@@ -50,6 +50,7 @@ The source currently references an existing public R2 media host. Those referenc
 ## Production
 
 Run `npm run lint` to check the frontend before building.
+Run `npm test` for SEO metadata, legacy-data compatibility, gallery alignment and page-access regression tests. See [the SEO publishing handoff](docs/seo-handoff.md) for admin editing, content publication and the remaining edge-host redirect configuration.
 
 ```powershell
 npm run build

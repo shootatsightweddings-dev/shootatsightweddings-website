@@ -5,6 +5,7 @@ import useSEO from '../hooks/useSEO';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { localBlogPosts } from '../data/localBlogPosts';
 import './BlogPost.css';
+import { articleSchema } from '../utils/articleSeo';
 
 const findLocalPost = (slug) => localBlogPosts.find((p) => p.slug === slug);
 
@@ -15,9 +16,6 @@ const BlogPostContent = ({ slug }) => {
 
   useEffect(() => {
     const local = findLocalPost(slug);
-    if (local) {
-      return;
-    }
 
     const fetchPost = async () => {
       try {
@@ -25,6 +23,7 @@ const BlogPostContent = ({ slug }) => {
         const data = await res.json();
         if (res.ok && data.blog) {
           setPost({
+            ...data.blog,
             slug: data.blog.slug,
             title: data.blog.title,
             date: new Date(data.blog.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
@@ -33,11 +32,11 @@ const BlogPostContent = ({ slug }) => {
             content: data.blog.content ? data.blog.content.split('\n\n') : [],
             img: data.blog.coverImageUrl,
           });
-        } else {
+        } else if (!local) {
           setNotFound(true);
         }
       } catch {
-        setNotFound(true);
+        if (!local) setNotFound(true);
       } finally {
         setLoading(false);
       }
@@ -45,21 +44,13 @@ const BlogPostContent = ({ slug }) => {
     fetchPost();
   }, [slug]);
 
-  const articleJsonLd = post ? {
-    '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
-    headline: post.title,
-    description: post.excerpt,
-    image: post.img,
-    datePublished: post.date,
-    author: { '@type': 'Organization', name: 'Shoot At Sight Weddings' },
-    publisher: { '@type': 'Organization', name: 'Shoot At Sight Weddings' },
-  } : null;
+  const articleJsonLd = post ? articleSchema(post) : null;
 
   useSEO({
-    title: post ? `${post.title} | Shoot At Sight Weddings Journal` : 'Article Not Found',
-    description: post ? post.excerpt : 'This article could not be found.',
+    title: post ? (post.metaTitle || `${post.title} | Shoot At Sight Weddings Journal`) : 'Article Not Found',
+    description: post ? (post.metaDescription || post.excerpt) : 'This article could not be found.',
     ogImage: post ? post.img : undefined,
+    canonicalUrl: post?.canonicalUrl,
     noindex: !post,
     jsonLd: articleJsonLd ? [articleJsonLd] : [],
     breadcrumbLabels: post ? { [`/blog/${slug}`]: post.title } : undefined,
@@ -94,10 +85,11 @@ const BlogPostContent = ({ slug }) => {
         </div>
 
         <h1 className="blog-post-title">{post.title}</h1>
+        <p className="blog-post-author">By {post.authorUrl ? <a href={post.authorUrl}>{post.authorName || 'Shoot At Sight Weddings'}</a> : (post.authorName || 'Shoot At Sight Weddings')}</p>
 
         {post.img && (
           <div className="blog-post-hero-img">
-            <img src={post.img} alt={post.title} loading="eager" fetchPriority="high" />
+            <img src={post.img} alt={post.altText || post.title} loading="eager" fetchPriority="high" />
           </div>
         )}
 

@@ -21,4 +21,8 @@ router.delete('/testimonials/:id', deleteTestimonial);
 // Site configuration management
 router.put('/site-config/:sectionKey', updateSectionConfig);
 
+const contentPages = require('../services/contentPageService');
+router.get('/pages', async (req,res,next) => { try {res.json({success:true,pages:await contentPages.listPages(true)});}catch(error){next(error);} });
+router.put('/pages', async (req,res,next) => { try {res.json({success:true,page:await contentPages.savePage(req.body)});}catch(error){next(error);} });
+
 module.exports = router;

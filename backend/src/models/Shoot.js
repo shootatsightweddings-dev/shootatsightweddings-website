@@ -1,5 +1,7 @@
 const { Schema, model } = require('mongoose');
 
+const { fields } = require('../services/seoFields');
+
 const shootSchema = new Schema(
   {
     title: { type: String, required: true, trim: true },
@@ -8,6 +10,14 @@ const shootSchema = new Schema(
     location: { type: String, required: true, trim: true },
     date: { type: String, required: true, trim: true },
     desc: { type: String, required: true },
+    ...fields,
+    heroImageAlt: { type: String, default: '' },
+    galleryAlt: { type: [String], default: [] },
+    narrative: { type: String, default: '' },
+    clientQuote: { type: String, default: '' },
+    clientQuoteAuthor: { type: String, default: '' },
+    testimonialId: { type: Schema.Types.ObjectId, ref: 'Testimonial', default: null },
+    resultsSummary: { type: String, default: '' },
     heroImage: { type: String, required: true },
     gallery: [{ type: String }],
   },

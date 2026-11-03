@@ -1,0 +1,10 @@
+.content-page { min-height:65vh; padding-top:180px; padding-bottom:80px; }
+.content-page h1 { margin:30px 0; }
+.content-page-hero { width:100%; max-height:600px; object-fit:cover; border-radius:8px; }
+.content-page-body { max-width:800px; margin:40px auto; font-size:18px; line-height:1.8; white-space:pre-line; }
+.content-page-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px; margin-top:40px; }
+.content-page-grid article { padding:28px; border:1px solid #8d756b44; border-radius:8px; }
+.content-page details { border-bottom:1px solid #8d756b44; padding:20px 0; }
+.content-page summary { cursor:pointer; }
+.content-page .btn-premium { margin:24px 0; }
+@media(max-width:600px){ .content-page { padding-top:140px; } .content-page-grid { grid-template-columns:1fr; } .content-page-body { font-size:17px; } }

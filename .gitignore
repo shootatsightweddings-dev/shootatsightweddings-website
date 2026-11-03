@@ -32,3 +32,6 @@ Thumbs.db
 # Internal handoff documents
 *.pdf
 Project_Proposal_Shoot_At_Sight.docx
+
+# Local database migration backups
+backend/backups/

@@ -4,6 +4,25 @@ const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
 const Shoot = require('../models/Shoot');
+const { validateSeo } = require('../services/seoFields');
+
+function galleryDescriptions(value, count, required = false) {
+  let descriptions;
+  try { descriptions = typeof value === 'string' ? JSON.parse(value) : value; } catch { descriptions = null; }
+  if (!Array.isArray(descriptions) || descriptions.length !== count || descriptions.some(text => typeof text !== 'string' || (required && !text.trim()))) {
+    const error = new Error('Provide one image description for every gallery photo, in the same order.'); error.statusCode = 400; throw error;
+  }
+  return descriptions.map(text => text.trim());
+}
+
+function shootMetadata(body, galleryCount) {
+  validateSeo(body);
+  const keys = ['metaTitle','metaDescription','canonicalUrl','heroImageAlt','narrative','clientQuote','clientQuoteAuthor','resultsSummary'];
+  const metadata = Object.fromEntries(keys.filter(key=>body[key] !== undefined).map(key=>[key,String(body[key]).trim()]));
+  if (body.testimonialId !== undefined) metadata.testimonialId = body.testimonialId || null;
+  if (body.galleryAlt !== undefined) metadata.galleryAlt = galleryDescriptions(body.galleryAlt,galleryCount);
+  return metadata;
+}
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
@@ -190,6 +209,11 @@ const createShoot = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Please upload a Hero Cover Image.' });
     }
 
+    if (!req.body.heroImageAlt?.trim()) return res.status(400).json({success:false,message:'Describe the hero image before uploading.'});
+    const uploadCount = (req.files.gallery || []).length;
+    const metadata = shootMetadata(req.body, uploadCount);
+    metadata.galleryAlt = galleryDescriptions(req.body.galleryAlt || '[]', uploadCount, true);
+
     // Generate unique slug
     const slug = title
       .toString()
@@ -233,6 +257,7 @@ const createShoot = async (req, res, next) => {
     // Save Shoot to DB or Local fallback
     try {
       const shoot = await Shoot.create({
+        ...metadata,
         title,
         slug,
         category,
@@ -248,6 +273,7 @@ const createShoot = async (req, res, next) => {
       console.warn('⚠️ MongoDB connection offline. Saving shoot details to local shoots-db.json fallback...');
       const localShoots = readLocalShoots();
       const newShoot = {
+        ...metadata,
         _id: uuidv4(),
         title,
         slug,
@@ -395,6 +421,7 @@ async function addGalleryImages(req, res, next) {
     if (files.length === 0)
       return res.status(400).json({ success: false, message: 'No images provided' });
 
+    const descriptions = galleryDescriptions(req.body.galleryAlt, files.length, true);
     const newUrls = await Promise.all(
       files.map(async (file) => {
         const filename = `${uuidv4()}.webp`;
@@ -403,8 +430,9 @@ async function addGalleryImages(req, res, next) {
     );
 
     const gallery = [...(found.shoot.gallery || []), ...newUrls];
-    const updated = await persistShoot(found, { gallery });
-    return res.json({ success: true, gallery: updated.gallery });
+    const galleryAlt = [...(found.shoot.gallery || []).map((_,i)=>found.shoot.galleryAlt?.[i] || ''), ...descriptions];
+    const updated = await persistShoot(found, { gallery, galleryAlt });
+    return res.json({ success: true, gallery: updated.gallery, galleryAlt: updated.galleryAlt });
   } catch (err) { next(err); }
 }
 
@@ -419,13 +447,15 @@ async function removeGalleryImage(req, res, next) {
     const idx = gallery.indexOf(imageUrl);
     if (idx === -1) return res.status(404).json({ success: false, message: 'Image not in gallery' });
 
+    const galleryAlt = gallery.map((_,i)=>found.shoot.galleryAlt?.[i] || '');
     gallery.splice(idx, 1);
-    const updated = await persistShoot(found, { gallery });
+    galleryAlt.splice(idx, 1);
+    const updated = await persistShoot(found, { gallery, galleryAlt });
 
     // Delete from R2/local storage (non-blocking)
     deleteStoredImage(imageUrl).catch(() => {});
 
-    return res.json({ success: true, gallery: updated.gallery });
+    return res.json({ success: true, gallery: updated.gallery, galleryAlt: updated.galleryAlt });
   } catch (err) { next(err); }
 }
 
@@ -438,14 +468,27 @@ async function updateHeroImage(req, res, next) {
     const heroFile = req.files?.['heroImage']?.[0];
     if (!heroFile) return res.status(400).json({ success: false, message: 'No hero image provided' });
 
+    const heroImageAlt = String(req.body.heroImageAlt || '').trim();
+    if (!heroImageAlt) return res.status(400).json({success:false,message:'Describe the new cover image.'});
     const oldHero = found.shoot.heroImage;
     const filename = `${uuidv4()}.webp`;
     const heroImageUrl = await processAndStoreImage(heroFile.buffer, filename, req);
-    const updated = await persistShoot(found, { heroImage: heroImageUrl });
+    const updated = await persistShoot(found, { heroImage: heroImageUrl, heroImageAlt });
 
     // Delete old hero from R2 (non-blocking)
     if (oldHero) deleteStoredImage(oldHero).catch(() => {});
 
-    return res.json({ success: true, heroImage: updated.heroImage });
+    return res.json({ success: true, heroImage: updated.heroImage, heroImageAlt: updated.heroImageAlt });
   } catch (err) { next(err); }
 }
+
+async function updateShootMetadata(req,res,next) {
+  try {
+    const found = await findShoot(req.params.id);
+    if (!found) return res.status(404).json({success:false,message:'Shoot not found'});
+    const metadata = shootMetadata(req.body,(found.shoot.gallery || []).length);
+    const updated = await persistShoot(found,metadata);
+    res.json({success:true,data:updated});
+  } catch(error) {next(error);}
+}
+module.exports.updateShootMetadata = updateShootMetadata;

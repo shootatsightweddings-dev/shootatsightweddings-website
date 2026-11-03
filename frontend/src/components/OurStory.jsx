@@ -85,22 +85,22 @@ const OurStory = () => {
           {/* VISUALS NOW ON THE LEFT */}
           <div className="story-visuals-new">
             <div className="story-img-wrapper type-1">
-              <img src={storyContent.img1} alt="Master Shot" />
+              <img src={storyContent.img1} alt={storyContent.img1Alt || "Wedding portrait"} />
             </div>
             <div className="story-img-wrapper type-2">
-              <img src={storyContent.img2} alt="Detail Frame" />
+              <img src={storyContent.img2} alt={storyContent.img2Alt || "Wedding celebration details"} />
             </div>
             <div className="story-img-wrapper type-3">
-              <img src={storyContent.img3} alt="Candid Moment" loading="lazy" decoding="async" />
+              <img src={storyContent.img3} alt={storyContent.img3Alt || "Candid wedding moment"} loading="lazy" decoding="async" />
             </div>
           </div>
 
           {/* CONTENT NOW ON THE RIGHT */}
           <div className="story-content-new">
             <div className="vertical-label">{storyContent.tagline}</div>
-            <h2 className="section-title-large" style={{ marginBottom: '40px' }}>
+            <h1 className="section-title-large" style={{ marginBottom: '40px' }}>
               {storyContent.titleMain} <br />of <i>{storyContent.titleHighlight}</i>
-            </h2>
+            </h1>
             <p className="story-p-lead">
               {storyContent.pLead}
             </p>

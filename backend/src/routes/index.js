@@ -20,5 +20,6 @@ router.use('/admin', adminRoutes);
 router.use('/shoots', shootRoutes);
 router.use('/testimonials', testimonialRoutes);
 router.use('/site-config', siteConfigRoutes);
+router.use('/pages', require('./contentPageRoutes'));
 
 module.exports = router;

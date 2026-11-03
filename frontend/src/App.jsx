@@ -12,6 +12,7 @@ import PreWeddingGallery from './pages/PreWeddingGallery';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import Contact from './pages/Contact';
+import ContentPages from './pages/ContentPages';
 import FAQ from './pages/FAQ';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -59,6 +60,10 @@ function App() {
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
 
+          <Route path="/services" element={<ContentPages kind="service" />} />
+          <Route path="/services/:slug" element={<ContentPages kind="service" />} />
+          <Route path="/locations" element={<ContentPages kind="location" />} />
+          <Route path="/locations/:slug" element={<ContentPages kind="location" />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/faq" element={<FAQ />} />
 

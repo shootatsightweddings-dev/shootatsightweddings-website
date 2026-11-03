@@ -1,4 +1,5 @@
 const Blog = require('../models/Blog');
+const { validateSeo } = require('./seoFields');
 
 const generateSlug = (title) =>
   title
@@ -28,7 +29,7 @@ const getPublishedBlogs = async (page = 1, limit = 10) => {
 
   const [blogs, total] = await Promise.all([
     Blog.find(filter)
-      .select('title slug coverImageUrl content tags createdAt')
+      .select('title slug coverImageUrl content tags createdAt updatedAt publishedAt metaTitle metaDescription altText authorName authorType authorUrl canonicalUrl')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
@@ -66,7 +67,9 @@ const getAllBlogs = async (page = 1, limit = 10) => {
   return { blogs, total, page, totalPages: Math.ceil(total / limit) };
 };
 
-const createBlog = async ({ title, content, coverImageUrl, tags, isPublished }) => {
+const createBlog = async (data) => {
+  validateSeo(data);
+  const { title, content, coverImageUrl, tags, isPublished, metaTitle, metaDescription, altText, authorName, authorType, authorUrl, canonicalUrl } = data;
   if (!title?.trim()) {
     const err = new Error('Title is required');
     err.statusCode = 400;
@@ -84,6 +87,8 @@ const createBlog = async ({ title, content, coverImageUrl, tags, isPublished }) 
     title: title.trim(),
     slug,
     content: content.trim(),
+    metaTitle, metaDescription, altText, authorName, authorType, authorUrl, canonicalUrl,
+    publishedAt: isPublished ? new Date() : null,
     coverImageUrl: coverImageUrl || null,
     tags: tags || [],
     isPublished: isPublished ?? false,
@@ -91,6 +96,7 @@ const createBlog = async ({ title, content, coverImageUrl, tags, isPublished }) 
 };
 
 const updateBlog = async (id, updates) => {
+  validateSeo(updates);
   const blog = await Blog.findById(id);
   if (!blog) {
     const err = new Error('Blog not found');
@@ -99,13 +105,14 @@ const updateBlog = async (id, updates) => {
   }
 
   if (updates.title && updates.title.trim() !== blog.title) {
-    updates.slug = await uniqueSlug(updates.title, id);
     updates.title = updates.title.trim();
   }
 
   if (updates.content) updates.content = updates.content.trim();
 
-  Object.assign(blog, updates);
+  const allowed = ['title','content','coverImageUrl','tags','isPublished','metaTitle','metaDescription','altText','authorName','authorType','authorUrl','canonicalUrl'];
+  if (updates.isPublished && !blog.publishedAt) blog.publishedAt = blog.isPublished ? blog.createdAt : new Date();
+  Object.assign(blog, Object.fromEntries(allowed.filter(key=>updates[key] !== undefined).map(key=>[key,updates[key]])));
   return blog.save();
 };
 

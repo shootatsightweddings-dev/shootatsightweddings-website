@@ -143,12 +143,12 @@ const Experience = () => {
                           >
                             <source src={currentVideo} type="video/mp4" />
                             <source src="https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/Low%20Bitrate.mp4" type="video/mp4" />
-                            <img src={phase.img} alt={phase.heading} />
+                            <img src={phase.img} alt={phase.imgAlt || phase.heading} />
                           </video>
                         ) : (
                           <img
                             src={phase.img}
-                            alt={phase.heading}
+                            alt={phase.imgAlt || phase.heading}
                             loading="lazy"
                             decoding="async"
                             className={idx === 1 ? 'capture-img' : idx === 2 ? 'heirloom-img' : ''}
@@ -172,12 +172,12 @@ const Experience = () => {
                           >
                             <source src={currentVideo} type="video/mp4" />
                             <source src="https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/Low%20Bitrate.mp4" type="video/mp4" />
-                            <img src={phase.img} alt={phase.heading} />
+                            <img src={phase.img} alt={phase.imgAlt || phase.heading} />
                           </video>
                         ) : (
                           <img
                             src={phase.img}
-                            alt={phase.heading}
+                            alt={phase.imgAlt || phase.heading}
                             loading="lazy"
                             decoding="async"
                             className={idx === 1 ? 'capture-img' : idx === 2 ? 'heirloom-img' : ''}

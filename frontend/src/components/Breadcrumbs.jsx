@@ -3,6 +3,8 @@ import './Breadcrumbs.css';
 
 const LABELS = {
   about: 'About',
+  services: 'Services',
+  locations: 'Locations',
   portfolio: 'Portfolio',
   wedding: 'Wedding',
   'pre-wedding': 'Pre-Wedding',

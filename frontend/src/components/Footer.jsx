@@ -130,6 +130,11 @@ const Footer = () => {
         </div>
       </div>
 
+      <nav aria-label="Services and locations" style={{display:'flex',justifyContent:'center',gap:28,marginTop:28}}>
+        <Link className="ft-nav-link" to="/services">Services</Link>
+        <Link className="ft-nav-link" to="/locations">Locations</Link>
+      </nav>
+
       {/* ── Bottom tagline + copyright ── */}
       <div className="ft-bottom">
         <p className="ft-profession">Destination Wedding Photographers &amp; Cinematography Professionals</p>

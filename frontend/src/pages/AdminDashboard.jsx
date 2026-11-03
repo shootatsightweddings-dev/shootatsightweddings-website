@@ -4,6 +4,9 @@ import { API_URL } from '../config';
 import useSEO from '../hooks/useSEO';
 import { DEFAULT_VIDEO_URL, DEFAULT_POSTER_URL, DEFAULT_MOBILE_VIDEO_URL } from '../data/videoDefaults';
 import './AdminDashboard.css';
+import SeoFields from '../components/SeoFields';
+import ShootStoryFields from '../components/ShootStoryFields';
+import ContentPageEditor from '../components/ContentPageEditor';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -13,6 +16,11 @@ const AdminDashboard = () => {
     noindex: true
   });
 
+  const [blogSeo,setBlogSeo] = useState({});
+  const [shootSeo,setShootSeo] = useState({});
+  const [uploadDescriptions,setUploadDescriptions] = useState({});
+  const [pendingGallery,setPendingGallery] = useState([]);
+  const [pendingGalleryAlt,setPendingGalleryAlt] = useState([]);
   const [activeTab, setActiveTab] = useState('list'); // 'list', 'create', 'blogs-list', 'create-blog'
   const [shoots, setShoots] = useState([]);
   const [loadingList, setLoadingList] = useState(true);
@@ -81,10 +89,11 @@ const AdminDashboard = () => {
     }
   };
 
-  const uploadImage = async (file) => {
+  const uploadImage = async (file, altText) => {
     const token = localStorage.getItem('adminToken');
     const fd = new FormData();
     fd.append('image', file);
+    fd.append('altText',altText);
     try {
       const res = await fetch(`${API_URL}/images/upload`, {
         method: 'POST',
@@ -132,15 +141,20 @@ const AdminDashboard = () => {
   const handleConfigImageUpload = async (e, sectionKey, field, index = null, arrayField = null) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    const descriptionKey=JSON.stringify(index===null?[sectionKey,field]:[sectionKey,field,index,arrayField]);
+    const altText=(uploadDescriptions[descriptionKey] || '').trim();
+    if(!altText){setError('Describe the image before uploading.');e.target.value='';return;}
 
     setUploading(true);
     setUploadProgress(`Uploading image for ${field}...`);
     try {
-      const url = await uploadImage(file);
+      const url = await uploadImage(file, altText);
       if (index !== null && arrayField) {
         handleConfigArrayChange(sectionKey, arrayField, index, field, url);
+        handleConfigArrayChange(sectionKey, arrayField, index, `${field}Alt`, altText);
       } else {
         handleConfigChange(sectionKey, field, url);
+        handleConfigChange(sectionKey, `${field}Alt`, altText);
       }
       setSuccess('Image uploaded successfully!');
       setTimeout(() => setSuccess(''), 3000);
@@ -255,7 +269,7 @@ const AdminDashboard = () => {
 
   const handleGalleryChange = (e) => {
     if (e.target.files) {
-      setGallery(Array.from(e.target.files));
+      setGallery(Array.from(e.target.files)); setShootSeo(previous=>({...previous,galleryAlt:[]}));
     }
   };
 
@@ -292,17 +306,33 @@ const AdminDashboard = () => {
   // ── Gallery Edit Handlers ────────────────────────────────────────────────
   const openEditPanel = (shoot) => {
     setEditingShoot({ ...shoot, gallery: [...(shoot.gallery || [])] });
+    setPendingGallery([]); setPendingGalleryAlt([]);
     setEditMsg('');
   };
 
-  const handleAddGalleryImages = async (e) => {
-    const files = Array.from(e.target.files);
+  const saveShootMetadata = async () => {
+    setEditUploading(true);setEditMsg('Saving descriptions and story...');
+    try{
+      const res=await fetch(`${API_URL}/shoots/${editingShoot._id}/metadata`,{method:'PATCH',headers:{Authorization:`Bearer ${localStorage.getItem('adminToken')}`,'Content-Type':'application/json'},body:JSON.stringify({...editingShoot,galleryAlt:(editingShoot.gallery || []).map((_,i)=>editingShoot.galleryAlt?.[i] || '')})});
+      const data=await res.json();if(!res.ok)throw new Error(data.message || 'Save failed');
+      setEditingShoot(data.data);setShoots(previous=>previous.map(shoot=>shoot._id===data.data._id?data.data:shoot));setEditMsg('Descriptions and case study saved.');
+    }catch(error){setEditMsg(error.message);}finally{setEditUploading(false);}
+  };
+
+  const handleAddGalleryImages = (event) => {
+    setPendingGallery(Array.from(event.target.files || []));setPendingGalleryAlt([]);event.target.value='';
+  };
+
+  const uploadPendingGallery = async () => {
+    const files = pendingGallery;
+    if(files.some((_,index)=>!pendingGalleryAlt[index]?.trim())){setEditMsg('Describe each new gallery photo first.');return;}
     if (!files.length) return;
     setEditUploading(true);
     setEditMsg('Uploading new images...');
     const token = localStorage.getItem('adminToken');
     const fd = new FormData();
     files.forEach(f => fd.append('gallery', f));
+    fd.append('galleryAlt',JSON.stringify(pendingGalleryAlt));
     try {
       const res = await fetch(`${API_URL}/shoots/${editingShoot._id}/gallery`, {
         method: 'PATCH',
@@ -311,14 +341,15 @@ const AdminDashboard = () => {
       });
       const data = await res.json();
       if (res.ok) {
-        setEditingShoot(prev => ({ ...prev, gallery: data.gallery }));
+        setEditingShoot(prev => ({ ...prev, gallery: data.gallery, galleryAlt:data.galleryAlt }));
         setShoots(prev => prev.map(s => s._id === editingShoot._id ? { ...s, gallery: data.gallery } : s));
         setEditMsg(`✅ ${files.length} image(s) added successfully!`);
+        setPendingGallery([]);setPendingGalleryAlt([]);
       } else {
         setEditMsg(`❌ ${data.message || 'Upload failed'}`);
       }
     } catch { setEditMsg('❌ Connection error'); }
-    finally { setEditUploading(false); e.target.value = ''; }
+    finally { setEditUploading(false); }
   };
 
   const handleRemoveGalleryImage = (imageUrl) => {
@@ -358,6 +389,7 @@ const AdminDashboard = () => {
     const token = localStorage.getItem('adminToken');
     const fd = new FormData();
     fd.append('heroImage', file);
+    fd.append('heroImageAlt',editingShoot.heroImageAlt || '');
     try {
       const res = await fetch(`${API_URL}/shoots/${editingShoot._id}/hero`, {
         method: 'PATCH',
@@ -366,7 +398,7 @@ const AdminDashboard = () => {
       });
       const data = await res.json();
       if (res.ok) {
-        setEditingShoot(prev => ({ ...prev, heroImage: data.heroImage }));
+        setEditingShoot(prev => ({ ...prev, heroImage: data.heroImage, heroImageAlt:data.heroImageAlt }));
         setShoots(prev => prev.map(s => s._id === editingShoot._id ? { ...s, heroImage: data.heroImage } : s));
         setEditMsg('✅ Cover image updated!');
       } else {
@@ -380,6 +412,8 @@ const AdminDashboard = () => {
   const handleBlogCoverUpload = async (e, isEdit = false) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    const altText=(isEdit?editingBlog.altText:blogSeo.altText)?.trim();
+    if(!altText){if(isEdit)setEditMsg('Describe the cover image before uploading.');else setError('Describe the cover image before uploading.');e.target.value='';return;}
 
     if (isEdit) {
       setEditUploading(true);
@@ -392,6 +426,7 @@ const AdminDashboard = () => {
     const token = localStorage.getItem('adminToken');
     const fd = new FormData();
     fd.append('image', file);
+    fd.append('altText',altText);
 
     try {
       const res = await fetch(`${API_URL}/images/upload`, {
@@ -449,6 +484,7 @@ const AdminDashboard = () => {
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
+          ...editingBlog,
           title: editingBlog.title,
           content: editingBlog.content,
           coverImageUrl: editingBlog.coverImageUrl,
@@ -522,6 +558,8 @@ const AdminDashboard = () => {
     formData.append('date', date);
     formData.append('desc', desc);
     formData.append('heroImage', heroImage);
+    Object.entries(shootSeo).filter(([key])=>key!=='galleryAlt').forEach(([key,value])=>formData.append(key,value));
+    formData.append('galleryAlt',JSON.stringify(gallery.map((_,index)=>shootSeo.galleryAlt?.[index] || '')));
 
     gallery.forEach((file) => {
       formData.append('gallery', file);
@@ -552,7 +590,7 @@ const AdminDashboard = () => {
       setLocation('');
       setDate('');
       setDesc('');
-      setHeroImage(null);
+      setHeroImage(null); setShootSeo({});
       setGallery([]);
 
       // Clear file inputs
@@ -590,6 +628,7 @@ const AdminDashboard = () => {
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
+          ...blogSeo,
           title: blogTitle,
           content: blogContent,
           coverImageUrl: blogCover,
@@ -600,7 +639,7 @@ const AdminDashboard = () => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Failed to publish blog');
       setSuccess(`Successfully published "${blogTitle}"!`);
-      setBlogTitle(''); setBlogContent('');
+      setBlogTitle(''); setBlogContent(''); setBlogSeo({});
       setLoadingBlogs(true); fetchBlogs();
       setTimeout(() => { setActiveTab('blogs-list'); setSuccess(''); }, 2000);
     } catch (err) {
@@ -735,6 +774,7 @@ const AdminDashboard = () => {
       <main className="dashboard-main container">
         {/* Navigation Tabs */}
         <div className="dash-tabs">
+          <button className={`dash-tab-btn ${activeTab === 'content-pages' ? 'active' : ''}`} onClick={()=>setActiveTab('content-pages')}>Services &amp; Locations</button>
           <button
             className={`dash-tab-btn ${activeTab === 'list' ? 'active' : ''}`}
             onClick={() => setActiveTab('list')}
@@ -786,6 +826,7 @@ const AdminDashboard = () => {
           </button>
         </div>
 
+        {activeTab === 'content-pages' && <ContentPageEditor />}
         {/* Tab content 1: Shoots List */}
         {activeTab === 'list' && (
           <div className="tab-content list-tab">
@@ -900,6 +941,8 @@ const AdminDashboard = () => {
                   disabled={uploading}
                 />
               </div>
+
+              <ShootStoryFields value={shootSeo} onChange={setShootSeo} gallery={gallery} testimonials={testimonials} requiredImages />
 
               {/* Uploads row */}
               <div className="form-double-column">
@@ -1032,6 +1075,7 @@ const AdminDashboard = () => {
                 </div>
               </div>
 
+              <SeoFields value={blogSeo} onChange={setBlogSeo} image author />
               <div className="input-group-chic upload-box-chic">
                 <label htmlFor="blogCoverInput">Cover Image (R2 Optimized)</label>
                 <div className="file-input-wrapper">
@@ -1447,7 +1491,8 @@ const AdminDashboard = () => {
                         {['img1', 'img2', 'img3'].map((imgKey, idx) => (
                           <div key={imgKey} className="input-group-chic upload-box-chic">
                             <label>Philosophy Photo {idx + 1}</label>
-                            <div className="file-input-wrapper">
+                            <input type="text" aria-label="Image description before upload" placeholder="Describe this photograph before choosing a file" value={uploadDescriptions[JSON.stringify(['about_philosophy', imgKey])] || ''} onChange={(event)=>setUploadDescriptions(previous=>({...previous,[JSON.stringify(['about_philosophy', imgKey])]:event.target.value}))} />
+<div className="file-input-wrapper">
                               <input
                                 type="file"
                                 accept="image/*"
@@ -1547,7 +1592,8 @@ const AdminDashboard = () => {
                           </div>
                           <div className="input-group-chic upload-box-chic">
                             <label>Floating Preview Image</label>
-                            <div className="file-input-wrapper">
+                            <input type="text" aria-label="Image description before upload" placeholder="Describe this photograph before choosing a file" value={uploadDescriptions[JSON.stringify(['services', 'img', index, 'list'])] || ''} onChange={(event)=>setUploadDescriptions(previous=>({...previous,[JSON.stringify(['services', 'img', index, 'list'])]:event.target.value}))} />
+<div className="file-input-wrapper">
                               <input
                                 type="file"
                                 accept="image/*"
@@ -1665,7 +1711,8 @@ const AdminDashboard = () => {
                           </div>
                           <div className="input-group-chic upload-box-chic">
                             <label>Phase Illustration Photo</label>
-                            <div className="file-input-wrapper">
+                            <input type="text" aria-label="Image description before upload" placeholder="Describe this photograph before choosing a file" value={uploadDescriptions[JSON.stringify(['experience', 'img', index, 'phases'])] || ''} onChange={(event)=>setUploadDescriptions(previous=>({...previous,[JSON.stringify(['experience', 'img', index, 'phases'])]:event.target.value}))} />
+<div className="file-input-wrapper">
                               <input
                                 type="file"
                                 accept="image/*"
@@ -1819,7 +1866,8 @@ const AdminDashboard = () => {
 
                       <div className="input-group-chic upload-box-chic" style={{ marginTop: '15px' }}>
                         <label>CTA Section Background Image</label>
-                        <div className="file-input-wrapper">
+                        <input type="text" aria-label="Image description before upload" placeholder="Describe this photograph before choosing a file" value={uploadDescriptions[JSON.stringify(['cta', 'bgImage'])] || ''} onChange={(event)=>setUploadDescriptions(previous=>({...previous,[JSON.stringify(['cta', 'bgImage'])]:event.target.value}))} />
+<div className="file-input-wrapper">
                           <input
                             type="file"
                             accept="image/*"
@@ -1984,7 +2032,8 @@ const AdminDashboard = () => {
                       </div>
                       <div className="input-group-chic upload-box-chic" style={{ marginTop: '15px' }}>
                         <label>Hero Parallax Background Image</label>
-                        <div className="file-input-wrapper">
+                        <input type="text" aria-label="Image description before upload" placeholder="Describe this photograph before choosing a file" value={uploadDescriptions[JSON.stringify(['about_page', 'heroBg'])] || ''} onChange={(event)=>setUploadDescriptions(previous=>({...previous,[JSON.stringify(['about_page', 'heroBg'])]:event.target.value}))} />
+<div className="file-input-wrapper">
                           <input
                             type="file"
                             accept="image/*"
@@ -2139,7 +2188,8 @@ const AdminDashboard = () => {
                         </div>
                         <div className="input-group-chic upload-box-chic">
                           <label>Founder Portrait Photo</label>
-                          <div className="file-input-wrapper">
+                          <input type="text" aria-label="Image description before upload" placeholder="Describe this photograph before choosing a file" value={uploadDescriptions[JSON.stringify(['about_page', 'founderImg'])] || ''} onChange={(event)=>setUploadDescriptions(previous=>({...previous,[JSON.stringify(['about_page', 'founderImg'])]:event.target.value}))} />
+<div className="file-input-wrapper">
                             <input
                               type="file"
                               accept="image/*"
@@ -2222,7 +2272,8 @@ const AdminDashboard = () => {
                         </div>
                         <div className="input-group-chic upload-box-chic">
                           <label>Team Collective Photo</label>
-                          <div className="file-input-wrapper">
+                          <input type="text" aria-label="Image description before upload" placeholder="Describe this photograph before choosing a file" value={uploadDescriptions[JSON.stringify(['about_page', 'teamImg'])] || ''} onChange={(event)=>setUploadDescriptions(previous=>({...previous,[JSON.stringify(['about_page', 'teamImg'])]:event.target.value}))} />
+<div className="file-input-wrapper">
                             <input
                               type="file"
                               accept="image/*"
@@ -2276,7 +2327,8 @@ const AdminDashboard = () => {
 
                       <div className="input-group-chic upload-box-chic" style={{ marginTop: '15px' }}>
                         <label>Philosophy Backdrop Photo</label>
-                        <div className="file-input-wrapper">
+                        <input type="text" aria-label="Image description before upload" placeholder="Describe this photograph before choosing a file" value={uploadDescriptions[JSON.stringify(['about_page', 'philosophyBg'])] || ''} onChange={(event)=>setUploadDescriptions(previous=>({...previous,[JSON.stringify(['about_page', 'philosophyBg'])]:event.target.value}))} />
+<div className="file-input-wrapper">
                           <input
                             type="file"
                             accept="image/*"
@@ -2488,7 +2540,8 @@ const AdminDashboard = () => {
 
                       <div className="input-group-chic upload-box-chic" style={{ marginTop: '15px' }}>
                         <label>Side Editorial Showcase Photo</label>
-                        <div className="file-input-wrapper">
+                        <input type="text" aria-label="Image description before upload" placeholder="Describe this photograph before choosing a file" value={uploadDescriptions[JSON.stringify(['contact_page', 'contactImg'])] || ''} onChange={(event)=>setUploadDescriptions(previous=>({...previous,[JSON.stringify(['contact_page', 'contactImg'])]:event.target.value}))} />
+<div className="file-input-wrapper">
                           <input
                             type="file"
                             accept="image/*"
@@ -2609,6 +2662,13 @@ const AdminDashboard = () => {
             </h2>
 
             <div className="modal-body-scrollable" data-lenis-prevent>
+              <ShootStoryFields value={editingShoot} onChange={setEditingShoot} gallery={editingShoot.gallery || []} testimonials={testimonials}/>
+              <button type="button" className="btn-premium-submit" disabled={editUploading} onClick={saveShootMetadata}>Save descriptions and case study</button>
+              {pendingGallery.length>0 && <fieldset style={{padding:16,margin:'20px 0'}}><legend>Describe new gallery photos</legend>
+                {pendingGallery.map((file,index)=><div className="input-group-chic" key={index}><label htmlFor={`new-photo-${index}`}>{file.name}</label><input id={`new-photo-${index}`} value={pendingGalleryAlt[index] || ''} onChange={event=>setPendingGalleryAlt(previous=>pendingGallery.map((_,i)=>i===index?event.target.value:(previous[i] || '')))}/></div>)}
+                <button type="button" disabled={editUploading} onClick={uploadPendingGallery}>Upload described photos</button>
+              </fieldset>}
+
               {/* Cover Photo */}
               <div className="edit-section" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '25px', marginBottom: '25px' }}>
                 <div className="edit-section-label">Cover / Hero Image</div>
@@ -2723,6 +2783,7 @@ const AdminDashboard = () => {
                 </div>
               </div>
 
+              <SeoFields value={editingBlog} onChange={setEditingBlog} image author />
               {/* Cover Image */}
               <div className="edit-section" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '25px', marginBottom: '25px' }}>
                 <label className="edit-section-label">Cover Image</label>

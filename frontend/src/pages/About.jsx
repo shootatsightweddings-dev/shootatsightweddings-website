@@ -190,7 +190,7 @@ const About = () => {
       {/* Fullscreen Hero Section with Parallax Background */}
       <section className="about-fullscreen-hero">
         <div className="about-hero-bg-wrapper">
-          <img src={aboutContent.heroBg} alt="The Story Behind The Light" className="about-hero-bg-img" />
+          <img src={aboutContent.heroBg} alt={aboutContent.heroBgAlt || "The Story Behind The Light"} className="about-hero-bg-img" />
           <div className="about-hero-overlay"></div>
         </div>
         <div className="about-hero-centered-content">
@@ -218,7 +218,7 @@ const About = () => {
                 <div className="founder-vertical-tag">{aboutContent.founderTagline}</div>
                 <div className="founder-backdrop-frame"></div>
                 <div className="founder-img-wrapper">
-                  <img src={aboutContent.founderImg} alt="Pavithra — Founder & Director" />
+                  <img src={aboutContent.founderImg} alt={aboutContent.founderImgAlt || "Pavithra — Founder & Director"} />
                 </div>
               </div>
             </div>
@@ -297,7 +297,7 @@ const About = () => {
               <div className="about-team-vertical-tag">CREATIVE COLLECTIVE // EST. 2018</div>
               <div className="about-team-backdrop"></div>
               <div className="about-img-mask">
-                <img src={aboutContent.teamImg} alt="Shoot At Sight Weddings Studio Team" />
+                <img src={aboutContent.teamImg} alt={aboutContent.teamImgAlt || "Shoot At Sight Weddings Studio Team"} />
               </div>
             </div>
             <div className="img-caption">{aboutContent.teamCaption}</div>
@@ -316,7 +316,7 @@ const About = () => {
               <div className="philosophy-portrait-backdrop"></div>
 
               <div className="philosophy-portrait-mask">
-                <img src={aboutContent.philosophyBg} alt="Fine art lighting and details" className="philosophy-portrait-img" />
+                <img src={aboutContent.philosophyBg} alt={aboutContent.philosophyBgAlt || "Fine art lighting and details"} className="philosophy-portrait-img" />
               </div>
 
               <div className="philosophy-portrait-tag">{aboutContent.philosophyTagline}</div>

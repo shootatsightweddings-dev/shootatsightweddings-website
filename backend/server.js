@@ -17,6 +17,7 @@ const routes = require('./src/routes');
 const errorHandler = require('./src/middlewares/errorHandler');
 const Shoot = require('./src/models/Shoot');
 const Blog = require('./src/models/Blog');
+const contentPages = require('./src/services/contentPageService');
 
 connectDB();
 
@@ -49,6 +50,15 @@ app.use(helmet({
   },
 }));
 
+// Preserve every path and query when requests reach this app on the apex host.
+// A CDN/legacy origin must apply the same rule before it returns its own 404.
+app.use((req,res,next) => {
+  if (req.hostname === 'shootatsightweddings.com') {
+    return res.redirect(301, 'https://www.shootatsightweddings.com' + req.originalUrl);
+  }
+  next();
+});
+
 app.use(cors());
 app.use(express.json());
 
@@ -68,7 +78,7 @@ if (process.env.NODE_ENV === 'production') {
   // shell so the client-side app can render them (see useSEO noindex).
   const STATIC_ROUTES = new Set([
     '/', '/films', '/about', '/portfolio', '/portfolio/wedding', '/portfolio/pre-wedding',
-    '/blog', '/contact', '/faq',
+    '/blog', '/contact', '/faq', '/services', '/locations',
   ]);
   const ADMIN_ROUTES = new Set([
     '/admin', '/admin/login', '/admin/dashboard', '/blog/admin-login',
@@ -164,6 +174,16 @@ if (process.env.NODE_ENV === 'production') {
 
     if (STATIC_ROUTES.has(reqPath) || ADMIN_ROUTES.has(reqPath)) {
       return sendRoute(res, reqPath);
+    }
+
+    const pageMatch = reqPath.match(/^\/(services|locations)\/([a-z0-9-]+)$/);
+    if (pageMatch) {
+      try {
+        const page = await contentPages.getPage(pageMatch[1] === 'services' ? 'service' : 'location',pageMatch[2]);
+        if (page) return sendRoute(res,reqPath);
+      } catch {
+        return res.status(503).send('This page is temporarily unavailable.');
+      }
     }
 
     const shootMatch = reqPath.match(/^\/shoot\/([a-z0-9-]+)$/i);

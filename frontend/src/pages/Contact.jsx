@@ -123,7 +123,7 @@ ${form.vision}`
             <div className="contact-image-vertical-label">{contactContent.verticalLabel}</div>
             <div className="contact-image-backdrop"></div>
             <div className="contact-image-wrapper">
-              <img src={contactContent.contactImg} alt="High-Fashion Editorial Narrative" />
+              <img src={contactContent.contactImg} alt={contactContent.contactImgAlt || "Shoot At Sight Weddings studio"} />
             </div>
           </div>
 

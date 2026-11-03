@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import gsap from 'gsap';
 import { useSiteConfig } from '../context/siteConfigState';
 import './Services.css';
@@ -9,7 +9,6 @@ const Services = () => {
   const imageRef = useRef(null);
   const [activeImage, setActiveImage] = useState(null);
   const { config } = useSiteConfig();
-  const navigate = useNavigate();
 
   const servicesContent = config?.services || {
     tagline: 'CRAFT & MASTERY',
@@ -74,19 +73,12 @@ const Services = () => {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  const handleServiceClick = (service) => {
-    let cat;
-    const title = service.title.toLowerCase();
-    if (title.includes('wedding photography') || title.includes('photo')) {
-      cat = 'Wedding';
-    } else if (title.includes('cinematic') || title.includes('film') || title.includes('drone') || title.includes('aerial')) {
-      cat = 'Cinematic';
-    } else if (title.includes('pre-wedding') || title.includes('engagement')) {
-      cat = 'Pre-wedding';
-    } else {
-      cat = 'Editorial';
-    }
-    navigate(`/portfolio?category=${cat}`);
+  const servicePath = (service) => {
+    const title=service.title.toLowerCase();
+    const slug=title.includes('drone') || title.includes('aerial') ? 'drone-aerial-coverage'
+      : title.includes('pre-wedding') || title.includes('engagement') ? 'pre-wedding-photography'
+      : title.includes('film') || title.includes('cinematic') ? 'cinematic-wedding-films' : 'wedding-photography';
+    return '/services/' + slug;
   };
 
   const services = servicesContent.list;
@@ -110,30 +102,30 @@ const Services = () => {
 
         <div className="services-list">
           {services.map((service, index) => (
-            <div
+            <Link
               key={index}
               className="service-item"
               onMouseEnter={() => {
-                setActiveImage(service.img);
+                setActiveImage({url:service.img,alt:service.imgAlt || service.title});
                 gsap.to(imageRef.current, { opacity: 1, scale: 1, duration: 0.5, ease: "power2.out" });
               }}
               onMouseLeave={() => {
                 gsap.to(imageRef.current, { opacity: 0, scale: 0.8, duration: 0.4, ease: "power2.in" });
               }}
-              onClick={() => handleServiceClick(service)}
+              to={servicePath(service)}
             >
               <div className="service-number">{service.num}</div>
               <div className="service-content">
                 <h3 className="service-title">{service.title}</h3>
                 <p className="service-desc">{service.desc}</p>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 
         {/* Floating Image Follower */}
         <div ref={imageRef} className="floating-service-image">
-          {activeImage && <img src={activeImage} alt="Service Preview" />}
+          {activeImage && <img src={activeImage.url} alt={activeImage.alt} />}
         </div>
       </div>
     </section>

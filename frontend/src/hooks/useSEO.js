@@ -86,11 +86,12 @@ const useSEO = ({
   noindex = false,
   jsonLd = [],
   breadcrumbLabels,
+  canonicalUrl: canonicalOverride,
   path,
 } = {}) => {
   useEffect(() => {
     const pathname = path || window.location.pathname;
-    const canonicalUrl = `${SITE_URL}${pathname === '/' ? '/' : pathname.replace(/\/$/, '')}`;
+    const canonicalUrl = canonicalOverride || `${SITE_URL}${pathname === '/' ? '/' : pathname.replace(/\/$/, '')}`;
 
     if (title) {
       const fullTitle = title.toLowerCase().includes('shoot at sight')
@@ -146,7 +147,7 @@ const useSEO = ({
       document.querySelectorAll('script[data-seo-jsonld="true"]').forEach((el) => el.remove());
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [title, description, ogTitle, ogDescription, ogImage, ogType, noindex, path, JSON.stringify(jsonLd)]);
+  }, [title, description, ogTitle, ogDescription, ogImage, ogType, noindex, path, canonicalOverride, JSON.stringify(jsonLd)]);
 };
 
 export default useSEO;

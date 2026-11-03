@@ -9,6 +9,7 @@ const {
   addGalleryImages,
   removeGalleryImage,
   updateHeroImage,
+  updateShootMetadata,
 } = require('../controllers/shootController');
 
 const router = Router();
@@ -58,5 +59,6 @@ router.patch('/:id/hero', (req, res, next) => {
 
 // Delete entire shoot
 router.delete('/:id', adminAuth, deleteShoot);
+router.patch('/:id/metadata', adminAuth, updateShootMetadata);
 
 module.exports = router;

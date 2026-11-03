@@ -12,6 +12,7 @@
     "dev:backend": "npm run start --workspace backend",
     "seed-admin": "npm run seed-admin --workspace backend",
     "lint": "npm run lint --workspace frontend",
+    "test": "node --test backend/tests/seo.test.js frontend/tests/article-seo.test.mjs",
     "build": "npm run build --workspace frontend"
   },
   "engines": {

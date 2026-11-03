@@ -45,6 +45,8 @@ const uploadImage = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'No file uploaded.' });
     }
 
+    const altText = String(req.body.altText || '').trim();
+    if (!altText) return res.status(400).json({success:false,message:'An image description is required.'});
     const { mimetype, size, buffer, originalname } = req.file;
 
     if (!ALLOWED_TYPES.includes(mimetype)) {
@@ -69,11 +71,12 @@ const uploadImage = async (req, res, next) => {
       url,
       filename,
       originalName: originalname,
+      altText,
       mimeType: 'image/webp',
       size: optimized.length,
     });
 
-    return res.status(201).json({ success: true, url: image.url, id: image._id });
+    return res.status(201).json({ success: true, url: image.url, id: image._id, altText: image.altText });
   } catch (err) {
     next(err);
   }

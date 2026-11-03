@@ -3,6 +3,7 @@ const { Schema, model } = require('mongoose');
 const imageSchema = new Schema(
   {
     url: { type: String, required: true },
+    altText: { type: String, required: true, trim: true },
     filename: { type: String, required: true },
     originalName: { type: String, required: true },
     mimeType: { type: String, required: true },

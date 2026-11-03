@@ -20,7 +20,7 @@ const Hero = () => {
     videoUrl: "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/Naveen%20%26%20Kate%204K%20Teaser.mp4"
   };
 
-  const videoUrl = heroContent.videoUrl || "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/Naveen%20%26%20Kate%204K%20Teaser.mp4";
+  const videoUrl = /^https:\/\//.test(heroContent.videoUrl || '') ? heroContent.videoUrl : "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/Naveen%20%26%20Kate%204K%20Teaser.mp4";
 
   // Set scroll restoration and reset scroll position early
   useLayoutEffect(() => {

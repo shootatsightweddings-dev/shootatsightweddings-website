@@ -41,6 +41,8 @@ const STATIC_ROUTES = [
   { path: '/portfolio/wedding', changefreq: 'weekly', priority: '0.8' },
   { path: '/portfolio/pre-wedding', changefreq: 'weekly', priority: '0.8' },
   { path: '/films', changefreq: 'monthly', priority: '0.7' },
+  { path: '/services', changefreq: 'monthly', priority: '0.8' },
+  { path: '/locations', changefreq: 'monthly', priority: '0.8' },
   { path: '/faq', changefreq: 'monthly', priority: '0.7' },
   { path: '/contact', changefreq: 'monthly', priority: '0.6' },
   { path: '/blog', changefreq: 'weekly', priority: '0.6' },
@@ -176,7 +178,11 @@ async function main() {
     const blogPosts = await getBlogSlugs();
     console.log(`[prerender] Found ${blogPosts.length} blog post(s) to prerender.`);
 
+    const pageResponse = await fetch(`${BASE_URL}/api/pages`);
+    if (!pageResponse.ok) throw new Error('Could not enumerate published service and location pages');
+    const { pages: contentPages = [] } = await pageResponse.json();
     const dynamicRoutes = [
+      ...contentPages.map(page=>({path:`/${page.kind === 'service' ? 'services' : 'locations'}/${page.slug}`,changefreq:'monthly',priority:'0.7',lastmod:page.updatedAt})),
       ...shoots.map((s) => ({
         path: `/shoot/${s.slug}`,
         changefreq: 'monthly',
@@ -191,12 +197,13 @@ async function main() {
       })),
     ];
 
-    const allRoutes = [...STATIC_ROUTES, ...dynamicRoutes];
+    const allRoutes = [...new Map([...STATIC_ROUTES, ...dynamicRoutes].map(route=>[route.path,route])).values()];
 
     browser = await chromium.launch();
     const context = await browser.newContext();
     const page = await context.newPage();
 
+    const failures = [];
     for (const route of allRoutes) {
       process.stdout.write(`[prerender] ${route.path} ... `);
       try {
@@ -205,9 +212,11 @@ async function main() {
         console.log(`ok (${(html.length / 1024).toFixed(0)} KiB, h1: ${hasH1 ? 'yes' : 'NO'})`);
       } catch (err) {
         console.log(`FAILED: ${err.message}`);
+        failures.push(route.path);
       }
     }
 
+    if (failures.length) throw new Error(`Prerender failed for: ${failures.join(', ')}`);
     const sitemapXml = buildSitemap(allRoutes);
     writeFileSync(path.join(DIST_DIR, 'sitemap.xml'), sitemapXml, 'utf8');
     console.log(`[prerender] Wrote sitemap.xml with ${allRoutes.length} URLs.`);

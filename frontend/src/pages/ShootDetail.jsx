@@ -4,6 +4,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { API_URL } from '../config';
 import useSEO from '../hooks/useSEO';
+import { isoDate } from '../utils/articleSeo';
 import Breadcrumbs from '../components/Breadcrumbs';
 import './ShootDetail.css';
 
@@ -177,11 +178,11 @@ const ShootDetail = () => {
     : 'Gallery Collection';
 
   const imagesJsonLd = shoot
-    ? [shoot.hero, ...(shoot.gallery || [])].filter(Boolean).map((url) => ({
+    ? [shoot.hero, ...(shoot.gallery || [])].filter(Boolean).map((url, index) => ({
         '@context': 'https://schema.org',
         '@type': 'ImageObject',
         contentUrl: url,
-        caption: `${shoot.title}${shoot.location ? ` — ${shoot.location}` : ''}`,
+        caption: (index === 0 ? shoot.heroImageAlt : shoot.galleryAlt?.[index - 1]) || `${shoot.title}${shoot.location ? ` — ${shoot.location}` : ''}`,
         creator: { '@type': 'Organization', name: 'Shoot At Sight Weddings' },
         copyrightNotice: `© ${new Date().getFullYear()} Shoot At Sight Weddings`,
         creditText: 'Shoot At Sight Weddings',
@@ -189,12 +190,19 @@ const ShootDetail = () => {
     : [];
 
   useSEO({
-    title: shootSeoTitle,
-    description: shoot ? shoot.desc : 'Explore the editorial wedding and pre-wedding galleries by Shoot At Sight Weddings.',
+    title: shoot?.metaTitle || shootSeoTitle,
+    canonicalUrl: shoot?.canonicalUrl,
+    description: shoot ? (shoot.metaDescription || shoot.desc) : 'Explore the editorial wedding and pre-wedding galleries by Shoot At Sight Weddings.',
     ogImage: shoot ? shoot.hero : null,
     noindex: !shoot,
     breadcrumbLabels: shoot ? { [`/shoot/${id}`]: shoot.title } : undefined,
-    jsonLd: imagesJsonLd,
+    jsonLd: [...imagesJsonLd, ...(shoot?.narrative ? [{
+      '@context':'https://schema.org','@type':'Article',headline:shoot.title,
+      description:shoot.metaDescription || shoot.desc,image:shoot.hero,
+      datePublished:isoDate(shoot.createdAt),dateModified:isoDate(shoot.updatedAt),
+      author:{'@type':'Organization','@id':'https://www.shootatsightweddings.com/#business',name:'Shoot At Sight Weddings'},
+      about:{'@type':'Event',name:shoot.title,location:shoot.location},
+    }] : [])],
   });
 
   useEffect(() => {
@@ -232,6 +240,7 @@ const ShootDetail = () => {
         if (res.ok && data.data) {
           const s = data.data;
           setShoot({
+            ...s,
             title: s.title,
             date: s.date,
             location: s.location,
@@ -322,7 +331,7 @@ const ShootDetail = () => {
               <div className="sd-split-img-wrapper">
                 <ImageWithSkeleton
                   src={shoot.hero}
-                  alt={shoot.title}
+                  alt={shoot.heroImageAlt || shoot.title}
                   className="sd-split-img"
                   fetchPriority="high"
                   loading="eager"
@@ -361,6 +370,13 @@ const ShootDetail = () => {
         </section>
       )}
 
+      {shoot?.narrative && <section className="container" style={{maxWidth:820,padding:'48px 24px'}}>
+        <h2>The story behind the celebration</h2>
+        {shoot.narrative.split(/\n\s*\n/).filter(Boolean).map((paragraph,index)=><p key={index}>{paragraph}</p>)}
+        {shoot.resultsSummary && <p>{shoot.resultsSummary}</p>}
+        {shoot.clientQuote && <blockquote><p>{shoot.clientQuote}</p><cite>{shoot.clientQuoteAuthor || 'The couple'}</cite></blockquote>}
+      </section>}
+
       {/* Main Gallery Exhibition */}
       <section className="exhibition-gallery container">
         <div className="collage-grid-vintage">
@@ -373,7 +389,7 @@ const ShootDetail = () => {
                 >
                   <ImageWithSkeleton
                     src={imgUrl}
-                    alt={`Story Frame ${idx + 1}`}
+                    alt={shoot.galleryAlt?.[idx] || `${shoot.title} — wedding photograph ${idx + 1}`}
                     loading="lazy"
                   />
                   <div className="zoom-indicator">EXPLORE FULLSCREEN</div>
@@ -420,7 +436,7 @@ const ShootDetail = () => {
         <div className="shoot-lightbox-modal" onClick={() => setLightboxImage(null)}>
           <button className="lightbox-close-btn" onClick={() => setLightboxImage(null)}>✕</button>
           <div className="lightbox-content-wrapper" onClick={(e) => e.stopPropagation()}>
-            <img src={lightboxImage} alt="Fullscreen exhibition view" className="lightbox-img" />
+            <img src={lightboxImage} alt={shoot.galleryAlt?.[shoot.gallery.indexOf(lightboxImage)] || shoot.heroImageAlt || shoot.title} className="lightbox-img" />
           </div>
         </div>
       )}
