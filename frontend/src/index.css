@@ -1,0 +1,303 @@
+/* All fonts (Cormorant Garamond, Inter, Playfair Display, Poppins, Great
+   Vibes, EB Garamond) are self-hosted from public/fonts/ — see fonts.css
+   and scripts/self-host-fonts.mjs. This replaces 6 separate render-blocking
+   @import calls to Google Fonts (this file plus 5 more scattered across
+   component CSS, several importing the same family redundantly) with one
+   local stylesheet. */
+@import './fonts.css';
+
+:root {
+  --bg-color: #fdf8f3;      /* Soft Cream Background */
+  --bg-secondary: #dcd0c0;  /* Muted Tan Header/Sections */
+  --text-primary: #1e1813;  /* Premium Deep Dark Brown (Footer Dark Color) */
+  --text-secondary: #4a3b32; /* Rich Dark Brown for secondary copy */
+  --accent: #C6A15B;        /* Premium gold accent */
+  --accent-light: #D4B77C;   /* Lighter gold accent */
+  --font-serif: 'Cormorant Garamond', serif;
+  --font-display: 'Playfair Display', serif;
+  --font-sans: 'Inter', sans-serif;
+  --font-poppins: 'Poppins', sans-serif;
+  --transition-smooth: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Page Loader */
+.page-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.loader-text {
+  font-family: var(--font-serif);
+  font-size: 24px;
+  letter-spacing: 10px;
+  font-weight: 700;
+}
+
+html {
+  overflow-x: hidden;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  font-family: var(--font-poppins);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (max-width: 768px) {
+  body {
+    padding-bottom: 80px; /* Safe space for sticky bottom navigation app bar */
+  }
+}
+
+/* Footer Stylish */
+.footer-stylish {
+  padding: 80px 0 40px;
+  background: var(--bg-color);
+  border-top: 1px solid rgba(0,0,0,0.05);
+}
+
+.footer-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 50px;
+}
+
+.footer-logo {
+  height: 60px;
+  width: auto;
+}
+
+.footer-nav {
+  display: flex;
+  gap: 40px;
+}
+
+.footer-nav a {
+  text-decoration: none;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 600;
+  opacity: 0.6;
+  transition: all 0.3s ease;
+}
+
+.footer-nav a:hover {
+  opacity: 1;
+  color: var(--accent);
+}
+
+.footer-divider {
+  height: 1px;
+  background: rgba(0,0,0,0.05);
+  margin-bottom: 30px;
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  color: var(--text-secondary);
+  letter-spacing: 1px;
+}
+
+.footer-social {
+  display: flex;
+  gap: 30px;
+}
+
+.footer-social a {
+  text-decoration: none;
+  color: var(--text-primary);
+  opacity: 0.8;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.footer-social a:hover {
+  color: var(--accent);
+}
+
+@media (max-width: 768px) {
+  .footer-top {
+    flex-direction: column;
+    gap: 40px;
+    text-align: center;
+  }
+  .footer-nav {
+    flex-direction: column;
+    gap: 20px;
+  }
+  .footer-bottom {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+}
+
+/* Lenis Smooth Scroll Core Styles */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* Typography */
+h1, h2, h3, h4 {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+}
+
+h1 i, h2 i, h3 i, h4 i {
+  font-family: var(--font-display);
+  color: var(--accent);
+  font-style: italic;
+}
+
+/* Global Section Headings */
+.section-header-centered {
+  text-align: center;
+  margin-bottom: 80px;
+}
+
+.subtitle-accent {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 5px;
+  color: var(--accent);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 20px;
+}
+
+.section-title-large {
+  font-family: var(--font-serif);
+  font-size: clamp(60px, 8vw, 110px);
+  font-weight: 300;
+  line-height: 0.9;
+  color: var(--text-primary);
+  letter-spacing: -2px;
+  text-transform: none; /* Override any global uppercase */
+  margin: 0;
+}
+
+.section-title-large i {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--accent);
+  padding-left: 0.1em;
+}
+
+p {
+  font-family: var(--font-poppins);
+  font-weight: 400; /* Increased weight from 300 for better visibility */
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+/* Custom Cursor */
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 12px; /* Smaller, more elegant */
+  height: 12px;
+  background: var(--accent);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.1s ease-out;
+  opacity: 0.8;
+}
+
+/* Layout Utilities */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 20px;
+  }
+}
+
+.section-padding {
+  padding: 160px 0;
+}
+
+@media (max-width: 1024px) {
+  .section-padding {
+    padding: 80px 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .section-padding {
+    padding: 60px 0;
+  }
+}
+
+/* Buttons */
+.btn-premium {
+  display: inline-block;
+  padding: 18px 45px; /* Slightly larger padding */
+  border: 2px solid var(--accent); /* Thicker border */
+  color: var(--accent);
+  text-decoration: none;
+  font-family: var(--font-sans);
+  text-transform: uppercase;
+  letter-spacing: 3px; /* Increased letter spacing */
+  font-size: 13px;
+  font-weight: 600; /* Bolder text */
+  transition: all 0.3s var(--transition-smooth);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-premium:hover {
+  background: var(--accent);
+  color: var(--bg-color);
+}

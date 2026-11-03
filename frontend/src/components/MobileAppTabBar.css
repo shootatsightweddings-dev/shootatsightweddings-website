@@ -1,0 +1,95 @@
+/* Mobile App Bottom Tab Bar Styling */
+.mobile-app-tab-bar {
+  display: none; /* Hidden on Desktop */
+}
+
+@media (max-width: 768px) {
+  .mobile-app-tab-bar {
+    display: block;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: calc(68px + env(safe-area-inset-bottom, 0px));
+    background: rgba(245, 239, 230, 0.85); /* Glassmorphic Sand Cream */
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border-top: 1px solid rgba(60, 48, 36, 0.08);
+    box-shadow: 0 -10px 40px rgba(60, 48, 36, 0.06);
+    z-index: 99999; /* Float above everything including maps and drones */
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .mobile-tab-bar-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 10px;
+  }
+
+  .mobile-tab-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: rgba(60, 48, 36, 0.5); /* Semi-transparent chocolate */
+    width: 20%;
+    height: 100%;
+    gap: 4px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+  }
+
+  .tab-icon {
+    width: 22px;
+    height: 22px;
+    stroke-width: 1.8;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .tab-label {
+    font-family: var(--font-sans);
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Active State Curation */
+  .mobile-tab-item.active {
+    color: var(--accent); /* Pure Gold highlight */
+  }
+
+  .mobile-tab-item.active .tab-icon {
+    transform: translateY(-2px);
+    stroke-width: 2.2;
+  }
+
+  .mobile-tab-item.active .tab-label {
+    font-weight: 800;
+    color: var(--text-primary);
+  }
+
+  /* Micro Gold Pulse Indicator under Active Tab */
+  .mobile-tab-item.active::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    width: 4px;
+    height: 4px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(198, 161, 91, 0.8);
+  }
+
+  /* Luxury Aperture Rotation Hover Effect */
+  .mobile-tab-item:active .aperture-spin {
+    transform: rotate(45deg);
+  }
+}

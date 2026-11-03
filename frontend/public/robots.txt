@@ -1,0 +1,9 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /blog/admin-login
+
+# Sitemap
+Sitemap: https://www.shootatsightweddings.com/sitemap.xml

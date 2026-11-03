@@ -1,0 +1,389 @@
+.boutique-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 30px 0; /* Taller padding at start */
+  z-index: 1000;
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Base display rules to hide mobile navigation elements completely on desktop viewports */
+.mobile-menu-overlay,
+.mobile-hamburger-btn {
+  display: none;
+}
+
+/* INITIAL STATE (Immediate 100% Visibility On Load) */
+.nav-logo-only {
+  background: transparent;
+}
+
+.nav-logo-only .nav-right {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+.nav-logo-only .nav-left {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+/* FULL VISIBLE STATE (On Scroll) */
+.nav-full-visible {
+  padding: 15px 0;
+  background: rgba(253, 248, 243, 0.95); /* Luxury Frosted Cream */
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(60, 48, 36, 0.05);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+}
+
+.nav-full-visible .nav-right {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+.nav-full-visible .nav-left {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+.nav-container {
+  max-width: 95%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Brand tagline below logo — hidden on desktop, shown on mobile */
+.nav-brand-tagline {
+  display: none;
+}
+
+/* LEFT SIDE - LOGO */
+.nav-left {
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-logo {
+  height: 52px; /* Refined luxury sizing */
+  width: auto;
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1));
+}
+
+.nav-full-visible .nav-logo {
+  height: 42px; /* Scales gracefully on scroll */
+}
+
+
+/* RIGHT SIDE */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.nav-link-item {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: 700;
+  position: relative;
+  padding: 5px 0;
+  transition: color 0.3s ease;
+}
+
+.nav-link-item::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 1px;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--accent);
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-link-item:hover::after {
+  width: 100%;
+}
+
+.nav-link-item:hover {
+  color: var(--accent);
+}
+
+.nav-divider {
+  width: 1px;
+  height: 20px;
+  background: rgba(60, 48, 36, 0.1);
+}
+
+.nav-location {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-sans);
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+  line-height: 1.2;
+}
+
+.digital-clock {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.nav-cta-pill-camera {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 22px;
+  background: var(--text-primary);
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 4px; /* Chic sharp design like a premium camera body! */
+  font-family: var(--font-sans);
+  font-size: 10px;
+  letter-spacing: 2px;
+  font-weight: 700;
+  border: 1px solid var(--text-primary);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.nav-camera-svg {
+  width: 18px;
+  height: 18px;
+  color: #b89f65; /* Gold camera accent! */
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-cta-pill-camera:hover {
+  background: transparent;
+  color: var(--text-primary);
+  border-color: var(--text-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(44, 30, 21, 0.1);
+}
+
+.nav-cta-pill-camera:hover .nav-camera-svg {
+  color: var(--text-primary);
+  transform: rotate(-12deg) scale(1.15);
+}
+
+@media (max-width: 1024px) {
+  .nav-logo { height: 60px; }
+  .nav-full-visible .nav-logo { height: 50px; }
+  .nav-links { display: none; }
+}
+
+@media (max-width: 768px) {
+  .nav-container {
+    justify-content: center !important; /* Center the logo beautifully! */
+    width: 100%;
+    position: relative;
+  }
+  .nav-right {
+    display: none !important; /* Hide the right side entirely on mobile */
+  }
+  .boutique-nav {
+    padding: 14px 0;
+    background: rgba(253, 248, 243, 0.95) !important;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 4px 20px rgba(60, 48, 36, 0.04);
+    z-index: 1000;
+  }
+  .boutique-nav.menu-is-open {
+    z-index: 1000055 !important; /* Float above the menu overlay */
+    background: transparent !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+    border-bottom: none !important;
+  }
+  .nav-logo {
+    height: 44px !important;
+  }
+
+  /* Tagline below logo on mobile */
+  .nav-brand-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    text-decoration: none;
+  }
+
+  .nav-brand-tagline {
+    display: block;
+    font-family: var(--font-sans);
+    font-size: 7.5px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    text-align: center;
+    opacity: 0.75;
+    white-space: nowrap;
+  }
+
+  /* LUXURY HORIZONTAL HAMBURGER BUTTON */
+  .mobile-hamburger-btn {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 26px;
+    height: 12px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 100010; /* Keep it above the overlay */
+    position: absolute;
+    right: 25px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0;
+  }
+
+  .hamburger-line {
+    width: 100%;
+    height: 2px;
+    background-color: var(--text-primary);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Morphing hamburger lines into a clean 'X' when active */
+  .mobile-hamburger-btn.open .line-top {
+    transform: translateY(5px) rotate(45deg);
+  }
+
+  .mobile-hamburger-btn.open .line-bottom {
+    transform: translateY(-5px) rotate(-45deg);
+  }
+
+  /* FULLSCREEN LUXURY OVERLAY DRAWER */
+  .mobile-menu-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(253, 248, 243, 0.98); /* Frosted Luxury Off-White */
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    z-index: 100000; /* Float under hamburger button, but above content */
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-20px);
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .mobile-menu-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .mobile-menu-inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    padding: 120px 40px 60px 40px;
+  }
+
+  .mobile-menu-links {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    text-align: center;
+    width: 100%;
+    max-width: 320px;
+    margin-bottom: auto;
+    margin-top: auto;
+  }
+
+  .mobile-menu-link-item {
+    font-family: var(--font-sans);
+    font-size: 1.5rem;
+    letter-spacing: 5px;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mobile-menu-link-item span {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--accent); /* Elegant Gold Numbering */
+    margin-right: 15px;
+    letter-spacing: 1px;
+  }
+
+  .mobile-menu-link-item:active {
+    color: #b89f65;
+    transform: scale(0.98);
+  }
+
+  .mobile-menu-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    margin-top: auto;
+  }
+
+  .mobile-menu-tagline {
+    font-family: var(--font-sans);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+  }
+
+  .mobile-menu-cta {
+    display: inline-block;
+    padding: 12px 30px;
+    background: var(--text-primary);
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 4px;
+    font-family: var(--font-sans);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    box-shadow: 0 10px 25px rgba(60, 48, 36, 0.15);
+    transition: transform 0.3s;
+  }
+
+  .mobile-menu-cta:active {
+    transform: translateY(2px);
+  }
+}

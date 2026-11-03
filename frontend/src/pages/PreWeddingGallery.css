@@ -1,0 +1,376 @@
+/* 'Great Vibes' is self-hosted — see src/fonts.css */
+
+/* ════════════════════════════════════════
+   PRE-WEDDING GALLERY PAGE
+════════════════════════════════════════ */
+.pwg-page {
+  background: var(--bg-color);
+  min-height: 100vh;
+  padding-top: 140px;
+}
+
+/* ── Header ── */
+.pwg-header {
+  max-width: 1200px;
+  margin: 0 auto 60px;
+  padding: 0 50px;
+}
+
+.pwg-back {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  letter-spacing: 3.5px;
+  text-transform: uppercase;
+  color: rgba(60, 48, 36, 0.5);
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: 24px;
+  transition: color 0.3s ease;
+}
+
+.pwg-back:hover {
+  color: var(--accent);
+}
+
+.pwg-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pwg-title {
+  font-size: clamp(36px, 5vw, 64px);
+  font-weight: 400;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.pwg-title-serif {
+  font-family: var(--font-serif);
+  color: var(--text-primary);
+}
+
+.pwg-title-script {
+  font-family: "Great Vibes", cursive;
+  color: var(--accent);
+  font-weight: 400;
+  font-size: 1.2em;
+}
+
+.pwg-tagline {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: rgba(60, 48, 36, 0.5);
+  margin: 0;
+}
+
+/* ── Curated Section ── */
+.pwg-curated-section {
+  max-width: 1200px;
+  margin: 0 auto 100px;
+  padding: 0 50px;
+}
+
+.pwg-curated-header {
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.pwg-curated-tag {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 8px;
+}
+
+.pwg-curated-title {
+  font-family: var(--font-serif);
+  font-size: clamp(24px, 3vw, 38px);
+  font-weight: 400;
+  color: var(--text-primary);
+  margin: 0;
+  font-style: italic;
+}
+
+/* ── Featured Couples Section ── */
+.pwg-shoots-section {
+  max-width: 1200px;
+  margin: 0 auto 60px;
+  padding: 0 50px;
+}
+
+.pwg-section-heading {
+  font-family: var(--font-serif);
+  font-size: clamp(22px, 2.5vw, 32px);
+  font-weight: 400;
+  color: var(--text-primary);
+  margin-bottom: 30px;
+  text-align: center;
+  font-style: italic;
+}
+
+.pwg-couples-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.pwg-couple-card {
+  position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.pwg-couple-img-wrap {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+
+.pwg-couple-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pwg-couple-card:hover .pwg-couple-img-wrap img {
+  transform: scale(1.05);
+}
+
+.pwg-couple-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, transparent 60%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 20px;
+  color: #fff;
+}
+
+.pwg-couple-name {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-style: italic;
+}
+
+.pwg-couple-link {
+  font-family: var(--font-sans);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-top: 4px;
+  opacity: 0.8;
+}
+
+/* ── Edge-to-Edge 4-Column Masonry Grid (Zero White Space Gaps, 0% Image Crop) ── */
+.pwg-grid {
+  column-count: 4;
+  column-gap: 20px;
+  width: 100%;
+}
+
+/* ── Grid cell frame ── */
+.pwg-grid-cell {
+  display: inline-block;
+  width: 100%;
+  margin-bottom: 20px;
+  break-inside: avoid;
+  position: relative;
+  height: auto;
+  cursor: pointer;
+}
+
+.pwg-cell-img-wrap {
+  position: relative;
+  width: 100%;
+  height: auto;
+  overflow: hidden;
+  border-radius: 6px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+}
+
+.pwg-cell-img-wrap img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pwg-grid-cell:hover img {
+  transform: scale(1.03);
+}
+
+.pwg-cell-zoom {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(18, 18, 18, 0.85);
+  backdrop-filter: blur(10px);
+  color: #ffffff;
+  font-family: var(--font-sans);
+  font-size: 9px;
+  letter-spacing: 3px;
+  padding: 8px 16px;
+  border-radius: 30px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  pointer-events: none;
+}
+
+.pwg-grid-cell:hover .pwg-cell-zoom {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+/* ── Lightbox Modal ── */
+.pwg-lightbox-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 12, 10, 0.95);
+  backdrop-filter: blur(25px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.pwg-lb-close {
+  position: absolute;
+  top: 30px;
+  right: 40px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 22px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.pwg-lb-close:hover {
+  background: #fff;
+  color: #000;
+}
+
+.pwg-lb-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.pwg-lb-prev { left: 40px; }
+.pwg-lb-next { right: 40px; }
+
+.pwg-lb-nav:hover {
+  background: #ffffff;
+  color: #000000;
+}
+
+.pwg-lb-content {
+  max-width: 85vw;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.pwg-lb-content img {
+  max-width: 100%;
+  max-height: 75vh;
+  object-fit: contain;
+  border-radius: 3px;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.6);
+}
+
+.pwg-lb-caption {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-family: var(--font-serif);
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.9);
+  font-style: italic;
+}
+
+.pwg-lb-counter {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: rgba(255, 255, 255, 0.4);
+  font-style: normal;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .pwg-grid-cell {
+    height: clamp(220px, 30vh, 290px);
+  }
+  .pwg-couples-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .pwg-grid {
+    column-count: 3;
+    column-gap: 18px;
+  }
+}
+
+@media (max-width: 768px) {
+  .pwg-grid {
+    column-count: 2;
+    column-gap: 14px;
+  }
+  .pwg-grid-cell {
+    margin-bottom: 14px;
+  }
+}
+
+@media (max-width: 640px) {
+  .pwg-header,
+  .pwg-curated-section,
+  .pwg-shoots-section {
+    padding: 0 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pwg-grid {
+    column-count: 1;
+  }
+}

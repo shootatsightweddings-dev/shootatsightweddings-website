@@ -1,0 +1,53 @@
+.floating-social-widget {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
+.floating-social-btn {
+  width: 48px; /* Elegant matching size */
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  background-color: #1a1a1a; /* Solid minimalist dark backing */
+  border-radius: 50%; /* Perfect circle */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.floating-social-btn:hover {
+  transform: scale(1.1) translateY(-2px);
+  background-color: var(--accent, #999581); /* Clean brand gold/khaki accent color on hover */
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+.social-svg-icon {
+  width: 20px; /* Centered, elegant small glyph size */
+  height: 20px;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .floating-social-widget {
+    right: 18px;
+    bottom: 94px; /* Sits safely above the mobile app bottom tab bar */
+    gap: 10px;
+  }
+
+  .floating-social-btn {
+    width: 42px; /* Elegant smaller size on mobile */
+    height: 42px;
+  }
+
+  .social-svg-icon {
+    width: 18px;
+    height: 18px;
+  }
+}

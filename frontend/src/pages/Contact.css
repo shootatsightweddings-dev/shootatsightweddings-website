@@ -1,0 +1,394 @@
+.contact-page-editorial-dark {
+  background-color: var(--bg-color);
+  min-height: 100vh;
+  padding: 120px 0 100px 0;
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Safety net: always visible; GSAP animates on top */
+.reveal-item {
+  opacity: 1;
+  will-change: transform, opacity;
+}
+
+
+/* Luxury Accent line at top of page */
+.contact-page-editorial-dark::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #b89f65, #c9b57f, #b89f65);
+  z-index: 10;
+}
+
+.contact-main-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 80px;
+  align-items: start;
+}
+
+/* ── LEFT COLUMN: EDITORIAL COPY & IMAGE FRAME ── */
+.contact-editorial-left {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.contact-accent-tag {
+  font-size: 0.72rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #b89f65;
+  font-weight: 600;
+  display: inline-block;
+  border-bottom: 1px solid rgba(184, 159, 101, 0.3);
+  padding-bottom: 8px;
+}
+
+.contact-hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(38px, 4.8vw, 64px);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.contact-hero-title i {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  color: #b89f65;
+}
+
+/* Attitude Copy Stylings */
+.contact-attitude-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 580px;
+}
+
+.attitude-p-bold {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.45rem;
+  line-height: 1.5;
+  color: var(--text-primary);
+  font-weight: 400;
+}
+
+.attitude-p-light {
+  font-size: 0.94rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+.attitude-p-gold {
+  font-family: 'EB Garamond', serif;
+  font-size: 1.25rem;
+  line-height: 1.6;
+  color: #b89f65;
+  font-style: italic;
+}
+
+/* Majestic Image Frame with offset borders */
+.contact-image-frame {
+  position: relative;
+  width: 100%;
+  max-width: 540px;
+  margin-top: 20px;
+  aspect-ratio: 16 / 10;
+}
+
+.contact-image-vertical-label {
+  position: absolute;
+  left: -40px;
+  bottom: 60px;
+  transform: rotate(270deg);
+  transform-origin: left bottom;
+  font-size: 0.62rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(184, 159, 101, 0.5);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.contact-image-backdrop {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  width: 100%;
+  height: 100%;
+  border: 1px solid rgba(184, 159, 101, 0.25);
+  z-index: 0;
+  border-radius: 4px;
+}
+
+.contact-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid rgba(44, 30, 21, 0.08);
+  border-radius: 4px;
+  z-index: 1;
+  box-shadow: 0 15px 35px rgba(44, 30, 21, 0.1);
+}
+
+.contact-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(20%) contrast(1.05);
+  transition: all 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.contact-image-wrapper:hover img {
+  transform: scale(1.05);
+  filter: grayscale(0%) contrast(1.05);
+}
+
+/* Quick Direct Channels */
+.contact-direct-blocks {
+  display: flex;
+  gap: 60px;
+  margin-top: 20px;
+  border-top: 1px solid rgba(44, 30, 21, 0.06);
+  padding-top: 40px;
+}
+
+.direct-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.direct-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #b89f65;
+  font-weight: 600;
+}
+
+.direct-value {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin: 0;
+  font-weight: 400;
+}
+
+.direct-link {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.direct-link:hover {
+  color: #b89f65;
+  transform: translateX(4px);
+}
+
+/* ── RIGHT COLUMN: ELEGANT WARM PAPER FORM ── */
+.contact-editorial-right {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.contact-form-glass-card {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(44, 30, 21, 0.06);
+  border-top: 3px solid #b89f65;
+  width: 100%;
+  max-width: 500px;
+  padding: 45px;
+  border-radius: 8px;
+  box-shadow: 0 30px 60px rgba(44, 30, 21, 0.06);
+  position: relative;
+}
+
+.form-card-header {
+  margin-bottom: 35px;
+}
+
+.form-card-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+
+.form-card-sub {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0;
+  font-weight: 400;
+}
+
+.premium-contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.form-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-input-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #b89f65;
+  font-weight: 600;
+}
+
+.form-double-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* Custom premium input tags */
+.input-contact-chic, .textarea-contact-chic, .select-contact-chic {
+  background: rgba(255, 255, 255, 0.5) !important;
+  border: 1px solid rgba(44, 30, 21, 0.12) !important;
+  color: var(--text-primary) !important;
+  padding: 14px 16px !important;
+  font-size: 0.9rem !important;
+  font-weight: 400 !important;
+  font-family: 'Inter', sans-serif !important;
+  border-radius: 4px !important;
+  transition: all 0.3s ease !important;
+  width: 100% !important;
+  outline: none !important;
+}
+
+.input-contact-chic, .textarea-contact-chic {
+  cursor: text !important;
+}
+
+.select-contact-chic {
+  cursor: pointer !important;
+  appearance: none !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23b89f65' width='18px' height='18px'%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 15px center !important;
+}
+
+.select-contact-chic option {
+  background: #ffffff !important;
+  color: var(--text-primary) !important;
+}
+
+.input-contact-chic::placeholder, .textarea-contact-chic::placeholder {
+  color: rgba(44, 30, 21, 0.4) !important;
+  font-style: italic !important;
+}
+
+.input-contact-chic:focus, .textarea-contact-chic:focus, .select-contact-chic:focus {
+  border-color: #b89f65 !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 10px rgba(184, 159, 101, 0.15) !important;
+}
+
+.textarea-contact-chic {
+  resize: none !important;
+  line-height: 1.6 !important;
+}
+
+/* Animated Luxury Submit Button */
+.btn-luxury-submit {
+  background: transparent;
+  border: 1px solid var(--text-primary);
+  color: var(--text-primary);
+  padding: 16px 20px;
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+  transition: all 0.4s ease;
+  margin-top: 15px;
+  z-index: 1;
+}
+
+.btn-luxury-submit::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: var(--text-primary);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: -1;
+}
+
+.btn-luxury-submit:hover {
+  color: var(--bg-color);
+  box-shadow: 0 8px 20px rgba(44, 30, 21, 0.15);
+  transform: translateY(-2px);
+}
+
+.btn-luxury-submit:hover::before {
+  left: 0;
+}
+
+/* ── RESPONSIVENESS ── */
+@media (max-width: 1024px) {
+  .contact-page-editorial-dark {
+    padding: 80px 0;
+  }
+
+  .contact-main-grid {
+    grid-template-columns: 1fr;
+    gap: 60px;
+  }
+
+  .contact-editorial-right {
+    justify-content: center;
+  }
+
+  .contact-form-glass-card {
+    max-width: 100%;
+    padding: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .contact-direct-blocks {
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .form-double-fields {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+
+  .contact-image-frame {
+    display: none; /* Hide image frame on small mobiles to prioritize content */
+  }
+}

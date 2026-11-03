@@ -1,0 +1,248 @@
+/* ─── Experience Section ─── */
+.experience-section {
+  width: 100%;
+  padding: 120px 0 80px;
+  background: var(--bg-color);
+  position: relative;
+}
+
+/* ─── Section Header ─── */
+.exp-section-header {
+  text-align: center;
+  margin-bottom: 100px;
+}
+
+.exp-main-title {
+  font-family: var(--font-serif);
+  font-size: clamp(48px, 6vw, 90px);
+  font-weight: 300;
+  line-height: 1.05;
+  letter-spacing: -2px;
+  color: var(--text-primary);
+  margin: 20px 0 24px;
+}
+
+.exp-main-title i {
+  font-style: italic;
+}
+
+.exp-subtitle {
+  font-family: var(--font-sans);
+  font-size: 17px;
+  color: var(--text-secondary);
+  font-weight: 300;
+  letter-spacing: 0.5px;
+}
+
+/* ─── Cards Grid ─── */
+.exp-cards-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 100px;
+}
+
+/* Safety net: content always visible; GSAP animates on top */
+.exp-section-header,
+.exp-card {
+  opacity: 1;
+  will-change: transform, opacity;
+}
+
+/* ─── Single Card ─── */
+.exp-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.exp-card--reverse {
+  direction: ltr; /* Always keep text reading direction */
+}
+
+/* ─── Text Side ─── */
+.exp-card__text {
+  display: flex;
+  flex-direction: column;
+}
+
+.layer-num {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 20px;
+  display: block;
+}
+
+.layer-heading {
+  font-family: var(--font-serif);
+  font-size: clamp(38px, 5vw, 68px);
+  line-height: 1.1;
+  font-weight: 300;
+  letter-spacing: -1px;
+  margin-bottom: 28px;
+  color: var(--text-primary);
+}
+
+.layer-desc {
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.85;
+  color: var(--text-secondary);
+  font-weight: 300;
+  max-width: 480px;
+  margin-bottom: 36px;
+}
+
+.layer-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.exp-tag {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  padding: 8px 18px;
+  border-radius: 30px;
+  border: 1px solid rgba(60, 48, 36, 0.15);
+  color: var(--text-secondary);
+  background: transparent;
+  transition: all 0.3s ease;
+}
+
+.exp-tag:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ─── Image Side ─── */
+.exp-card__image {
+  width: 100%;
+}
+
+.img-reveal-wrapper {
+  width: 100%;
+  max-width: 440px;
+  height: 520px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+  margin: 0 auto;
+}
+
+.img-reveal-wrapper img,
+.img-reveal-wrapper video.exp-video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  border-radius: 16px;
+  transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.img-reveal-wrapper img.heirloom-img,
+.img-reveal-wrapper video.heirloom-img {
+  object-position: center;
+}
+
+.img-reveal-wrapper img.capture-img,
+.img-reveal-wrapper video.capture-img {
+  object-position: center 20%;
+}
+
+.exp-card:hover .img-reveal-wrapper img,
+.exp-card:hover .img-reveal-wrapper video.exp-video {
+  transform: scale(1.04);
+}
+
+/* ─── Decorative Number ─── */
+.exp-card::before {
+  display: none;
+}
+
+/* ─── Tablet ─── */
+@media (max-width: 1024px) {
+  .experience-section {
+    padding: 80px 0;
+  }
+
+  .exp-section-header {
+    margin-bottom: 70px;
+  }
+
+  .exp-cards-grid {
+    gap: 70px;
+  }
+
+  .exp-card {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+
+  /* On tablets/mobile, always put image after text */
+  .exp-card--reverse .exp-card__text { order: 1; }
+  .exp-card--reverse .exp-card__image { order: 2; }
+  .exp-card .exp-card__image { order: 2; }
+  .exp-card .exp-card__text { order: 1; }
+
+  .layer-heading {
+    font-size: 36px;
+    margin-bottom: 18px;
+  }
+
+  .layer-desc {
+    font-size: 15px;
+    margin-bottom: 22px;
+  }
+
+  .img-reveal-wrapper {
+    max-height: 380px;
+  }
+}
+
+/* ─── Mobile ─── */
+@media (max-width: 640px) {
+  .experience-section {
+    padding: 60px 0;
+  }
+
+  .exp-section-header {
+    margin-bottom: 50px;
+  }
+
+  .exp-cards-grid {
+    gap: 56px;
+  }
+
+  .exp-card {
+    gap: 28px;
+  }
+
+  .exp-main-title {
+    font-size: 38px;
+    letter-spacing: -1px;
+  }
+
+  .exp-subtitle {
+    font-size: 14px;
+  }
+
+  .layer-heading {
+    font-size: 30px;
+  }
+
+  .layer-desc {
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .img-reveal-wrapper {
+    max-height: 300px;
+    border-radius: 12px;
+  }
+}

@@ -1,0 +1,129 @@
+.portfolio-preview {
+  position: relative;
+  background: var(--bg-color);
+  overflow: hidden;
+}
+
+.bg-text-decoration {
+  position: absolute;
+  top: 10%;
+  left: -5%;
+  font-family: var(--font-serif);
+  font-size: 25vw;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.05); /* Increased from 0.03 */
+  pointer-events: none;
+  z-index: 0;
+  white-space: nowrap;
+}
+
+.portfolio-header {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 120px;
+}
+
+
+
+.portfolio-stack {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 200px;
+  z-index: 1;
+}
+
+.portfolio-card {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+}
+
+.card-1 { justify-content: flex-start; }
+.card-2 { justify-content: flex-end; }
+.card-3 { justify-content: center; }
+
+.item-image-wrapper {
+  width: 55%;
+  aspect-ratio: 4/5;
+  overflow: hidden;
+  clip-path: inset(0% 0% 0% 0%); /* Initial state for animation */
+  background: var(--bg-secondary);
+}
+
+.item-image {
+  width: 100%;
+  height: 120%; /* For parallax */
+  object-fit: cover;
+}
+
+.item-info-overlap {
+  position: absolute;
+  bottom: -40px;
+  background: var(--bg-color);
+  padding: 60px;
+  box-shadow: 30px 30px 60px rgba(0,0,0,0.05);
+  max-width: 400px;
+  z-index: 2;
+}
+
+.card-1 .item-info-overlap { right: 10%; }
+.card-2 .item-info-overlap { left: 10%; }
+.card-3 .item-info-overlap { bottom: -60px; right: 15%; }
+
+.item-number {
+  font-family: var(--font-serif);
+  font-size: 40px;
+  color: var(--accent);
+  opacity: 0.3;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.item-cat {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.item-title {
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+
+.item-line {
+  width: 40px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.view-all-wrapper {
+  margin-top: 160px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .item-image-wrapper {
+    width: 100%;
+  }
+  .item-info-overlap {
+    position: relative;
+    bottom: 0;
+    right: 0 !important;
+    left: 0 !important;
+    padding: 30px;
+    margin-top: -30px;
+    width: 90%;
+    margin-left: auto;
+  }
+  .portfolio-stack {
+    gap: 100px;
+  }
+  .section-title-large {
+    font-size: 48px;
+  }
+}

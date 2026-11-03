@@ -1,0 +1,20 @@
+{
+  "name": "shoot-sight-root",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "start": "npm run start --workspace backend",
+    "dev": "npm run dev --workspace frontend",
+    "dev:backend": "npm run start --workspace backend",
+    "seed-admin": "npm run seed-admin --workspace backend",
+    "lint": "npm run lint --workspace frontend",
+    "build": "npm run build --workspace frontend"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}

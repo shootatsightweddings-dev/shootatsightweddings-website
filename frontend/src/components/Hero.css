@@ -1,0 +1,65 @@
+.hero-full {
+  height: 100vh;
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  overflow: hidden;
+  background: #000000;
+}
+
+/* Background Video */
+.hero-video-container {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 2;
+  background: #000000;
+}
+
+.hero-video-blocker {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: transparent;
+}
+
+.hero-html-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: 0;
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+}
+
+/* Mobile reel video — hidden on desktop */
+.hero-mobile-video {
+  display: none;
+}
+
+.hero-desktop-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero-desktop-video {
+    display: none;
+  }
+
+  .hero-mobile-video {
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    pointer-events: none;
+  }
+}

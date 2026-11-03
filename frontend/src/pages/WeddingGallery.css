@@ -1,0 +1,227 @@
+/* 'Great Vibes' is self-hosted — see src/fonts.css */
+
+/* ── Page wrapper ── */
+.wg-page {
+  min-height: 100vh;
+  background: var(--bg-color);
+  padding-bottom: 100px;
+}
+
+/* ── Header ── */
+.wg-header {
+  padding: 100px 60px 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.wg-back {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: rgba(60, 48, 36, 0.6);
+  text-decoration: none;
+  border: 1px solid rgba(60, 48, 36, 0.18);
+  padding: 10px 18px;
+  border-radius: 2px;
+  transition: color 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+}
+
+.wg-back:hover {
+  color: var(--text-primary);
+  border-color: rgba(60, 48, 36, 0.5);
+  background: rgba(60, 48, 36, 0.04);
+}
+
+.wg-title {
+  font-family: var(--font-sans);
+  font-size: clamp(22px, 3vw, 42px);
+  font-weight: 300;
+  color: var(--text-primary);
+  margin: 0;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+.wg-title-normal {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-style: normal;
+}
+
+.wg-title-script {
+  font-family: "Great Vibes", cursive;
+  font-size: clamp(30px, 4vw, 56px);
+  color: var(--accent);
+  font-weight: 400;
+}
+
+/* ── Paired Container ── */
+.wg-sections-container {
+  max-width: 1200px;
+  margin: 0 auto 90px;
+  padding: 0 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.wg-pair-section {
+  width: 100%;
+}
+
+/* Vertical Pair Grid: 3-column portrait layout (increased size, 0% crop) */
+.wg-pair-grid--vertical {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  width: 100%;
+}
+
+.wg-cell--vertical {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  border-radius: 6px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+}
+
+.wg-cell--vertical img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transition: transform 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.wg-cell--vertical:hover img {
+  transform: scale(1.05);
+}
+
+/* Horizontal Pair Grid: 2-column landscape layout (increased size, 0% crop) */
+.wg-pair-grid--horizontal {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  width: 100%;
+}
+
+.wg-cell--horizontal {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  border-radius: 6px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+}
+
+.wg-cell--horizontal img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transition: transform 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.wg-cell--horizontal:hover img {
+  transform: scale(1.05);
+}
+
+/* ── Couple name overlay ── */
+.wg-cell-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.6) 0%,
+    rgba(0, 0, 0, 0.1) 50%,
+    transparent 100%
+  );
+  display: flex;
+  align-items: flex-end;
+  padding: 28px 32px;
+  transition: background 0.4s ease;
+}
+
+.wg-cell--vertical:hover .wg-cell-overlay,
+.wg-cell--horizontal:hover .wg-cell-overlay {
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.72) 0%,
+    rgba(0, 0, 0, 0.18) 60%,
+    transparent 100%
+  );
+}
+
+.wg-couple-name {
+  font-family: var(--font-serif);
+  font-size: clamp(18px, 2.2vw, 28px);
+  font-weight: 400;
+  font-style: italic;
+  color: #ffffff;
+  letter-spacing: 0.01em;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  line-height: 1.2;
+  transition: letter-spacing 0.4s ease;
+}
+
+.wg-cell--vertical:hover .wg-couple-name,
+.wg-cell--horizontal:hover .wg-couple-name {
+  letter-spacing: 0.03em;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .wg-pair-grid--vertical {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .wg-header {
+    padding: 90px 24px 40px;
+  }
+
+  .wg-sections-container {
+    padding: 0 24px;
+  }
+
+  .wg-pair-grid--vertical,
+  .wg-pair-grid--horizontal {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .wg-cell--vertical,
+  .wg-cell--horizontal {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+/* ── Loading spinner ── */
+.wg-loading {
+  display: flex;
+  justify-content: center;
+  padding: 100px 0;
+}
+
+.wg-spinner {
+  width: 32px;
+  height: 32px;
+  border: 2px solid rgba(60, 48, 36, 0.12);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: wgSpin 0.7s linear infinite;
+  display: block;
+}
+
+@keyframes wgSpin {
+  to { transform: rotate(360deg); }
+}
