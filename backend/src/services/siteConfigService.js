@@ -11,9 +11,9 @@ const defaultConfigs = [
       line2Main: 'We Preserve',
       line2Highlight: 'Emotions',
       line2End: 'Forever.',
-      videoUrl: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/Naveen%20%26%20Kate%204K%20Teaser.mp4',
-      mobileVideoUrl: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/Low%20Bitrate.mp4',
-      bgImage: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/_DSC2178_-_Copy.webp'
+      videoUrl: '/Naveen%20%26%20Kate%204K%20Teaser.mp4',
+      mobileVideoUrl: '/Low%20Bitrate.mp4',
+      bgImage: '/common/_DSC2178_-_Copy.webp'
     }
   },
   {
@@ -28,9 +28,9 @@ const defaultConfigs = [
       stat1Label: 'Weddings Covered',
       stat2Num: '15+',
       stat2Label: 'Cities Covered',
-      img1: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/shoot-sight-latest-images/SYD08443%20(3).jpg.webp',
-      img2: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/shoot-sight-latest-images/DSC_0347-_2_.jpg.webp',
-      img3: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/shoot-sight-latest-images/NGD_5981-_1_.jpg.webp'
+      img1: '/shoot-sight-latest-images/SYD08443%20(3).jpg.webp',
+      img2: '/shoot-sight-latest-images/DSC_0347-_2_.jpg.webp',
+      img3: '/shoot-sight-latest-images/NGD_5981-_1_.jpg.webp'
     }
   },
   {
@@ -45,25 +45,25 @@ const defaultConfigs = [
           num: '01',
           title: 'Wedding Photography',
           desc: 'Candid, emotional, and trend-forward photography that captures the soul of your celebration. We specialize in natural expressions, ethereal lighting, and storytelling frames that preserve your most intimate memories forever.',
-          img: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/shoot-sight-latest-images/VIJ01478.jpg.webp'
+          img: '/shoot-sight-latest-images/VIJ01478.jpg.webp'
         },
         {
           num: '02',
           title: 'Cinematic Wedding Films',
           desc: 'High-definition movies inspired by your unique love story. With artistic angles, cinematic drone perspectives, emotional pacing, and professional-grade color grading, we turn your wedding day into a timeless motion picture experience.',
-          img: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/shoot-sight-latest-images/DSC_9199-2.jpg.webp'
+          img: '/shoot-sight-latest-images/DSC_9199-2.jpg.webp'
         },
         {
           num: '03',
           title: 'Pre-Wedding & Engagement',
           desc: 'A bespoke, conceptual shoot that reflects the essence of your partnership. Whether urban, nature-focused, luxury, or minimalist aesthetic — we curate mood-driven visuals designed for your legacy and invites.',
-          img: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/shoot-sight-latest-images/DSC00238-Edit%20(1).jpg.webp'
+          img: '/shoot-sight-latest-images/DSC00238-Edit%20(1).jpg.webp'
         },
         {
           num: '04',
           title: 'Drone & Aerial Coverage',
           desc: 'Sweeping aerial views that provide a grand perspective of your wedding story. From majestic heritage venues to scenic outdoor landscapes, our advanced drone cinematography adds a breathtaking dimension to your visuals.',
-          img: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/shoot-sight-latest-images/DJI_20260429175238_0374_D-_1_.jpg.webp'
+          img: '/shoot-sight-latest-images/DJI_20260429175238_0374_D-_1_.jpg.webp'
         }
       ]
     }
@@ -82,22 +82,22 @@ const defaultConfigs = [
           heading: 'The Curation',
           desc: 'We begin by understanding the soul of your story, selecting the perfect aesthetic tone and light for your unique celebration.',
           tags: ['Moodboarding', 'Lighting Design', 'Styling Harmony'],
-          img: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/_DSC4382.webp'
+          img: '/common/_DSC4382.webp'
         },
         {
           num: 'Phase 02 // Capture',
           heading: 'The Capture',
           desc: 'Discreet, immersive, and refined. We capture the moments that feel like a whisper, and the ones that roar across time.',
           tags: ['Discreet Presence', 'Candid Emotion', 'Cinematic Framing'],
-          img: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/shoot-sight-latest-images/KRP_9557.jpg.webp'
+          img: '/shoot-sight-latest-images/KRP_9557.jpg.webp'
         },
         {
           num: 'Phase 03 // Heirloom',
           heading: 'The Heirloom',
           desc: 'Final delivery of high-fidelity, processed imagery designed to last for generations. Your legacy, preserved in light.',
           tags: ['Color Grading', 'Fine Art Prints', 'Digital Vault'],
-          img: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/shoot-sight-latest-images/DSC_8454.jpg.webp',
-          video: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/Naveen%20%26%20Kate%204K%20Teaser.mp4'
+          img: '/shoot-sight-latest-images/DSC_8454.jpg.webp',
+          video: '/Naveen%20%26%20Kate%204K%20Teaser.mp4'
         }
       ]
     }
@@ -105,8 +105,8 @@ const defaultConfigs = [
   {
     sectionKey: 'featured_film',
     content: {
-      videoUrl: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/Naveen%20%26%20Kate%204K%20Teaser.mp4',
-      posterUrl: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/NAVEEN%20AND%20KATE/SYD08467.webp',
+      videoUrl: '/Naveen%20%26%20Kate%204K%20Teaser.mp4',
+      posterUrl: '/NAVEEN%20AND%20KATE/SYD08467.webp',
       tagline: '03 // FEATURED FILMS',
       headingMain: 'Cinematic',
       headingHighlight: 'Poetry',
@@ -175,11 +175,11 @@ const defaultConfigs = [
   {
     sectionKey: 'about_page',
     content: {
-      heroBg: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/DSC01641_-_Copy.webp',
+      heroBg: '/common/DSC01641_-_Copy.webp',
       heroTitleMain: 'The Story Behind',
       heroTitleHighlight: 'The Light',
       heroTagline: 'SHOOT @ SIGHT // ARCHITECTS OF TIMELESS MEMORIES',
-      founderImg: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/founder%20(1).webp',
+      founderImg: '/founder%20(1).webp',
       founderTagline: 'CREATIVE DIRECTOR // PAVITHRA ARUN KUMAR',
       founderName: 'Pavithra Arun Kumar',
       founderSub: 'Founder & Lead Visual Storyteller',
@@ -199,9 +199,9 @@ const defaultConfigs = [
       studioTitleHighlight: 'Legacy',
       studioTitleEnd: 'Through Light.',
       studioDesc: 'Founded in 2018, Shoot @ Sight is a boutique photography studio specializing in high-end, editorial wedding narratives. We believe your story deserves to be told with the intentionality of fine art.',
-      teamImg: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/team.webp',
+      teamImg: '/common/team.webp',
       teamCaption: 'The Shoot @ Sight Creative Collective, 2026',
-      philosophyBg: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/camera_lens_detail.webp',
+      philosophyBg: '/common/camera_lens_detail.webp',
       philosophyTagline: 'INTENTIONAL // TIMING // RAW',
       philosophyTitleMain: 'The',
       philosophyTitleHighlight: 'Philosophy',
@@ -229,7 +229,7 @@ const defaultConfigs = [
   {
     sectionKey: 'contact_page',
     content: {
-      contactImg: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/SAS_3280.webp',
+      contactImg: '/common/SAS_3280.webp',
       tagline: '05 // THE INITIATION',
       heroTitleMain: 'For those who value',
       heroTitleHighlight: 'legacy over pixels.',

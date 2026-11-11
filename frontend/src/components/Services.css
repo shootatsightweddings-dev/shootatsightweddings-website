@@ -27,6 +27,8 @@
   cursor: pointer;
   position: relative;
   z-index: 2;
+  text-decoration: none;
+  color: inherit;
 }
 
 .service-item:hover {

@@ -23,22 +23,22 @@ const Experience = () => {
         heading: 'The Curation',
         desc: 'We begin by understanding the soul of your story, selecting the perfect aesthetic tone and light for your unique celebration.',
         tags: ['Moodboarding', 'Lighting Design', 'Styling Harmony'],
-        img: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/_DSC4382.webp'
+        img: '/common/_DSC4382.webp'
       },
       {
         num: 'Phase 02 // Capture',
         heading: 'The Capture',
         desc: 'Discreet, immersive, and refined. We capture the moments that feel like a whisper, and the ones that roar across time.',
         tags: ['Discreet Presence', 'Candid Emotion', 'Cinematic Framing'],
-        img: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/shoot-sight-latest-images/KRP_9557.jpg.webp'
+        img: '/shoot-sight-latest-images/KRP_9557.jpg.webp'
       },
       {
         num: 'Phase 03 // Heirloom',
         heading: 'The Heirloom',
         desc: 'Final delivery of high-fidelity, processed imagery designed to last for generations. Your legacy, preserved in light.',
         tags: ['Color Grading', 'Fine Art Prints', 'Digital Vault'],
-        img: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/srinidhi%20and%20ramya/DSC00045.webp',
-        video: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/Naveen%20%26%20Kate%204K%20Teaser.mp4'
+        img: '/srinidhi%20and%20ramya/DSC00045.webp',
+        video: '/Naveen%20%26%20Kate%204K%20Teaser.mp4'
       }
     ]
   };
@@ -114,7 +114,7 @@ const Experience = () => {
         <div className="exp-cards-grid">
           {expContent.phases.map((phase, idx) => {
             const isReverse = idx % 2 === 0;
-            const currentVideo = phase.video || (idx === 2 || phase.num?.includes('03') ? "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/Naveen%20%26%20Kate%204K%20Teaser.mp4" : null);
+            const currentVideo = phase.video || (idx === 2 || phase.num?.includes('03') ? "/Naveen%20%26%20Kate%204K%20Teaser.mp4" : null);
 
             return (
               <div key={idx} className={`exp-card ${isReverse ? 'exp-card--reverse' : ''}`}>
@@ -142,7 +142,7 @@ const Experience = () => {
                             className={`exp-video ${idx === 1 ? 'capture-img' : idx === 2 ? 'heirloom-img' : ''}`}
                           >
                             <source src={currentVideo} type="video/mp4" />
-                            <source src="https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/Low%20Bitrate.mp4" type="video/mp4" />
+                            <source src="/Low%20Bitrate.mp4" type="video/mp4" />
                             <img src={phase.img} alt={phase.imgAlt || phase.heading} />
                           </video>
                         ) : (
@@ -171,7 +171,7 @@ const Experience = () => {
                             className={`exp-video ${idx === 1 ? 'capture-img' : idx === 2 ? 'heirloom-img' : ''}`}
                           >
                             <source src={currentVideo} type="video/mp4" />
-                            <source src="https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/Low%20Bitrate.mp4" type="video/mp4" />
+                            <source src="/Low%20Bitrate.mp4" type="video/mp4" />
                             <img src={phase.img} alt={phase.imgAlt || phase.heading} />
                           </video>
                         ) : (

@@ -11,7 +11,7 @@ import Breadcrumbs from '../components/Breadcrumbs';
 import { localBlogPosts } from '../data/localBlogPosts';
 import './Blog.css';
 
-const img1 = "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/_DSC3521_-_Copy.webp";
+const img1 = "/common/_DSC3521_-_Copy.webp";
 
 const Blog = () => {
   const container = useRef();

@@ -20,25 +20,25 @@ const Services = () => {
         num: '01',
         title: 'Wedding Photography',
         desc: 'Candid, emotional, and trend-forward photography that captures the soul of your celebration. We specialize in natural expressions, ethereal lighting, and storytelling frames that preserve your most intimate memories forever.',
-        img: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/shoot-sight-latest-images/VIJ01478.jpg.webp'
+        img: '/shoot-sight-latest-images/VIJ01478.jpg.webp'
       },
       {
         num: '02',
         title: 'Cinematic Wedding Films',
         desc: 'High-definition movies inspired by your unique love story. With artistic angles, cinematic drone perspectives, emotional pacing, and professional-grade color grading, we turn your wedding day into a timeless motion picture experience.',
-        img: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/shoot-sight-latest-images/DSC_9199-2.jpg.webp'
+        img: '/shoot-sight-latest-images/DSC_9199-2.jpg.webp'
       },
       {
         num: '03',
         title: 'Pre-Wedding & Engagement',
         desc: 'A bespoke, conceptual shoot that reflects the essence of your partnership. Whether urban, nature-focused, luxury, or minimalist aesthetic — we curate mood-driven visuals designed for your legacy and invites.',
-        img: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/shoot-sight-latest-images/DSC00238-Edit%20(1).jpg.webp'
+        img: '/shoot-sight-latest-images/DSC00238-Edit%20(1).jpg.webp'
       },
       {
         num: '04',
         title: 'Drone & Aerial Coverage',
         desc: 'Sweeping aerial views that provide a grand perspective of your wedding story. From majestic heritage venues to scenic outdoor landscapes, our advanced drone cinematography adds a breathtaking dimension to your visuals.',
-        img: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/shoot-sight-latest-images/DJI_20260429175238_0374_D-_1_.jpg.webp'
+        img: '/shoot-sight-latest-images/DJI_20260429175238_0374_D-_1_.jpg.webp'
       }
     ]
   };

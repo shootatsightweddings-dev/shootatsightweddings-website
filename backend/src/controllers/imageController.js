@@ -1,10 +1,24 @@
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const { v4: uuidv4 } = require('uuid');
 const sharp = require('sharp');
+const fs = require('fs');
+const path = require('path');
 const Image = require('../models/Image');
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
+
+// Same gate as shootController.js — R2 is used only when fully configured;
+// otherwise uploads fall back to local disk, served from /uploads (see
+// server.js's express.static mount).
+const isR2Configured = () =>
+  !!(
+    process.env.R2_ACCOUNT_ID &&
+    process.env.R2_ACCESS_KEY_ID &&
+    process.env.R2_SECRET_ACCESS_KEY &&
+    process.env.R2_BUCKET_NAME &&
+    process.env.R2_PUBLIC_URL
+  );
 
 const getR2Client = () =>
   new S3Client({
@@ -39,6 +53,13 @@ const uploadToR2 = async (buffer, filename) => {
   return `${process.env.R2_PUBLIC_URL}/${filename}`;
 };
 
+const uploadLocal = (buffer, filename) => {
+  const uploadDir = path.join(__dirname, '..', '..', 'uploads');
+  if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+  fs.writeFileSync(path.join(uploadDir, filename), buffer);
+  return `/uploads/${filename}`;
+};
+
 const uploadImage = async (req, res, next) => {
   try {
     if (!req.file) {
@@ -65,7 +86,7 @@ const uploadImage = async (req, res, next) => {
 
     const optimized = await optimizeImage(buffer);
     const filename = `${uuidv4()}.webp`;
-    const url = await uploadToR2(optimized, filename);
+    const url = isR2Configured() ? await uploadToR2(optimized, filename) : uploadLocal(optimized, filename);
 
     const image = await Image.create({
       url,

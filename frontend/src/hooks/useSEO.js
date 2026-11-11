@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 const SITE_URL = 'https://www.shootatsightweddings.com';
 const BRAND = 'Shoot At Sight Weddings';
-const DEFAULT_OG_IMAGE = 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/NAVEEN%20AND%20KATE/SYD08467.webp';
+const DEFAULT_OG_IMAGE = '/NAVEEN%20AND%20KATE/SYD08467.webp';
 
 const setMetaByName = (name, content) => {
   if (!content) return;
@@ -113,8 +113,9 @@ const useSEO = ({
     setMetaByProperty('og:type', ogType);
 
     const image = ogImage || DEFAULT_OG_IMAGE;
-    setMetaByProperty('og:image', image);
-    setMetaByName('twitter:image', image);
+    const absoluteImage = /^https?:\/\//.test(image) ? image : `${SITE_URL}${image}`;
+    setMetaByProperty('og:image', absoluteImage);
+    setMetaByName('twitter:image', absoluteImage);
     setMetaByName('twitter:card', 'summary_large_image');
 
     let robotsTag = document.querySelector('meta[name="robots"]');
