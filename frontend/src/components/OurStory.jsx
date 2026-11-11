@@ -20,9 +20,9 @@ const OurStory = () => {
     stat1Label: 'Weddings Covered',
     stat2Num: '15+',
     stat2Label: 'Cities Covered',
-    img1: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/shoot-sight-latest-images/SYD08443%20(3).jpg.webp',
-    img2: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/shoot-sight-latest-images/DSC_0347-_2_.jpg.webp',
-    img3: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/shoot-sight-latest-images/NGD_5981-_1_.jpg.webp'
+    img1: '/shoot-sight-latest-images/SYD08443%20(3).jpg.webp',
+    img2: '/shoot-sight-latest-images/DSC_0347-_2_.jpg.webp',
+    img3: '/shoot-sight-latest-images/NGD_5981-_1_.jpg.webp'
   };
 
   useLayoutEffect(() => {

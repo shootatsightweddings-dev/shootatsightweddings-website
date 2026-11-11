@@ -14,7 +14,7 @@ const Contact = () => {
   const { config } = useSiteConfig();
 
   const contactContent = config?.contact_page || {
-    contactImg: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/SAS_3280.webp',
+    contactImg: '/common/SAS_3280.webp',
     tagline: '05 // THE INITIATION',
     heroTitleMain: 'For those who value',
     heroTitleHighlight: 'legacy over pixels.',

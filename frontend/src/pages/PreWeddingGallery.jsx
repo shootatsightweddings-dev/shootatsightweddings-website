@@ -9,87 +9,87 @@ import "./PreWeddingGallery.css";
 /* Handpicked High-Res Pre-Wedding R2 Frames */
 const curatedPreWeddingFrames = [
   {
-    url: "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/KRP_9777.webp",
+    url: "/common/KRP_9777.webp",
     title: "Ethereal Sunset Promenade"
   },
   {
-    url: "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/_I3A6612.webp",
+    url: "/common/_I3A6612.webp",
     title: "Heritage Doorway Reflection"
   },
   {
-    url: "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/SAS_3280.webp",
+    url: "/common/SAS_3280.webp",
     title: "Intimate Canopy Moment"
   },
   {
-    url: "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/2S9A3065.webp",
+    url: "/common/2S9A3065.webp",
     title: "Royal Courtyard Walk"
   },
   {
-    url: "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/NGD_4849-2.webp",
+    url: "/common/NGD_4849-2.webp",
     title: "Candlelit Garden Whispers"
   },
   {
-    url: "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/NGD_4961.webp",
+    url: "/common/NGD_4961.webp",
     title: "Golden Hour Embrace"
   },
   {
-    url: "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/_DSC3521_-_Copy.webp",
+    url: "/common/_DSC3521_-_Copy.webp",
     title: "Royal Palace Archway"
   },
   {
-    url: "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/aishwarya%20and%20akshay/KRP_8213.webp",
+    url: "/aishwarya%20and%20akshay/KRP_8213.webp",
     title: "Editorial Sunset Walk"
   },
   {
-    url: "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/ragini/_I3A6607.webp",
+    url: "/ragini/_I3A6607.webp",
     title: "Poetic Grace & Silk"
   },
   {
-    url: "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/ragini/_I3A6987.webp",
+    url: "/ragini/_I3A6987.webp",
     title: "Golden Sun Reflection"
   },
   {
-    url: "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/ragini/_I3A7446.webp",
+    url: "/ragini/_I3A7446.webp",
     title: "Heritage Garden Stroll"
   },
   {
-    url: "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/srinidhi%20and%20ramya/DSC00045.webp",
+    url: "/srinidhi%20and%20ramya/DSC00045.webp",
     title: "Intimate Forehead Kiss"
   },
   {
-    url: "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/srinidhi%20and%20ramya/DSC00167.webp",
+    url: "/srinidhi%20and%20ramya/DSC00167.webp",
     title: "Warm Floral Festivity"
   },
   {
-    url: "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/srinidhi%20and%20ramya/DSC00236-Edit.webp",
+    url: "/srinidhi%20and%20ramya/DSC00236-Edit.webp",
     title: "Misty Mountain Backdrop"
   },
   {
-    url: "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/4%20RAGHUDIXITH%20AND%20VARIJASHREE_WEBP/NGD_6702.webp",
+    url: "/4%20RAGHUDIXITH%20AND%20VARIJASHREE_WEBP/NGD_6702.webp",
     title: "Musical Harmony"
   },
   {
-    url: "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/4%20RAGHUDIXITH%20AND%20VARIJASHREE_WEBP/NGD_7085.webp",
+    url: "/4%20RAGHUDIXITH%20AND%20VARIJASHREE_WEBP/NGD_7085.webp",
     title: "Traditional Ceremony Laughter"
   },
   {
-    url: "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/NAVEEN%20AND%20KATE/SYD08292.webp",
+    url: "/NAVEEN%20AND%20KATE/SYD08292.webp",
     title: "High Fashion Architecture"
   },
   {
-    url: "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/NAVEEN%20AND%20KATE/SYD08325.webp",
+    url: "/NAVEEN%20AND%20KATE/SYD08325.webp",
     title: "Royal Archway Portrait"
   },
   {
-    url: "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/NAVEEN%20AND%20KATE/SYD08510.webp",
+    url: "/NAVEEN%20AND%20KATE/SYD08510.webp",
     title: "Twilight Lawn Stroll"
   },
   {
-    url: "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/aishwarya%20and%20akshay/KRP_7896.webp",
+    url: "/aishwarya%20and%20akshay/KRP_7896.webp",
     title: "Sparkler Fireworks Celebration"
   },
   {
-    url: "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/aishwarya%20and%20akshay/_DSC8119.webp",
+    url: "/aishwarya%20and%20akshay/_DSC8119.webp",
     title: "Palace Pillars Promenade"
   }
 ];
@@ -205,7 +205,7 @@ const PreWeddingGallery = () => {
                   loading="lazy"
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/KRP_9777.webp";
+                    e.target.src = "/common/KRP_9777.webp";
                   }}
                 />
                 <div className="pwg-cell-zoom">EXPLORE FULLSCREEN</div>

@@ -7,7 +7,7 @@ import { DEFAULT_MOBILE_VIDEO_URL } from "../data/videoDefaults";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const HERO_POSTER = "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/NAVEEN%20AND%20KATE/SYD08467.webp";
+const HERO_POSTER = "/NAVEEN%20AND%20KATE/SYD08467.webp";
 
 const Hero = () => {
   const containerRef = useRef(null);
@@ -17,10 +17,10 @@ const Hero = () => {
   );
 
   const heroContent = config?.hero || {
-    videoUrl: "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/Naveen%20%26%20Kate%204K%20Teaser.mp4"
+    videoUrl: "/Naveen%20%26%20Kate%204K%20Teaser.mp4"
   };
 
-  const videoUrl = /^https:\/\//.test(heroContent.videoUrl || '') ? heroContent.videoUrl : "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/Naveen%20%26%20Kate%204K%20Teaser.mp4";
+  const videoUrl = /^https:\/\//.test(heroContent.videoUrl || '') ? heroContent.videoUrl : "/Naveen%20%26%20Kate%204K%20Teaser.mp4";
 
   // Set scroll restoration and reset scroll position early
   useLayoutEffect(() => {

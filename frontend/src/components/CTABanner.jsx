@@ -36,7 +36,7 @@ const CTABanner = ({ theme: overrideTheme }) => {
         <div className="cta-line" />
         <div className="cta-monogram-ring">
           <img
-            src="https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/logo_1.webp"
+            src="/common/logo_1.webp"
             alt="Shoot At Sight Weddings Logo"
             className="cta-logo-img"
           />
@@ -66,7 +66,7 @@ const CTABanner = ({ theme: overrideTheme }) => {
         <div className="cta-line" />
         <div className="cta-monogram-ring cta-monogram-ring--lg">
           <img
-            src="https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/logo_1.webp"
+            src="/common/logo_1.webp"
             alt="Shoot At Sight Weddings Logo"
             className="cta-logo-img cta-logo-img--lg"
           />

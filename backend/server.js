@@ -24,14 +24,14 @@ connectDB();
 const app = express();
 
 // HSTS, nosniff, frameguard, etc. enabled at their safe defaults. CSP is
-// report-only for now — YouTube embeds, Google Tag Manager/Ads, and the R2
-// media host make an enforced policy risky to get right blind; report-only
-// surfaces violations without breaking autoplay embeds or conversion
-// tracking. Tighten to enforced once a few days of reports come back clean.
+// report-only for now — YouTube embeds and Google Tag Manager/Ads make an
+// enforced policy risky to get right blind; report-only surfaces violations
+// without breaking autoplay embeds or conversion tracking. Tighten to
+// enforced once a few days of reports come back clean.
 app.use(helmet({
   // Off: require-corp (helmet's default) can silently block cross-origin
-  // YouTube iframes and R2-hosted media unless those origins send matching
-  // CORP headers, which we can't control or verify from here.
+  // YouTube iframes unless that origin sends matching CORP headers, which we
+  // can't control or verify from here.
   crossOriginEmbedderPolicy: false,
   contentSecurityPolicy: {
     reportOnly: true,
@@ -39,8 +39,8 @@ app.use(helmet({
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'", "'unsafe-inline'", 'https://www.googletagmanager.com', 'https://www.clarity.ms'],
       styleSrc: ["'self'", "'unsafe-inline'"],
-      imgSrc: ["'self'", 'data:', 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev', 'https://img.youtube.com', 'https://www.googletagmanager.com', 'https://www.google.com'],
-      mediaSrc: ["'self'", 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev'],
+      imgSrc: ["'self'", 'data:', 'https://img.youtube.com', 'https://www.googletagmanager.com', 'https://www.google.com'],
+      mediaSrc: ["'self'"],
       fontSrc: ["'self'", 'data:'],
       frameSrc: ['https://www.youtube.com', 'https://www.youtube-nocookie.com'],
       connectSrc: ["'self'", 'https://www.google-analytics.com', 'https://*.google-analytics.com', 'https://www.googletagmanager.com', 'https://www.clarity.ms', 'https://*.clarity.ms'],
@@ -64,6 +64,10 @@ app.use(express.json());
 
 // Serve uploads folder statically for local fallback
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Serve media migrated from Cloudflare R2, same-origin, preserving each
+// object's original key as its path (e.g. /common/team.webp).
+app.use(express.static(path.join(__dirname, 'media')));
 
 app.use('/api', routes);
 

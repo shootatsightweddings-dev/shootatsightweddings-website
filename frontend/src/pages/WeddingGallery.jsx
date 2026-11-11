@@ -109,7 +109,7 @@ const WeddingGallery = () => {
                       loading="lazy"
                       onError={(e) => {
                         e.target.onerror = null;
-                        e.target.src = "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/aishwarya%20and%20akshay/KRP_8213.webp";
+                        e.target.src = "/aishwarya%20and%20akshay/KRP_8213.webp";
                       }}
                     />
                     <div className="wg-cell-overlay">
@@ -137,7 +137,7 @@ const WeddingGallery = () => {
                       loading="lazy"
                       onError={(e) => {
                         e.target.onerror = null;
-                        e.target.src = "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/aishwarya%20and%20akshay/KRP_8213.webp";
+                        e.target.src = "/aishwarya%20and%20akshay/KRP_8213.webp";
                       }}
                     />
                     <div className="wg-cell-overlay">
