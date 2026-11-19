@@ -55,7 +55,9 @@ const RecentShoots = () => {
             cat: s.category,
             img: s.heroImage
           }));
-          setShoots(mapped); // show ALL clients from DB
+          // Keep the homepage curated as the archive grows; the full archive
+          // remains available from the portfolio galleries.
+          setShoots(mapped.slice(-6).reverse());
 
           // Recalculate ScrollTrigger parameters on the next tick
           setTimeout(() => {
@@ -152,6 +154,9 @@ const RecentShoots = () => {
             <polyline points="9 18 15 12 9 6" />
           </svg>
         </button>
+      </div>
+      <div className="recent-shoots-footer">
+        <Link to="/portfolio" className="recent-shoots-view-all">View all stories <span aria-hidden="true">→</span></Link>
       </div>
     </section>
   );

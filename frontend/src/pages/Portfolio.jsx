@@ -2,51 +2,9 @@ import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import useSEO from "../hooks/useSEO";
 import Breadcrumbs from "../components/Breadcrumbs";
+import { useSiteConfig } from "../context/siteConfigState";
+import { defaultPortfolio } from "../data/portfolioDefaults";
 import "./Portfolio.css";
-
-
-/* ── Hero Carousel vertical images ── */
-const portfolioHeroImages = [
-  "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/KRP_9777.webp",
-  "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/_I3A6612.webp",
-  "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/SAS_3280.webp",
-  "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/2S9A3065.webp",
-  "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/NGD_4849-2.webp",
-  "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/NGD_4961.webp",
-  "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/_DSC3521_-_Copy.webp",
-];
-
-/* ── Featured grid images (landscape format) ── */
-const featuredImages = [
-  "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/hero-banner/2S9A9106__4__jpg.webp",
-  "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/hero-banner/DSC06041_3__1___2__jpg.webp",
-  "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/hero-banner/KRP_9557__3__jpg.webp",
-  "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/hero-banner/KRP_9878__2__jpg.webp",
-  "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/hero-banner/SAS_2092__2__jpg.webp",
-  "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/hero-banner/SASP4766__2__jpg.webp",
-];
-
-/* ── Collection sections ── */
-const collections = [
-  {
-    id: "wedding",
-    title: "Wedding",
-    tagline: "REAL EMOTIONS & INTIMATE MOMENTS",
-    panels: [
-      { label: "PHOTOGRAPHY",  img: "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/4%20RAGHUDIXITH%20AND%20VARIJASHREE_WEBP/NGD_6702.webp", to: "/portfolio/wedding" },
-      { label: "WEDDING FILM", img: "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/NAVEEN%20AND%20KATE/SYD08467.webp", to: "/films" },
-    ],
-  },
-  {
-    id: "pre-wedding",
-    title: "Pre-Wedding",
-    tagline: "CAPTURING YOUR LOVE'S FIRST GLANCE",
-    panels: [
-      { label: "PHOTOGRAPHY",      img: "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/KRP_9777.webp", to: "/portfolio/pre-wedding" },
-      { label: "PRE-WEDDING FILM", img: "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/_I3A6612.webp", to: "/films" },
-    ],
-  },
-];
 
 /* ══════════════════════════
    LIGHTBOX COMPONENT
@@ -114,8 +72,18 @@ const Lightbox = ({ images, startIndex, onClose }) => {
    PORTFOLIO PAGE
 ══════════════════════════ */
 const Portfolio = () => {
+  const { config } = useSiteConfig();
+  const portfolioContent = config?.portfolio_page || defaultPortfolio;
+  const portfolioHeroImages = portfolioContent.heroImages?.length >= 5 ? portfolioContent.heroImages : defaultPortfolio.heroImages;
+  const featuredImages = portfolioContent.featuredImages?.length ? portfolioContent.featuredImages : defaultPortfolio.featuredImages;
+  const portfolioHeading = portfolioContent.heading || defaultPortfolio.heading;
+  const collections = portfolioContent.collections?.length === defaultPortfolio.collections.length
+    ? portfolioContent.collections
+    : defaultPortfolio.collections;
+  const featuredTitle = portfolioContent.featuredTitle || defaultPortfolio.featuredTitle;
+
   useSEO({
-    title: "Wedding & Pre-Wedding Portfolio | Shoot At Sight, Bangalore",
+    title: `${portfolioHeading} | Shoot At Sight Weddings`,
     description: "Browse real Bangalore and destination weddings, pre-wedding shoots and cinematic films, with venue, city and coverage detail for each.",
     ogImage: portfolioHeroImages[0],
   });
@@ -154,7 +122,7 @@ const Portfolio = () => {
       <div className="ptf-hero-banner">
 
         <div className="ptf-hero-heading-wrap">
-          <h1 className="ptf-hero-heading">Wedding &amp; Pre-Wedding Portfolio in Bangalore</h1>
+          <h1 className="ptf-hero-heading">{portfolioHeading}</h1>
         </div>
 
         {/* 5 Vertical Panel Stage */}
@@ -214,7 +182,7 @@ const Portfolio = () => {
       <section className="ptf-featured">
         <div className="ptf-featured-label">
           <span className="ptf-featured-script">Featured</span>
-          <span className="ptf-featured-serif">Wedding</span>
+          <span className="ptf-featured-serif">{featuredTitle.replace(/^featured\s*/i, '')}</span>
           <Link to="/portfolio/wedding" className="ptf-featured-more">VIEW MORE +</Link>
         </div>
         <div className="ptf-featured-grid">

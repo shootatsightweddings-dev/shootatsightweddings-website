@@ -1,15 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../config';
+import { useSiteConfig } from '../context/siteConfigState';
 import useSEO from '../hooks/useSEO';
 import { DEFAULT_VIDEO_URL, DEFAULT_POSTER_URL, DEFAULT_MOBILE_VIDEO_URL } from '../data/videoDefaults';
 import './AdminDashboard.css';
 import SeoFields from '../components/SeoFields';
 import ShootStoryFields from '../components/ShootStoryFields';
 import ContentPageEditor from '../components/ContentPageEditor';
+import { defaultFaqs } from '../data/defaultFaqs';
+import { defaultPortfolio } from '../data/portfolioDefaults';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
+  const { refreshConfig } = useSiteConfig();
 
   useSEO({
     title: 'Admin Dashboard Portal',
@@ -38,7 +42,7 @@ const AdminDashboard = () => {
   const [editingShoot, setEditingShoot] = useState(null); // shoot being edited
   const [editingBlog, setEditingBlog] = useState(null);   // blog being edited
   const [editUploading, setEditUploading] = useState(false);
-  const [editMsg, setEditMsg] = useState('');
+  const [editMsg, setEditMsgState] = useState('');
 
   // Blog Management State
   const [blogs, setBlogs] = useState([]);
@@ -51,8 +55,27 @@ const AdminDashboard = () => {
   // UI States
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [toast, setToast] = useState(null);
+  const toastTimerRef = useRef(null);
+  const toastSequenceRef = useRef(0);
+
+  const showToast = useCallback((type, message) => {
+    const text = String(message || '').replace(/^[✅❌]\s*/, '').trim();
+    if (!text) return;
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    setToast({ id: ++toastSequenceRef.current, type, message: text });
+    toastTimerRef.current = setTimeout(() => setToast(null), 5000);
+  }, []);
+  const setSuccess = (message) => { if (message) showToast('success', message); };
+  const setError = (message) => { if (message) showToast('error', message); };
+  const setEditMsg = (message) => {
+    setEditMsgState(message);
+    if (!message || /^(Saving|Uploading|Removing|Updating)/i.test(message)) return;
+    const type = /✅|saved|success|updated|removed|added/i.test(message) ? 'success' : 'error';
+    showToast(type, message);
+  };
+
+  useEffect(() => () => clearTimeout(toastTimerRef.current), []);
 
   // Testimonials Management State
   const [testimonials, setTestimonials] = useState([]);
@@ -66,7 +89,7 @@ const AdminDashboard = () => {
   const [confirmModal, setConfirmModal] = useState(null);
 
   // Site Editor State
-  const [editorSubTab, setEditorSubTab] = useState('home'); // 'home', 'films', 'about', 'contact'
+  const [editorSubTab, setEditorSubTab] = useState('home');
   const [siteConfig, setSiteConfig] = useState(null);
   const [loadingConfig, setLoadingConfig] = useState(false);
   const [editorSaving, setEditorSaving] = useState(false);
@@ -78,7 +101,21 @@ const AdminDashboard = () => {
       const res = await fetch(`${API_URL}/site-config`);
       const data = await res.json();
       if (res.ok && data.success) {
-        setSiteConfig(data.config);
+        setSiteConfig({
+          ...data.config,
+          portfolio_page: {
+            ...data.config.portfolio_page,
+            heading: data.config.portfolio_page?.heading || defaultPortfolio.heading,
+            featuredTitle: data.config.portfolio_page?.featuredTitle || defaultPortfolio.featuredTitle,
+            collections: data.config.portfolio_page?.collections || defaultPortfolio.collections,
+            heroImagesText: (data.config.portfolio_page?.heroImages || defaultPortfolio.heroImages).join('\n'),
+            featuredImagesText: (data.config.portfolio_page?.featuredImages || defaultPortfolio.featuredImages).join('\n'),
+          },
+          faq_page: {
+            ...data.config.faq_page,
+            faqs: data.config.faq_page?.faqs?.length ? data.config.faq_page.faqs : defaultFaqs,
+          },
+        });
       } else {
         setError('Failed to fetch site configurations.');
       }
@@ -138,6 +175,25 @@ const AdminDashboard = () => {
     });
   };
 
+  const updateFaqs = (updater) => {
+    setSiteConfig((previous) => ({
+      ...previous,
+      faq_page: { ...previous.faq_page, faqs: updater(previous.faq_page?.faqs || []) },
+    }));
+  };
+
+  const handlePortfolioPanelChange = (collectionIndex, panelIndex, field, value) => {
+    setSiteConfig((previous) => ({
+      ...previous,
+      portfolio_page: {
+        ...previous.portfolio_page,
+        collections: previous.portfolio_page.collections.map((collection, index) => index === collectionIndex
+          ? { ...collection, panels: collection.panels.map((panel, itemIndex) => itemIndex === panelIndex ? { ...panel, [field]: value } : panel) }
+          : collection),
+      },
+    }));
+  };
+
   const handleConfigImageUpload = async (e, sectionKey, field, index = null, arrayField = null) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -171,17 +227,64 @@ const AdminDashboard = () => {
     setEditorSaving(true);
     const token = localStorage.getItem('adminToken');
     try {
+      const section = siteConfig[sectionKey];
+      const payload = sectionKey === 'portfolio_page'
+        ? {
+            heading: section.heading,
+            featuredTitle: section.featuredTitle,
+            heroImages: section.heroImagesText.split(/\r?\n/).map((url) => url.trim()).filter(Boolean),
+            featuredImages: section.featuredImagesText.split(/\r?\n/).map((url) => url.trim()).filter(Boolean),
+            collections: section.collections,
+          }
+        : section;
+      if (sectionKey === 'portfolio_page' && (payload.heroImages.length < 5 || payload.featuredImages.length < 1)) {
+        setError('Keep at least 5 carousel image links and 1 featured image link so the portfolio remains complete.');
+        return;
+      }
+      if (sectionKey === 'portfolio_page') {
+        if (payload.collections.length !== 2 || payload.collections.some((collection) => !collection.title?.trim() || !collection.tagline?.trim() || collection.panels?.length !== 2 || collection.panels.some((panel) => !panel.label?.trim() || !panel.to?.startsWith('/') || !panel.img?.trim()))) {
+          setError('Keep both collection sections complete, including their two cards, titles, image links, and page destinations.');
+          return;
+        }
+        const urls = [...payload.heroImages, ...payload.featuredImages, ...payload.collections.flatMap((collection) => collection.panels.map((panel) => panel.img))];
+        if (urls.some((value) => {
+          try { return new URL(value).protocol !== 'https:'; } catch { return true; }
+        })) {
+          setError('Portfolio image links must be complete HTTPS URLs.');
+          return;
+        }
+      }
+      if (sectionKey === 'faq_page' && (section.faqs || []).some((category) =>
+        !category.category?.trim() || !(category.items || []).length || category.items.some((item) => !item.q?.trim() || !item.a?.trim())
+      )) {
+        setError('Each FAQ category needs a name, and each question needs both a question and an answer.');
+        return;
+      }
       const res = await fetch(`${API_URL}/admin/site-config/${sectionKey}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(siteConfig[sectionKey])
+        body: JSON.stringify(payload)
       });
       const data = await res.json();
       if (res.ok && data.success) {
-        setSuccess(`✅ Section config for "${sectionKey}" saved successfully!`);
+        await refreshConfig();
+        const sectionNames = {
+          hero: 'Home page hero',
+          about_philosophy: 'Home page story section',
+          services: 'Home page services section',
+          experience: 'Home page experience section',
+          featured_film: 'Featured film section',
+          cta: 'Home page contact banner',
+          films_page: 'Films page',
+          about_page: 'About page',
+          contact_page: 'Contact page',
+          faq_page: 'FAQ page',
+          portfolio_page: 'Portfolio page',
+        };
+        setSuccess(`${sectionNames[sectionKey] || 'Website section'} saved successfully.`);
         setTimeout(() => setSuccess(''), 3000);
       } else {
         setError(data.message || 'Failed to save section.');
@@ -268,9 +371,16 @@ const AdminDashboard = () => {
   };
 
   const handleGalleryChange = (e) => {
-    if (e.target.files) {
-      setGallery(Array.from(e.target.files)); setShootSeo(previous=>({...previous,galleryAlt:[]}));
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    if (files.length > 50) {
+      setError('Choose up to 50 gallery photos per upload. Split larger folders into smaller batches.');
+      e.target.value = '';
+      return;
     }
+    setError('');
+    setGallery(files);
+    setShootSeo(previous=>({...previous,galleryAlt:[]}));
   };
 
   const handleDelete = (shootId, shootTitle) => {
@@ -320,19 +430,26 @@ const AdminDashboard = () => {
   };
 
   const handleAddGalleryImages = (event) => {
-    setPendingGallery(Array.from(event.target.files || []));setPendingGalleryAlt([]);event.target.value='';
+    const files = Array.from(event.target.files || []);
+    event.target.value = '';
+    if (!files.length) return;
+    if (files.length > 50) {
+      setEditMsg('Choose up to 50 gallery photos per upload. Split larger folders into smaller batches.');
+      return;
+    }
+    setPendingGallery(files);
+    setPendingGalleryAlt([]);
   };
 
   const uploadPendingGallery = async () => {
     const files = pendingGallery;
-    if(files.some((_,index)=>!pendingGalleryAlt[index]?.trim())){setEditMsg('Describe each new gallery photo first.');return;}
     if (!files.length) return;
     setEditUploading(true);
     setEditMsg('Uploading new images...');
     const token = localStorage.getItem('adminToken');
     const fd = new FormData();
     files.forEach(f => fd.append('gallery', f));
-    fd.append('galleryAlt',JSON.stringify(pendingGalleryAlt));
+    fd.append('galleryAlt',JSON.stringify(files.map((_, index) => pendingGalleryAlt[index]?.trim() || '')));
     try {
       const res = await fetch(`${API_URL}/shoots/${editingShoot._id}/gallery`, {
         method: 'PATCH',
@@ -768,8 +885,16 @@ const AdminDashboard = () => {
       </header>
 
       {/* Primary Notifications */}
-      {success && <div className="dash-alert success">{success}</div>}
-      {error && <div className="dash-alert error">{error}</div>}
+      {toast && (
+        <div className={`admin-toast admin-toast--${toast.type}`} role={toast.type === 'error' ? 'alert' : 'status'} aria-live={toast.type === 'error' ? 'assertive' : 'polite'} key={toast.id}>
+          <span className="admin-toast-icon" aria-hidden="true">{toast.type === 'success' ? '✓' : '!'}</span>
+          <div className="admin-toast-copy">
+            <strong>{toast.type === 'success' ? 'Done' : 'Please check'}</strong>
+            <span>{toast.message}</span>
+          </div>
+          <button type="button" className="admin-toast-close" aria-label="Dismiss notification" onClick={() => { clearTimeout(toastTimerRef.current); setToast(null); }}>×</button>
+        </div>
+      )}
 
       <main className="dashboard-main container">
         {/* Navigation Tabs */}
@@ -826,7 +951,7 @@ const AdminDashboard = () => {
           </button>
         </div>
 
-        {activeTab === 'content-pages' && <ContentPageEditor />}
+        {activeTab === 'content-pages' && <ContentPageEditor onNotify={showToast} />}
         {/* Tab content 1: Shoots List */}
         {activeTab === 'list' && (
           <div className="tab-content list-tab">
@@ -963,20 +1088,19 @@ const AdminDashboard = () => {
                 </div>
 
                 <div className="input-group-chic upload-box-chic">
-                  <label htmlFor="galleryInput">Gallery Photos (Collage Collection)</label>
-                  <div className="file-input-wrapper">
-                    <input
-                      type="file"
-                      id="galleryInput"
-                      accept="image/*"
-                      multiple
-                      onChange={handleGalleryChange}
-                      disabled={uploading}
-                    />
-                    <div className="custom-file-label">
-                      {gallery.length > 0 ? `Selected: ${gallery.length} files` : 'Choose Gallery Photos'}
+                  <label>Gallery photos (up to 50 per upload)</label>
+                  <p className="upload-help-text">Choose individual photos or select a whole folder. Up to 50 images per upload, 20 MB each. Photo descriptions are optional.</p>
+                  <div className="gallery-picker-options">
+                    <div className="file-input-wrapper">
+                      <input type="file" id="galleryInput" accept="image/*" multiple onChange={handleGalleryChange} disabled={uploading} />
+                      <div className="custom-file-label">Choose individual photos</div>
+                    </div>
+                    <div className="file-input-wrapper">
+                      <input type="file" id="galleryFolderInput" accept="image/*" multiple webkitdirectory="" directory="" onChange={handleGalleryChange} disabled={uploading} />
+                      <div className="custom-file-label">Choose a photo folder</div>
                     </div>
                   </div>
+                  {gallery.length > 0 && <p className="selected-gallery-count">{gallery.length} photo{gallery.length === 1 ? '' : 's'} selected</p>}
                 </div>
               </div>
 
@@ -1248,10 +1372,21 @@ const AdminDashboard = () => {
         )}
 
         {/* Tab content 7: Site Editor */}
-        {activeTab === 'site-editor' && (
-          <div className="tab-content site-editor-tab" style={{ background: '#090909', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '30px', marginTop: '20px' }}>
+      {activeTab === 'site-editor' && (
+          <div className="tab-content site-editor-tab">
+            <div className="site-editor-intro">
+              <span className="site-editor-kicker">WEBSITE CONTENT</span>
+              <h2>Edit your website</h2>
+              <p>Choose a page below, update its words or media, then save that section. Changes appear on the live site after saving.</p>
+              <div className="site-editor-help-links">
+                <span><strong>Home, Films, About, Contact, FAQ &amp; Portfolio</strong> — page editor tabs below</span>
+                <span><strong>Services &amp; Locations</strong> — the Services &amp; Locations tab above</span>
+                <span><strong>Wedding stories and galleries</strong> — Archives List above</span>
+                <span><strong>Journal articles</strong> — Blog Articles and Write Blog Post above</span>
+              </div>
+            </div>
             <div className="editor-sub-tabs" style={{ display: 'flex', gap: '15px', marginBottom: '30px', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '10px' }}>
-              {['home', 'films', 'about', 'contact', 'faq'].map(tab => (
+              {['home', 'films', 'about', 'contact', 'faq', 'portfolio'].map(tab => (
                 <button
                   key={tab}
                   type="button"
@@ -1270,7 +1405,7 @@ const AdminDashboard = () => {
                     letterSpacing: '1px'
                   }}
                 >
-                  {tab} Page
+                  {tab === 'home' ? 'Home page' : tab === 'faq' ? 'FAQ page' : tab === 'portfolio' ? 'Portfolio page' : `${tab} page`}
                 </button>
               ))}
             </div>
@@ -2565,6 +2700,92 @@ const AdminDashboard = () => {
                   </div>
                 )}
 
+                {/* ─── SUB-TAB: PORTFOLIO PAGE ─── */}
+                {editorSubTab === 'portfolio' && (
+                  <div>
+                    <div className="edit-section" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '30px', marginBottom: '30px' }}>
+                      <h3>Portfolio page</h3>
+                      <p className="site-editor-section-help">Edit the portfolio heading, collection cards, and image links. Put one full, public HTTPS image URL on each line. Keep at least five carousel images and one featured image.</p>
+                      <div className="input-group-chic">
+                        <label>Page heading</label>
+                        <input
+                          type="text"
+                          maxLength={120}
+                          value={siteConfig.portfolio_page?.heading || ''}
+                          onChange={(event) => handleConfigChange('portfolio_page', 'heading', event.target.value)}
+                        />
+                      </div>
+                      <div className="input-group-chic">
+                        <label>Featured gallery heading</label>
+                        <input
+                          type="text"
+                          maxLength={60}
+                          value={siteConfig.portfolio_page?.featuredTitle || ''}
+                          onChange={(event) => handleConfigChange('portfolio_page', 'featuredTitle', event.target.value)}
+                        />
+                      </div>
+                      <h4 className="portfolio-editor-subheading">Collection cards</h4>
+                      <p className="site-editor-section-help">Edit the Wedding and Pre-Wedding feature sections. The destination field is an internal page path such as /films.</p>
+                      {(siteConfig.portfolio_page?.collections || []).map((collection, collectionIndex) => (
+                        <section className="portfolio-editor-collection" key={collection.id}>
+                          <h4>{collection.id === 'pre-wedding' ? 'Pre-Wedding collection' : 'Wedding collection'}</h4>
+                          <div className="form-double-column">
+                            <div className="input-group-chic">
+                              <label>Collection title</label>
+                              <input value={collection.title || ''} onChange={(event) => handleConfigArrayChange('portfolio_page', 'collections', collectionIndex, 'title', event.target.value)} />
+                            </div>
+                            <div className="input-group-chic">
+                              <label>Short description</label>
+                              <input value={collection.tagline || ''} onChange={(event) => handleConfigArrayChange('portfolio_page', 'collections', collectionIndex, 'tagline', event.target.value)} />
+                            </div>
+                          </div>
+                          {(collection.panels || []).map((panel, panelIndex) => (
+                            <div className="portfolio-editor-panel" key={`${collection.id}-panel-${panelIndex}`}>
+                              <strong>Card {panelIndex + 1}</strong>
+                              <div className="form-double-column">
+                                <div className="input-group-chic">
+                                  <label>Card label</label>
+                                  <input value={panel.label || ''} onChange={(event) => handlePortfolioPanelChange(collectionIndex, panelIndex, 'label', event.target.value)} />
+                                </div>
+                                <div className="input-group-chic">
+                                  <label>Destination page path</label>
+                                  <input value={panel.to || ''} placeholder="/portfolio/wedding" onChange={(event) => handlePortfolioPanelChange(collectionIndex, panelIndex, 'to', event.target.value)} />
+                                </div>
+                              </div>
+                              <div className="input-group-chic">
+                                <label>Image URL (public HTTPS link)</label>
+                                <input type="url" value={panel.img || ''} onChange={(event) => handlePortfolioPanelChange(collectionIndex, panelIndex, 'img', event.target.value)} />
+                              </div>
+                              {panel.img && <img className="portfolio-editor-preview" src={panel.img} alt={`${panel.label || 'Portfolio'} preview`} />}
+                            </div>
+                          ))}
+                        </section>
+                      ))}
+                      <div className="input-group-chic">
+                        <label>Top carousel images (one URL per line)</label>
+                        <textarea
+                          rows="7"
+                          spellCheck="false"
+                          value={siteConfig.portfolio_page?.heroImagesText || ''}
+                          onChange={(event) => handleConfigChange('portfolio_page', 'heroImagesText', event.target.value)}
+                        />
+                      </div>
+                      <div className="input-group-chic">
+                        <label>Featured gallery images (one URL per line)</label>
+                        <textarea
+                          rows="6"
+                          spellCheck="false"
+                          value={siteConfig.portfolio_page?.featuredImagesText || ''}
+                          onChange={(event) => handleConfigChange('portfolio_page', 'featuredImagesText', event.target.value)}
+                        />
+                      </div>
+                      <button type="button" className="btn-premium-submit" style={{ marginTop: '20px' }} onClick={() => saveSectionConfig('portfolio_page')} disabled={editorSaving}>
+                        {editorSaving ? 'Saving…' : 'Save Portfolio page'}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
                 {/* ─── SUB-TAB: FAQ PAGE ─── */}
                 {editorSubTab === 'faq' && (
                   <div>
@@ -2634,8 +2855,49 @@ const AdminDashboard = () => {
                         </div>
                       </div>
 
+                      <div className="faq-editor-list">
+                        <h4>Questions and answers</h4>
+                        <p>These are the questions visitors see on the FAQ page. Edit the wording, add new questions, or remove items you no longer offer.</p>
+                        {(siteConfig.faq_page?.faqs || []).map((category, categoryIndex) => (
+                          <section className="faq-editor-category" key={`faq-category-${categoryIndex}`}>
+                            <div className="faq-editor-category-heading">
+                              <label>
+                                Category name
+                                <input
+                                  value={category.category || ''}
+                                  onChange={(event) => updateFaqs((items) => items.map((item, index) => index === categoryIndex ? { ...item, category: event.target.value } : item))}
+                                />
+                              </label>
+                              <button type="button" className="faq-editor-remove" onClick={() => updateFaqs((items) => items.filter((_, index) => index !== categoryIndex))}>Remove category</button>
+                            </div>
+                            {(category.items || []).map((item, itemIndex) => (
+                              <div className="faq-editor-item" key={`faq-item-${categoryIndex}-${itemIndex}`}>
+                                <label>
+                                  Question
+                                  <input
+                                    value={item.q || ''}
+                                    onChange={(event) => updateFaqs((items) => items.map((group, index) => index === categoryIndex ? { ...group, items: group.items.map((entry, entryIndex) => entryIndex === itemIndex ? { ...entry, q: event.target.value } : entry) } : group))}
+                                  />
+                                </label>
+                                <label>
+                                  Answer
+                                  <textarea
+                                    rows="3"
+                                    value={item.a || ''}
+                                    onChange={(event) => updateFaqs((items) => items.map((group, index) => index === categoryIndex ? { ...group, items: group.items.map((entry, entryIndex) => entryIndex === itemIndex ? { ...entry, a: event.target.value } : entry) } : group))}
+                                  />
+                                </label>
+                                <button type="button" className="faq-editor-remove" onClick={() => updateFaqs((items) => items.map((group, index) => index === categoryIndex ? { ...group, items: group.items.filter((_, entryIndex) => entryIndex !== itemIndex) } : group))}>Remove question</button>
+                              </div>
+                            ))}
+                            <button type="button" className="faq-editor-add" onClick={() => updateFaqs((items) => items.map((group, index) => index === categoryIndex ? { ...group, items: [...group.items, { q: '', a: '' }] } : group))}>＋ Add a question</button>
+                          </section>
+                        ))}
+                        <button type="button" className="faq-editor-add" onClick={() => updateFaqs((items) => [...items, { category: 'NEW CATEGORY', items: [{ q: '', a: '' }] }])}>＋ Add a category</button>
+                      </div>
+
                       <button type="button" className="btn-premium-submit" style={{ marginTop: '20px' }} onClick={() => saveSectionConfig('faq_page')} disabled={editorSaving}>
-                        {editorSaving ? 'Saving...' : 'Save FAQ Page Changes'}
+                        {editorSaving ? 'Saving…' : 'Save FAQ page'}
                       </button>
                     </div>
                   </div>
@@ -2665,7 +2927,7 @@ const AdminDashboard = () => {
               <ShootStoryFields value={editingShoot} onChange={setEditingShoot} gallery={editingShoot.gallery || []} testimonials={testimonials}/>
               <button type="button" className="btn-premium-submit" disabled={editUploading} onClick={saveShootMetadata}>Save descriptions and case study</button>
               {pendingGallery.length>0 && <fieldset style={{padding:16,margin:'20px 0'}}><legend>Describe new gallery photos</legend>
-                {pendingGallery.map((file,index)=><div className="input-group-chic" key={index}><label htmlFor={`new-photo-${index}`}>{file.name}</label><input id={`new-photo-${index}`} value={pendingGalleryAlt[index] || ''} onChange={event=>setPendingGalleryAlt(previous=>pendingGallery.map((_,i)=>i===index?event.target.value:(previous[i] || '')))}/></div>)}
+                {pendingGallery.map((file,index)=><div className="input-group-chic" key={index}><label htmlFor={`new-photo-${index}`}>{file.webkitRelativePath || file.name}</label><input id={`new-photo-${index}`} value={pendingGalleryAlt[index] || ''} onChange={event=>setPendingGalleryAlt(previous=>pendingGallery.map((_,i)=>i===index?event.target.value:(previous[i] || '')))}/></div>)}
                 <button type="button" disabled={editUploading} onClick={uploadPendingGallery}>Upload described photos</button>
               </fieldset>}
 
@@ -2692,7 +2954,7 @@ const AdminDashboard = () => {
                   Gallery Collage Collection ({editingShoot.gallery?.length || 0} images)
                 </div>
                 <p style={{ fontSize: '0.8rem', color: '#a0a0a0', marginBottom: '20px', lineHeight: '1.4' }}>
-                  These images populate the scrollable narrative collection. Click the red ✕ button on any image to permanently delete it, or click "Add Photos" to upload multiple new images.
+                  These images populate the scrollable narrative collection. Remove an image with ✕, or add up to 50 images from individual files or a folder in each batch.
                 </p>
 
                 <div className="gallery-edit-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '15px' }}>
@@ -2714,6 +2976,11 @@ const AdminDashboard = () => {
                     <span>＋</span>
                     <small>Add Photos</small>
                     <input type="file" accept="image/*" multiple hidden onChange={handleAddGalleryImages} disabled={editUploading} />
+                  </label>
+                  <label className={`gallery-add-btn ${editUploading ? 'disabled' : ''}`} style={{ minHeight: '130px' }}>
+                    <span>▧</span>
+                    <small>Add Folder</small>
+                    <input type="file" accept="image/*" multiple webkitdirectory="" directory="" hidden onChange={handleAddGalleryImages} disabled={editUploading} />
                   </label>
                 </div>
               </div>

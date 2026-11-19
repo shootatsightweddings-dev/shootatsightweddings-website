@@ -212,7 +212,7 @@ const createShoot = async (req, res, next) => {
     if (!req.body.heroImageAlt?.trim()) return res.status(400).json({success:false,message:'Describe the hero image before uploading.'});
     const uploadCount = (req.files.gallery || []).length;
     const metadata = shootMetadata(req.body, uploadCount);
-    metadata.galleryAlt = galleryDescriptions(req.body.galleryAlt || '[]', uploadCount, true);
+    metadata.galleryAlt = galleryDescriptions(req.body.galleryAlt || '[]', uploadCount);
 
     // Generate unique slug
     const slug = title
@@ -421,7 +421,7 @@ async function addGalleryImages(req, res, next) {
     if (files.length === 0)
       return res.status(400).json({ success: false, message: 'No images provided' });
 
-    const descriptions = galleryDescriptions(req.body.galleryAlt, files.length, true);
+    const descriptions = galleryDescriptions(req.body.galleryAlt, files.length);
     const newUrls = await Promise.all(
       files.map(async (file) => {
         const filename = `${uuidv4()}.webp`;

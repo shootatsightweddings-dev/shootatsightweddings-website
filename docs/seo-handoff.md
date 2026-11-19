@@ -3,9 +3,9 @@
 ## Content editing
 
 - Blog create/edit forms include SEO title, description, canonical URL, cover description and author name/type/profile URL. Descriptions have a character counter; 155 is a writing guideline, not a mandatory search-engine limit.
-- Existing shoot URLs stay unchanged. In **Edit Gallery**, edit cover/gallery descriptions and optional case-study narrative, summary and client quotation, then choose **Save descriptions and case study**. Use genuine quotations with permission. New gallery uploads require a description for each photo before uploading.
+- Existing shoot URLs stay unchanged. In **Edit Gallery**, edit cover/gallery descriptions and optional case-study narrative, summary and client quotation, then choose **Save descriptions and case study**. Use genuine quotations with permission. Gallery image descriptions are optional during uploads, but recommended for accessibility and image search.
 - **Services & Locations** in the admin dashboard manages page content, SEO fields, city/locality, hero description, questions and publication state. The initial pages describe existing offerings and the Bengaluru base; review and enrich them with the SEO team. Draft pages are not publicly listed. Keep existing slugs when editing.
-- Image uploads require a description before the file is sent. Older records continue to render with their existing title-based descriptions until backfilled. No existing gallery URLs are converted or removed by this update.
+- Hero image uploads require a description before the file is sent. Gallery image descriptions are optional. Older records continue to render with their existing title-based descriptions until backfilled. No existing gallery URLs are converted or removed by this update.
 - Organization authors remain valid. Select Person only for a real named author. Article dates use ISO timestamps, separately from the human-readable display date.
 - FAQs are visible content. New pages do not promise or rely on Google FAQ rich results.
 

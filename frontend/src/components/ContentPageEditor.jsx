@@ -3,22 +3,22 @@ import { API_URL } from '../config';
 import SeoFields from './SeoFields';
 
 const emptyPage={kind:'service',slug:'',title:'',body:'',heroImage:'',heroImageAlt:'',areaServed:'',faqs:[],isPublished:false};
-export default function ContentPageEditor(){
+export default function ContentPageEditor({onNotify=()=>{}}){
   const [pages,setPages]=useState([]),[editing,setEditing]=useState(null),[message,setMessage]=useState(''),[saving,setSaving]=useState(false);
   const headers={Authorization:`Bearer ${localStorage.getItem('adminToken')}`,'Content-Type':'application/json'};
   useEffect(()=>{
     const controller=new AbortController();
-    fetch(`${API_URL}/admin/pages`,{headers:{Authorization:`Bearer ${localStorage.getItem('adminToken')}`},signal:controller.signal}).then(res=>res.json()).then(data=>setPages(data.pages || [])).catch(error=>{if(error.name!=='AbortError')setMessage('Could not load pages.');});
+    fetch(`${API_URL}/admin/pages`,{headers:{Authorization:`Bearer ${localStorage.getItem('adminToken')}`},signal:controller.signal}).then(async res=>{const data=await res.json();if(!res.ok)throw new Error(data.message || 'Could not load pages.');return data;}).then(data=>setPages(data.pages || [])).catch(error=>{if(error.name!=='AbortError'){setMessage(error.message);onNotify('error',error.message);}});
     return ()=>controller.abort();
-  },[]);
+  },[onNotify]);
   const save=async event=>{
     event.preventDefault();setSaving(true);setMessage('');
     try{
       const res=await fetch(`${API_URL}/admin/pages`,{method:'PUT',headers,body:JSON.stringify(editing)});const data=await res.json();
       if(!res.ok)throw new Error(data.message || 'Save failed.');
       setPages(previous=>[...previous.filter(page=>!(page.kind===data.page.kind&&page.slug===data.page.slug)),data.page]);
-      setEditing(null);setMessage('Page saved. Rebuild and deploy to refresh prerendered search content.');
-    }catch(error){setMessage(error.message);}finally{setSaving(false);}
+      setEditing(null);setMessage('Page saved. Rebuild and deploy to refresh prerendered search content.');onNotify('success','Page saved. Rebuild and deploy to refresh search content.');
+    }catch(error){setMessage(error.message);onNotify('error',error.message);}finally{setSaving(false);}
   };
   const field=(key,label,type='text',required=false)=><div className="input-group-chic" key={key}><label htmlFor={`page-${key}`}>{label}</label><input id={`page-${key}`} type={type} required={required} value={editing[key] || ''} onChange={e=>setEditing({...editing,[key]:e.target.value})}/></div>;
   return <section className="admin-chic-form"><h2>Service and location pages</h2><p>Publish useful content for real services and locations you serve. Uncheck Published to hide a page.</p>

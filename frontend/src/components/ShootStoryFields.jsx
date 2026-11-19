@@ -13,11 +13,12 @@ export default function ShootStoryFields({value, onChange, gallery = [], require
     {field('heroImageAlt','Cover image description')}
     <fieldset style={{border:'1px solid #7775',padding:16,marginBottom:20,minWidth:0}}>
       <legend>Gallery image descriptions</legend>
-      {gallery.length===0 && <p>Add gallery photos to describe them individually.</p>}
+      <p>Optional: descriptions help screen readers and search engines understand each photo.</p>
+      {gallery.length===0 && <p>After adding gallery photos, you can add a description for each one here.</p>}
       {gallery.map((item,index)=><div className="input-group-chic" key={typeof item==='string'?item:index}>
-        <label htmlFor={`${id}-gallery-${index}`}>Photo {index+1}{typeof item==='string'?'':` — ${item.name}`}</label>
+        <label htmlFor={`${id}-gallery-${index}`}>Photo {index+1}{typeof item==='string'?'':` — ${item.webkitRelativePath || item.name}`}</label>
         {typeof item==='string' && <img src={item} alt="" loading="lazy" width={96} height={72} style={{objectFit:'cover',borderRadius:4,marginBottom:8}}/>}
-        <input id={`${id}-gallery-${index}`} required={requiredImages} value={value.galleryAlt?.[index] || ''} onChange={e=>{
+        <input id={`${id}-gallery-${index}`} value={value.galleryAlt?.[index] || ''} onChange={e=>{
           const descriptions=gallery.map((_,i)=>value.galleryAlt?.[i] || '');descriptions[index]=e.target.value;onChange({...value,galleryAlt:descriptions});
         }}/>
       </div>)}

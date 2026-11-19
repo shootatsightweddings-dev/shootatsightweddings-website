@@ -160,6 +160,30 @@
   display: none;
 }
 
+.recent-shoots-footer {
+  display: flex;
+  justify-content: center;
+  padding: 28px 20px 0;
+}
+
+.recent-shoots-view-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--accent);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.recent-shoots-view-all span { color: var(--accent); font-size: 1.2rem; }
+.recent-shoots-view-all:hover { color: var(--accent); }
+
 @media (max-width: 768px) {
   .horizontal-shoots-section {
     overflow: visible;
