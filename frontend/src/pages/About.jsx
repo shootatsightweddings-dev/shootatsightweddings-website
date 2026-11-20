@@ -14,11 +14,11 @@ const About = () => {
   const { config } = useSiteConfig();
 
   const aboutContent = config?.about_page || {
-    heroBg: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/DSC01641_-_Copy.webp',
+    heroBg: '/common/DSC01641_-_Copy.webp',
     heroTitleMain: 'The Story Behind',
     heroTitleHighlight: 'The Light',
     heroTagline: 'SHOOT @ SIGHT // ARCHITECTS OF TIMELESS MEMORIES',
-    founderImg: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/founder%20(1).webp',
+    founderImg: '/founder%20(1).webp',
     founderTagline: 'CREATIVE DIRECTOR // PAVITHRA ARUN KUMAR',
     founderName: 'Pavithra Arun Kumar',
     founderSub: 'Founder & Lead Visual Storyteller',
@@ -38,9 +38,9 @@ const About = () => {
     studioTitleHighlight: 'Legacy',
     studioTitleEnd: 'Through Light.',
     studioDesc: 'Founded in 2020, Shoot At Sight Weddings is a boutique photography studio specializing in high-end, editorial wedding narratives. We believe your story deserves to be told with the intentionality of fine art.',
-    teamImg: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/team.webp',
+    teamImg: '/common/team.webp',
     teamCaption: 'The Shoot At Sight Weddings Creative Collective, 2026',
-    philosophyBg: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/camera_lens_detail.webp',
+    philosophyBg: '/common/camera_lens_detail.webp',
     philosophyTagline: 'INTENTIONAL // TIMING // RAW',
     philosophyTitleMain: 'The',
     philosophyTitleHighlight: 'Philosophy',

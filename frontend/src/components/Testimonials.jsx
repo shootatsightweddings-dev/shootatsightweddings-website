@@ -5,7 +5,7 @@ import './Testimonials.css';
 const testimonialsData = [
   {
     num: "01",
-    photo: "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/4%20RAGHUDIXITH%20AND%20VARIJASHREE_WEBP/NGD_6702.webp",
+    photo: "/4%20RAGHUDIXITH%20AND%20VARIJASHREE_WEBP/NGD_6702.webp",
     quote: "We didn't want standard wedding photography; we wanted an author for our legacy. Shoot @ Sight didn't just capture our celebration—they curated a high-fashion, digital visual spread. Every single frame is pure art.",
     author: "Raghu Dixit & Varijashree",
     location: "THE HEIRLOOM CEREMONY",
@@ -14,7 +14,7 @@ const testimonialsData = [
   },
   {
     num: "02",
-    photo: "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/NAVEEN%20AND%20KATE/SYD08467.webp",
+    photo: "/NAVEEN%20AND%20KATE/SYD08467.webp",
     quote: "To say they captured the emotion is an understatement. They captured the unspoken whispers, the raw poetry, and the cinematic architecture of our wedding. Absolute masters of high-end visual art.",
     author: "Naveen & Kate",
     location: "THE CINEMATIC CAPTURE",
@@ -23,7 +23,7 @@ const testimonialsData = [
   },
   {
     num: "03",
-    photo: "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/aishwarya%20and%20akshay/KRP_8213.webp",
+    photo: "/aishwarya%20and%20akshay/KRP_8213.webp",
     quote: "The sheer drama, the unscripted whispers, the absolute masterclass in lighting. Working with them was an immersive luxury experience. They don't just document—they command the lens with sheer prestige.",
     author: "Aishwarya & Akshay",
     location: "THE LUXURY PORTFOLIO",
@@ -32,7 +32,7 @@ const testimonialsData = [
   },
   {
     num: "04",
-    photo: "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/srinidhi%20and%20ramya/DSC00045.webp",
+    photo: "/srinidhi%20and%20ramya/DSC00045.webp",
     quote: "Every single print is a physical masterpiece. The deep emotional weight, the rich color grading, and the timeless textures. They have forever preserved the raw soul of our celebration.",
     author: "Srinidhi & Ramya",
     location: "THE FINE ART LEGACY",

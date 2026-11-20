@@ -2,10 +2,10 @@ import { Link, useLocation } from "react-router-dom";
 import "./Footer.css";
 
 const portfolioStrips = [
-  "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/4%20RAGHUDIXITH%20AND%20VARIJASHREE_WEBP/NGD_6702.webp",
-  "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/NAVEEN%20AND%20KATE/SYD08292.webp",
-  "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/NAVEEN%20AND%20KATE/SYD08467.webp",
-  "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/KRP_9777.webp",
+  "/4%20RAGHUDIXITH%20AND%20VARIJASHREE_WEBP/NGD_6702.webp",
+  "/NAVEEN%20AND%20KATE/SYD08292.webp",
+  "/NAVEEN%20AND%20KATE/SYD08467.webp",
+  "/common/KRP_9777.webp",
 ];
 
 const navLinks = [
@@ -51,7 +51,7 @@ const Footer = () => {
       <div className="ft-brand-header">
         <div className="ft-brand-logo-wrap">
           <img
-            src="https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/logo_1.webp"
+            src="/common/logo_1.webp"
             alt="Shoot At Sight Weddings"
             className="ft-main-logo"
           />
