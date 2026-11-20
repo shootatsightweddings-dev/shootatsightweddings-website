@@ -46,7 +46,7 @@ const AdminDashboard = () => {
   const [blogTitle, setBlogTitle] = useState('');
   const [blogCategory, setBlogCategory] = useState('ARTISTRY');
   const [blogContent, setBlogContent] = useState('');
-  const [blogCover, setBlogCover] = useState("https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/_DSC3521_-_Copy.webp");
+  const [blogCover, setBlogCover] = useState("/common/_DSC3521_-_Copy.webp");
 
   // UI States
   const [uploading, setUploading] = useState(false);
@@ -1009,7 +1009,7 @@ const AdminDashboard = () => {
                 {blogs.map((blog) => (
                   <div key={blog._id} className="admin-shoot-card">
                     <div className="card-thumbnail-wrapper">
-                      <img src={(editingBlog?._id === blog._id ? editingBlog.coverImageUrl : blog.coverImageUrl) || "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/_DSC3521_-_Copy.webp"} alt={blog.title} />
+                      <img src={(editingBlog?._id === blog._id ? editingBlog.coverImageUrl : blog.coverImageUrl) || "/common/_DSC3521_-_Copy.webp"} alt={blog.title} />
                       <span className="card-cat-badge">{(editingBlog?._id === blog._id ? editingBlog.tags?.[0] : blog.tags?.[0]) || 'ARTISTRY'}</span>
                     </div>
                     <div className="card-details">
@@ -2788,7 +2788,7 @@ const AdminDashboard = () => {
               <div className="edit-section" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '25px', marginBottom: '25px' }}>
                 <label className="edit-section-label">Cover Image</label>
                 <div className="hero-preview-row">
-                  <img src={editingBlog.coverImageUrl || "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/_DSC3521_-_Copy.webp"} alt="cover" className="hero-thumb-edit" style={{ width: '160px', height: '100px', borderRadius: '4px' }} />
+                  <img src={editingBlog.coverImageUrl || "/common/_DSC3521_-_Copy.webp"} alt="cover" className="hero-thumb-edit" style={{ width: '160px', height: '100px', borderRadius: '4px' }} />
                   <div>
                     <p style={{ fontSize: '0.8rem', color: '#a0a0a0', marginBottom: '12px' }}>
                       Choose an image from your computer to update this article's primary cover.

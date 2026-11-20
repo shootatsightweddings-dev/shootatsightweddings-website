@@ -1,7 +1,7 @@
-const img1 = "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/_DSC3521_-_Copy.webp";
-const img2 = "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/_DSC0075_-_Copy.webp";
-const img3 = "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/_DSC2178_-_Copy.webp";
-const img4 = "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/SAS_3280.webp";
+const img1 = "/common/_DSC3521_-_Copy.webp";
+const img2 = "/common/_DSC0075_-_Copy.webp";
+const img3 = "/common/_DSC2178_-_Copy.webp";
+const img4 = "/common/SAS_3280.webp";
 
 // The four articles the site has always advertised on /blog. Previously
 // these only opened in a client-side modal with no real URL — a crawler
