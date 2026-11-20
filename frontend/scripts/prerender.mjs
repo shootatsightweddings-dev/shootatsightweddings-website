@@ -206,18 +206,32 @@ async function main() {
 
     browser = await chromium.launch();
     const context = await browser.newContext();
-    const page = await context.newPage();
+    let page = await context.newPage();
 
+    // The server's outbound connection occasionally stalls, so a page can
+    // time out waiting for network idle even though nothing is wrong with
+    // it. Retry each page up to MAX_ATTEMPTS times in a fresh tab before
+    // treating it as a real failure.
+    const MAX_ATTEMPTS = 3;
     const failures = [];
     for (const route of allRoutes) {
       process.stdout.write(`[prerender] ${route.path} ... `);
-      try {
-        const html = await prerenderRoute(page, route.path);
-        const hasH1 = /<h1[\s>]/i.test(html);
-        console.log(`ok (${(html.length / 1024).toFixed(0)} KiB, h1: ${hasH1 ? 'yes' : 'NO'})`);
-      } catch (err) {
-        console.log(`FAILED: ${err.message}`);
-        failures.push(route.path);
+      for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+        try {
+          const html = await prerenderRoute(page, route.path);
+          const hasH1 = /<h1[\s>]/i.test(html);
+          console.log(`ok (${(html.length / 1024).toFixed(0)} KiB, h1: ${hasH1 ? 'yes' : 'NO'})${attempt > 1 ? ` on attempt ${attempt}` : ''}`);
+          break;
+        } catch (err) {
+          await page.close().catch(() => {});
+          page = await context.newPage();
+          if (attempt === MAX_ATTEMPTS) {
+            console.log(`FAILED after ${MAX_ATTEMPTS} attempts: ${err.message}`);
+            failures.push(route.path);
+          } else {
+            process.stdout.write(`timed out (attempt ${attempt}), retrying ... `);
+          }
+        }
       }
     }
 
