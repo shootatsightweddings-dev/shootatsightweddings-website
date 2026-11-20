@@ -177,11 +177,15 @@ const ShootDetail = () => {
         : `${shoot.title} Wedding${shoot.location ? ` | ${shoot.location}` : ''} | Shoot At Sight`)
     : 'Gallery Collection';
 
+  // Photos served from this server are stored as relative paths; structured
+  // data needs absolute URLs.
+  const absoluteUrl = (url) => (/^https?:\/\//.test(url) ? url : `https://www.shootatsightweddings.com${url.startsWith('/') ? '' : '/'}${url}`);
+
   const imagesJsonLd = shoot
     ? [shoot.hero, ...(shoot.gallery || [])].filter(Boolean).map((url, index) => ({
         '@context': 'https://schema.org',
         '@type': 'ImageObject',
-        contentUrl: url,
+        contentUrl: absoluteUrl(url),
         caption: (index === 0 ? shoot.heroImageAlt : shoot.galleryAlt?.[index - 1]) || `${shoot.title}${shoot.location ? ` — ${shoot.location}` : ''}`,
         creator: { '@type': 'Organization', name: 'Shoot At Sight Weddings' },
         copyrightNotice: `© ${new Date().getFullYear()} Shoot At Sight Weddings`,
@@ -198,7 +202,7 @@ const ShootDetail = () => {
     breadcrumbLabels: shoot ? { [`/shoot/${id}`]: shoot.title } : undefined,
     jsonLd: [...imagesJsonLd, ...(shoot?.narrative ? [{
       '@context':'https://schema.org','@type':'Article',headline:shoot.title,
-      description:shoot.metaDescription || shoot.desc,image:shoot.hero,
+      description:shoot.metaDescription || shoot.desc,image:shoot.hero ? absoluteUrl(shoot.hero) : undefined,
       datePublished:isoDate(shoot.createdAt),dateModified:isoDate(shoot.updatedAt),
       author:{'@type':'Organization','@id':'https://www.shootatsightweddings.com/#business',name:'Shoot At Sight Weddings'},
       about:{'@type':'Event',name:shoot.title,location:shoot.location},
