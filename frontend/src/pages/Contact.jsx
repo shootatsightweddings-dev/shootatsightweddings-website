@@ -23,6 +23,8 @@ const Contact = () => {
     pGold: 'If you are ready to move past standard imagery and immortalize your history as a living masterpiece, let’s begin.',
     verticalLabel: 'HIGH END EDITORIAL // RAW EMOTION',
     studioInfo: 'Bengaluru, India // Global Commissions',
+    address: '7, Sindhoor, 2nd Cross Rd, near Mitra Academy School, behind British Biologicals, Venugopal Reddy Layout, Arekere, Bengaluru, Karnataka 560076',
+    mapsUrl: 'https://www.google.com/maps/search/?api=1&query=VJP2%2BF4F%2C%20Arekere%2C%20Bengaluru%2C%20Karnataka%20560076',
     email: 'connect@shootatsightweddings.com',
     phone: '+91 9900233338',
     formTitle: 'Start a Conversation',
@@ -132,6 +134,14 @@ ${form.vision}`
             <div className="direct-item">
               <span className="direct-label">THE STUDIO</span>
               <p className="direct-value">{contactContent.studioInfo}</p>
+              {contactContent.address && (
+                <address className="direct-address">{contactContent.address}</address>
+              )}
+              {/^https:\/\//.test(contactContent.mapsUrl || '') && (
+                <a href={contactContent.mapsUrl} target="_blank" rel="noopener noreferrer" className="direct-directions">
+                  Get directions <span aria-hidden="true">→</span>
+                </a>
+              )}
             </div>
             <div className="direct-item">
               <span className="direct-label">DIRECT CHANNELS</span>

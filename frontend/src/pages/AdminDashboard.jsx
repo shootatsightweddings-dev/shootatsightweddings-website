@@ -2631,6 +2631,24 @@ const AdminDashboard = () => {
                         </div>
                       </div>
 
+                      <div className="input-group-chic">
+                        <label>Studio Address (shown on the Contact page; keep it identical to the Google Business Profile)</label>
+                        <textarea
+                          rows={2}
+                          maxLength={200}
+                          value={siteConfig.contact_page?.address || ''}
+                          onChange={(e) => handleConfigChange('contact_page', 'address', e.target.value)}
+                        />
+                      </div>
+                      <div className="input-group-chic">
+                        <label>Get Directions Link (Google Maps, must start with https://)</label>
+                        <input
+                          type="url"
+                          value={siteConfig.contact_page?.mapsUrl || ''}
+                          onChange={(e) => handleConfigChange('contact_page', 'mapsUrl', e.target.value)}
+                        />
+                      </div>
+
                       <div className="form-double-column">
                         <div className="input-group-chic">
                           <label>Direct Email Link (max 50 chars)</label>

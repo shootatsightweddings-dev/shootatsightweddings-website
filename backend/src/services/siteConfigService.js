@@ -238,6 +238,8 @@ const defaultConfigs = [
       pGold: 'If you are ready to move past standard imagery and immortalize your history as a living masterpiece, let’s begin.',
       verticalLabel: 'HIGH END EDITORIAL // RAW EMOTION',
       studioInfo: 'Bengaluru, India // Global Commissions',
+      address: '7, Sindhoor, 2nd Cross Rd, near Mitra Academy School, behind British Biologicals, Venugopal Reddy Layout, Arekere, Bengaluru, Karnataka 560076',
+      mapsUrl: 'https://www.google.com/maps/search/?api=1&query=VJP2%2BF4F%2C%20Arekere%2C%20Bengaluru%2C%20Karnataka%20560076',
       email: 'connect@shootatsightweddings.com',
       phone: '+91 9900233338',
       formTitle: 'Start a Conversation',
