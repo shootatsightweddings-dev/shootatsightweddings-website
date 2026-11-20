@@ -1,4 +1,3 @@
-const { S3Client, PutObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
 const { v4: uuidv4 } = require('uuid');
 const sharp = require('sharp');
 const fs = require('fs');
@@ -27,27 +26,10 @@ function shootMetadata(body, galleryCount) {
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
 
-// Helper to determine if R2 is configured
-const isR2Configured = () => {
-  return !!(
-    process.env.R2_ACCOUNT_ID &&
-    process.env.R2_ACCESS_KEY_ID &&
-    process.env.R2_SECRET_ACCESS_KEY &&
-    process.env.R2_BUCKET_NAME &&
-    process.env.R2_PUBLIC_URL
-  );
-};
-
-// Get Cloudflare R2 S3 Client
-const getR2Client = () =>
-  new S3Client({
-    region: 'auto',
-    endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
-    credentials: {
-      accessKeyId: process.env.R2_ACCESS_KEY_ID,
-      secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
-    },
-  });
+// Uploaded images are stored on this server in backend/uploads and served by
+// server.js at /uploads. Links are saved as relative paths (/uploads/x.webp)
+// so they work over HTTPS behind nginx.
+const UPLOAD_DIR = path.join(__dirname, '..', '..', 'uploads');
 
 // Optimize image to next-gen .webp format
 const optimizeImage = async (buffer) => {
@@ -58,67 +40,23 @@ const optimizeImage = async (buffer) => {
     .toBuffer();
 };
 
-// Handle generic upload (R2 or Local Folder fallback)
-const processAndStoreImage = async (buffer, filename, req) => {
+// Optimize and save an uploaded image on this server.
+const processAndStoreImage = async (buffer, filename) => {
   const optimized = await optimizeImage(buffer);
-
-  if (isR2Configured()) {
-    // Cloudflare R2 Upload
-    const client = getR2Client();
-    await client.send(
-      new PutObjectCommand({
-        Bucket: process.env.R2_BUCKET_NAME,
-        Key: filename,
-        Body: optimized,
-        ContentType: 'image/webp',
-      })
-    );
-    return `${process.env.R2_PUBLIC_URL}/${filename}`;
-  } else {
-    // Local Folder Fallback
-    const uploadDir = path.join(__dirname, '..', '..', 'uploads');
-    // Ensure upload directory exists
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-
-    const filePath = path.join(uploadDir, filename);
-    fs.writeFileSync(filePath, optimized);
-
-    // Build local server URL
-    const protocol = req.secure ? 'https' : 'http';
-    const host = req.get('host');
-    return `${protocol}://${host}/uploads/${filename}`;
-  }
+  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+  fs.writeFileSync(path.join(UPLOAD_DIR, filename), optimized);
+  return `/uploads/${filename}`;
 };
 
-// Helper to delete an image file (R2 or Local)
+// Delete an uploaded image from this server. Images that ship with the site
+// (backend/media) are never deleted here.
 const deleteStoredImage = async (url) => {
-  if (!url) return;
-
-  if (isR2Configured() && url.includes(process.env.R2_PUBLIC_URL)) {
-    try {
-      const filename = url.replace(`${process.env.R2_PUBLIC_URL}/`, '');
-      const client = getR2Client();
-      await client.send(
-        new DeleteObjectCommand({
-          Bucket: process.env.R2_BUCKET_NAME,
-          Key: filename,
-        })
-      );
-    } catch (err) {
-      console.error(`Failed to delete ${url} from R2:`, err.message);
-    }
-  } else if (url.includes('/uploads/')) {
-    try {
-      const filename = url.substring(url.lastIndexOf('/') + 1);
-      const filePath = path.join(__dirname, '..', '..', 'uploads', filename);
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-      }
-    } catch (err) {
-      console.error(`Failed to delete local file ${url}:`, err.message);
-    }
+  if (!url || !url.includes('/uploads/')) return;
+  try {
+    const filePath = path.join(UPLOAD_DIR, path.basename(url));
+    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+  } catch (err) {
+    console.error(`Failed to delete local file ${url}:`, err.message);
   }
 };
 
@@ -452,7 +390,7 @@ async function removeGalleryImage(req, res, next) {
     galleryAlt.splice(idx, 1);
     const updated = await persistShoot(found, { gallery, galleryAlt });
 
-    // Delete from R2/local storage (non-blocking)
+    // Delete uploaded files from this server (non-blocking)
     deleteStoredImage(imageUrl).catch(() => {});
 
     return res.json({ success: true, gallery: updated.gallery, galleryAlt: updated.galleryAlt });
@@ -475,7 +413,7 @@ async function updateHeroImage(req, res, next) {
     const heroImageUrl = await processAndStoreImage(heroFile.buffer, filename, req);
     const updated = await persistShoot(found, { heroImage: heroImageUrl, heroImageAlt });
 
-    // Delete old hero from R2 (non-blocking)
+    // Delete the old uploaded hero (non-blocking)
     if (oldHero) deleteStoredImage(oldHero).catch(() => {});
 
     return res.json({ success: true, heroImage: updated.heroImage, heroImageAlt: updated.heroImageAlt });

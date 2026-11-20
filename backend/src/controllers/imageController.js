@@ -1,4 +1,3 @@
-const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const { v4: uuidv4 } = require('uuid');
 const sharp = require('sharp');
 const fs = require('fs');
@@ -8,28 +7,6 @@ const Image = require('../models/Image');
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
 
-// Same gate as shootController.js — R2 is used only when fully configured;
-// otherwise uploads fall back to local disk, served from /uploads (see
-// server.js's express.static mount).
-const isR2Configured = () =>
-  !!(
-    process.env.R2_ACCOUNT_ID &&
-    process.env.R2_ACCESS_KEY_ID &&
-    process.env.R2_SECRET_ACCESS_KEY &&
-    process.env.R2_BUCKET_NAME &&
-    process.env.R2_PUBLIC_URL
-  );
-
-const getR2Client = () =>
-  new S3Client({
-    region: 'auto',
-    endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
-    credentials: {
-      accessKeyId: process.env.R2_ACCESS_KEY_ID,
-      secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
-    },
-  });
-
 const optimizeImage = async (buffer) => {
   return sharp(buffer)
     .rotate()                                          // auto-rotate camera orientation based on EXIF metadata
@@ -38,21 +15,7 @@ const optimizeImage = async (buffer) => {
     .toBuffer();
 };
 
-const uploadToR2 = async (buffer, filename) => {
-  const client = getR2Client();
-
-  await client.send(
-    new PutObjectCommand({
-      Bucket: process.env.R2_BUCKET_NAME,
-      Key: filename,
-      Body: buffer,
-      ContentType: 'image/webp',
-    })
-  );
-
-  return `${process.env.R2_PUBLIC_URL}/${filename}`;
-};
-
+// Uploaded images are stored on this server and served from /uploads (server.js).
 const uploadLocal = (buffer, filename) => {
   const uploadDir = path.join(__dirname, '..', '..', 'uploads');
   if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
@@ -86,7 +49,7 @@ const uploadImage = async (req, res, next) => {
 
     const optimized = await optimizeImage(buffer);
     const filename = `${uuidv4()}.webp`;
-    const url = isR2Configured() ? await uploadToR2(optimized, filename) : uploadLocal(optimized, filename);
+    const url = uploadLocal(optimized, filename);
 
     const image = await Image.create({
       url,

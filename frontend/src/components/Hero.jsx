@@ -20,7 +20,7 @@ const Hero = () => {
     videoUrl: "/Naveen%20%26%20Kate%204K%20Teaser.mp4"
   };
 
-  const videoUrl = /^https:\/\//.test(heroContent.videoUrl || '') ? heroContent.videoUrl : "/Naveen%20%26%20Kate%204K%20Teaser.mp4";
+  const videoUrl = /^(https:\/\/|\/(?!\/))/.test(heroContent.videoUrl || '') ? heroContent.videoUrl : "/Naveen%20%26%20Kate%204K%20Teaser.mp4";
 
   // Set scroll restoration and reset scroll position early
   useLayoutEffect(() => {

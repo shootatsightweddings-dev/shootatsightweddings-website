@@ -13,9 +13,7 @@
 
 Run `npm run lint` and `npm run build`. The build prerenders service and location pages and includes published routes in the sitemap. Rebuild/redeploy after publishing or changing content to refresh the static HTML seen by crawlers. Live browser content also loads through the API.
 
-Run `node scripts/migrate-seo-config.js` from backend to preview legacy video/email configuration changes; add `--apply` to apply them. The script backs up affected records in the ignored `backend/backups/` directory before writing and preserves unrelated settings. It only replaces non-HTTPS video settings and the specific legacy Gmail address.
-
-Only the Naveen & Kate teaser and the mobile Low Bitrate video currently exist in R2. Upload the other films, then enter their own public HTTPS MP4 and poster URLs in the film editor. Do not reuse the teaser as a different couple's film.
+Only the Naveen & Kate teaser and the mobile Low Bitrate video currently exist on the server (`backend/media`). Copy the other films there, then enter their own paths (e.g. `/films/couple-name.mp4`) and posters in the film editor. Do not reuse the teaser as a different couple's film.
 
 ## Apex-domain redirect: hosting action required
 

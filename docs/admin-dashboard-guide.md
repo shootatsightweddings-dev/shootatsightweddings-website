@@ -107,7 +107,7 @@ Use the matching **Save … Config** button for each section. Check headlines an
 
 ### Films page
 
-Edit the Films page heading and description, followed by its four video entries. Each entry has an order number, a public Cloudflare R2 video URL, poster image URL, tag/label, and location. Replace video or poster links with complete public URLs. An empty video link may appear as “Coming soon.” Select **Save Films Page Changes** when finished.
+Edit the Films page heading and description, followed by its four video entries. Each entry has an order number, a video, a poster image, tag/label, and location. Video and poster fields take a path on this site (e.g. `/films/couple-name.mp4`, for a file copied into `backend/media` on the server) or a complete HTTPS URL. An empty video link may appear as “Coming soon.” Select **Save Films Page Changes** when finished.
 
 ### About page
 
