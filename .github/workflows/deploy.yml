@@ -1,0 +1,99 @@
+name: Deploy to BigRock VPS
+
+# Every push to main is checked on GitHub, then built and released on the
+# BigRock VPS. Setup (secrets, variables, deploy key): docs/deployment.md.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# One deploy at a time; a newer push waits instead of interrupting a build.
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Lint, test and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run lint
+      - run: npm test
+      # Prerendering needs the production database, so it runs on the VPS.
+      # Here we only confirm the site compiles.
+      - run: npx vite build
+        working-directory: frontend
+
+  deploy:
+    name: Deploy
+    needs: check
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 30
+    env:
+      VPS_HOST: ${{ secrets.VPS_HOST }}
+      VPS_USER: ${{ secrets.VPS_USER }}
+      VPS_PORT: ${{ vars.VPS_PORT || '22' }}
+      APP_DIR: ${{ vars.APP_DIR }}
+      RESTART_CMD: ${{ vars.RESTART_CMD }}
+      SITE_URL: ${{ vars.SITE_URL || 'https://www.shootatsightweddings.com' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check deploy settings
+        env:
+          HAS_KEY: ${{ secrets.VPS_SSH_KEY != '' }}
+          HAS_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS != '' }}
+        run: |
+          missing=()
+          [ -n "$VPS_HOST" ] || missing+=("secret VPS_HOST")
+          [ -n "$VPS_USER" ] || missing+=("secret VPS_USER")
+          [ "$HAS_KEY" = "true" ] || missing+=("secret VPS_SSH_KEY")
+          [ "$HAS_KNOWN_HOSTS" = "true" ] || missing+=("secret VPS_KNOWN_HOSTS")
+          [ -n "$APP_DIR" ] || missing+=("variable APP_DIR")
+          [ -n "$RESTART_CMD" ] || missing+=("variable RESTART_CMD")
+          if [ ${#missing[@]} -gt 0 ]; then
+            printf '::error::Deploy is not configured. Missing: %s. See docs/deployment.md.\n' "$(IFS=', '; echo "${missing[*]}")"
+            exit 1
+          fi
+
+      - name: Configure SSH
+        env:
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          VPS_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          # Pinned host key: the connection fails if the server's identity changes.
+          printf '%s\n' "$VPS_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Build and release on the VPS
+        run: |
+          remote_env="APP_DIR=$(printf %q "$APP_DIR") RESTART_CMD=$(printf %q "$RESTART_CMD") DEPLOY_SHA=$GITHUB_SHA"
+          ssh -i ~/.ssh/deploy_key -p "$VPS_PORT" \
+            -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o BatchMode=yes \
+            -o ServerAliveInterval=30 \
+            "$VPS_USER@$VPS_HOST" "$remote_env bash -s" < scripts/deploy.sh
+
+      - name: Check the live site
+        run: |
+          curl -fsS --retry 6 --retry-delay 5 --retry-all-errors "$SITE_URL/api/health" > /dev/null
+          code=$(curl -s -o /dev/null -w '%{http_code}' "$SITE_URL/")
+          echo "Homepage returned $code"
+          [ "$code" = "200" ]
+
+      - name: Remove SSH key
+        if: always()
+        run: rm -f ~/.ssh/deploy_key
