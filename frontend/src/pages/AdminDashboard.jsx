@@ -1201,7 +1201,7 @@ const AdminDashboard = () => {
 
               <SeoFields value={blogSeo} onChange={setBlogSeo} image author />
               <div className="input-group-chic upload-box-chic">
-                <label htmlFor="blogCoverInput">Cover Image (R2 Optimized)</label>
+                <label htmlFor="blogCoverInput">Cover Image (optimised on upload)</label>
                 <div className="file-input-wrapper">
                   <input
                     type="file"
@@ -1422,8 +1422,8 @@ const AdminDashboard = () => {
                       <h3 style={{ color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '20px' }}>01 // Hero Header</h3>
 
                       <div className="input-group-chic">
-                        <label>Cloudflare R2 Mobile Video URL</label>
-                        <input type="url" value={siteConfig.hero?.mobileVideoUrl ?? DEFAULT_MOBILE_VIDEO_URL}
+                        <label>Mobile Video URL</label>
+                        <input type="text" value={siteConfig.hero?.mobileVideoUrl ?? DEFAULT_MOBILE_VIDEO_URL}
                           onChange={(e) => handleConfigChange('hero', 'mobileVideoUrl', e.target.value)} />
                       </div>
                       <div className="form-double-column">
@@ -1437,9 +1437,9 @@ const AdminDashboard = () => {
                           />
                         </div>
                         <div className="input-group-chic">
-                          <label>Cloudflare R2 Desktop Video URL</label>
+                          <label>Desktop Video URL</label>
                           <input
-                            type="url" placeholder="https://your-bucket.r2.dev/video.mp4"
+                            type="text" placeholder="/your-video.mp4 or https://…/video.mp4"
                             value={siteConfig.hero?.videoUrl || ''}
                             onChange={(e) => handleConfigChange('hero', 'videoUrl', e.target.value)}
                           />
@@ -1877,14 +1877,14 @@ const AdminDashboard = () => {
 
                       <div className="input-group-chic">
                         <label>Featured Poster Image URL</label>
-                        <input type="url" value={siteConfig.featured_film?.posterUrl ?? DEFAULT_POSTER_URL}
+                        <input type="text" value={siteConfig.featured_film?.posterUrl ?? DEFAULT_POSTER_URL}
                           onChange={(e) => handleConfigChange('featured_film', 'posterUrl', e.target.value)} />
                       </div>
                       <div className="form-double-column">
                         <div className="input-group-chic">
-                          <label>Featured Cloudflare R2 Video URL</label>
+                          <label>Featured Video URL</label>
                           <input
-                            type="url" placeholder="https://your-bucket.r2.dev/video.mp4"
+                            type="text" placeholder="/your-video.mp4 or https://…/video.mp4"
                             value={siteConfig.featured_film?.videoUrl ?? DEFAULT_VIDEO_URL}
                             onChange={(e) => handleConfigChange('featured_film', 'videoUrl', e.target.value)}
                           />
@@ -2087,9 +2087,9 @@ const AdminDashboard = () => {
                               />
                             </div>
                             <div className="input-group-chic">
-                              <label>Cloudflare R2 Video URL</label>
+                              <label>Video URL</label>
                               <input
-                                type="url" placeholder="https://your-bucket.r2.dev/video.mp4"
+                                type="text" placeholder="/your-video.mp4 or https://…/video.mp4"
                                 value={film.videoUrl || ''}
                                 onChange={(e) => handleConfigArrayChange('films_page', 'list', index, 'videoUrl', e.target.value)}
                               />
@@ -2097,7 +2097,7 @@ const AdminDashboard = () => {
                           </div>
                           <div className="input-group-chic">
                             <label>Poster Image URL</label>
-                            <input type="url" value={film.posterUrl || ''}
+                            <input type="text" value={film.posterUrl || ''}
                               onChange={(e) => handleConfigArrayChange('films_page', 'list', index, 'posterUrl', e.target.value)} />
                           </div>
                           <div className="form-double-column">

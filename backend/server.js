@@ -62,11 +62,11 @@ app.use((req,res,next) => {
 app.use(cors());
 app.use(express.json());
 
-// Serve uploads folder statically for local fallback
+// Images uploaded through the admin panel (backend/uploads).
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Serve media migrated from Cloudflare R2, same-origin, preserving each
-// object's original key as its path (e.g. /common/team.webp).
+// Site photos and videos stored on this server (backend/media), served at
+// their folder paths (e.g. /common/team.webp).
 app.use(express.static(path.join(__dirname, 'media')));
 
 app.use('/api', routes);

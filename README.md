@@ -1,6 +1,6 @@
 # Shoot At Sight Weddings
 
-Client website built with React, Vite, Express and MongoDB. Photos and direct MP4 videos are hosted on Cloudflare R2.
+Client website built with React, Vite, Express and MongoDB. Everything runs on the client's BigRock VPS: the site, the database, and all photos and videos. No outside storage service is used.
 
 ## Local setup
 
@@ -11,7 +11,7 @@ npm ci
 Copy-Item backend/.env.example backend/.env
 ```
 
-Edit `backend/.env` with the client's MongoDB connection, a unique `JWT_SECRET`, and Cloudflare R2 credentials. Never commit this file. Generate a JWT secret with:
+Edit `backend/.env` with the MongoDB connection and a unique `JWT_SECRET`. Never commit this file. Generate a JWT secret with:
 
 ```powershell
 node -e "console.log(require('node:crypto').randomBytes(48).toString('hex'))"
@@ -35,17 +35,18 @@ Open the URL Vite prints, normally `http://localhost:5173`. Saved frontend chang
 
 MongoDB is required for admin login and saving website configuration. Some public pages have built-in content and a local shoot-data fallback, but this does not replace MongoDB for the CMS.
 
-## Cloudflare video settings
+## Photos and videos
 
-In the admin dashboard's site editor:
+All media is stored on the VPS and served by Express from the same domain:
 
-- **Hero Header:** enter desktop and mobile public Cloudflare R2 MP4 URLs.
-- **Featured Film:** enter a video URL and poster image URL.
-- **Films page:** enter each film's own video and poster URLs. Films without video URLs display “Coming soon”.
+- `backend/media/`: the site's photos and videos, served at their folder paths (e.g. `/common/team.webp`, `/Naveen%20%26%20Kate%204K%20Teaser.mp4`). This folder is not in Git; it lives only on the server, so include it in server backups.
+- `backend/uploads/`: images uploaded through the admin panel, served at `/uploads/<file>.webp`. Also not in Git.
 
-Use complete public HTTPS media URLs, not YouTube IDs or Cloudflare Stream IDs. Upload files to the client's R2 bucket first; these fields reference existing files. R2 access keys remain on the backend. Cloudflare must allow browser access to the public media URLs.
+In the admin dashboard's site editor, video and poster fields take a path on this site (e.g. `/your-film.mp4`) or a complete HTTPS URL. YouTube links and IDs are not accepted, because these fields play MP4 files directly. To add a new film, copy the MP4 into `backend/media/` on the server, then enter its path.
 
-The source currently references an existing public R2 media host. Those references are preserved to keep existing photos and the homepage teaser available; moving Git repositories does not transfer the bucket or its ownership. Configure the client's storage and update the saved URLs when moving those assets.
+- **Hero Header:** desktop and mobile video paths.
+- **Featured Film:** a video path and a poster image path.
+- **Films page:** each film's own video and poster. Films without a video display “Coming soon”.
 
 ## Production
 
@@ -58,13 +59,13 @@ npm run build
 
 The build produces `frontend/dist`, prerenders public routes and generates a sitemap. It needs Chromium (installed by the frontend postinstall script) and access to the API/media used for prerendering. To install Chromium manually, run `npx playwright install chromium` from `frontend`.
 
-Set `NODE_ENV=production`, `PORT`, `MONGO_URI`, `JWT_SECRET`, and the R2 environment variables on the hosting service, then run:
+Set `NODE_ENV=production`, `PORT`, `MONGO_URI` and `JWT_SECRET` in `backend/.env` on the server, then run:
 
 ```powershell
 npm start
 ```
 
-Express serves both the built frontend and `/api`. Configure the client's domain and persistent upload storage if using the local upload fallback. Database records, uploaded media, hosting configuration and secrets are managed separately from Git.
+Express serves the built frontend, `/api`, and the media folders. Pushes to `main` deploy automatically; see [docs/deployment.md](docs/deployment.md). Database records, `backend/media`, `backend/uploads`, hosting configuration and secrets are managed separately from Git.
 
 ## Layout
 

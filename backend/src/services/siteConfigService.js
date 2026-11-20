@@ -122,7 +122,7 @@ const defaultConfigs = [
       subtext: 'Now booking luxury wedding experiences for 2026/27.',
       bgText: 'CONTACT',
       buttonText: 'Start a Conversation',
-      bgImage: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=2070'
+      bgImage: '/shoot-sight-latest-images/KRP_7298.jpg.webp'
     }
   },
   {
@@ -314,16 +314,18 @@ const getSiteConfig = async () => {
   return configMap;
 };
 
-// R2 objects are played through public HTTPS URLs; a YouTube ID cannot be used.
+// Videos and posters are either files on this server ("/video.mp4") or a
+// complete HTTPS URL. YouTube links and IDs cannot be played as MP4s.
 const validateMediaUrl = (value, field) => {
   if (value === undefined || value === '') return;
+  if (/^\/(?!\/)/.test(value)) return;
   try {
     const url = new URL(value);
     if (url.protocol !== 'https:' || /(^|\.)(youtube\.com|youtu\.be|youtube-nocookie\.com)$/.test(url.hostname)) {
       throw new Error('Invalid video host');
     }
   } catch {
-    const error = new Error(`${field} must be a public HTTPS media URL, not a YouTube ID or link.`);
+    const error = new Error(`${field} must be a path on this site (e.g. /video.mp4) or a complete HTTPS media URL, not a YouTube ID or link.`);
     error.statusCode = 400;
     throw error;
   }

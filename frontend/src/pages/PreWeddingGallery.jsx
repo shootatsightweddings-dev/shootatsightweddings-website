@@ -6,7 +6,7 @@ import { API_URL } from "../config";
 import "./PreWeddingGallery.css";
 
 
-/* Handpicked High-Res Pre-Wedding R2 Frames */
+/* Handpicked high-res pre-wedding frames */
 const curatedPreWeddingFrames = [
   {
     url: "/common/KRP_9777.webp",
