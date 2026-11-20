@@ -32,7 +32,7 @@ const Home = () => {
   useSEO({
     title: 'Editorial Wedding Photography & Cinematic Films in Bangalore | Shoot At Sight Weddings',
     description: 'Bangalore wedding photographers shooting editorial, candid and cinematic weddings. 250+ weddings, 15+ cities. See the portfolio and get in touch.',
-    ogImage: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/NAVEEN%20AND%20KATE/SYD08467.webp',
+    ogImage: '/NAVEEN%20AND%20KATE/SYD08467.webp',
     jsonLd: reviewsJsonLd,
   });
 
@@ -52,7 +52,7 @@ const Home = () => {
     subtext: 'Now booking luxury wedding experiences for 2026/27.',
     bgText: 'CONTACT',
     buttonText: 'Start a Conversation',
-    bgImage: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/shoot-sight-latest-images/KRP_7298.jpg.webp'
+    bgImage: '/shoot-sight-latest-images/KRP_7298.jpg.webp'
   };
 
   useEffect(() => {
