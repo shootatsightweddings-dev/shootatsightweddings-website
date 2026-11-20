@@ -82,10 +82,23 @@ jobs:
       - name: Build and release on the VPS
         run: |
           remote_env="APP_DIR=$(printf %q "$APP_DIR") RESTART_CMD=$(printf %q "$RESTART_CMD") DEPLOY_SHA=$GITHUB_SHA"
-          ssh -i ~/.ssh/deploy_key -p "$VPS_PORT" \
-            -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o BatchMode=yes \
-            -o ServerAliveInterval=30 \
-            "$VPS_USER@$VPS_HOST" "$remote_env bash -s" < scripts/deploy.sh
+          # The VPS sometimes drops or times out SSH connections. Exit code 255
+          # means SSH itself failed (not the deploy script), so retry; the
+          # script is safe to run again from the start.
+          for attempt in 1 2 3; do
+            set +e
+            ssh -i ~/.ssh/deploy_key -p "$VPS_PORT" \
+              -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o BatchMode=yes \
+              -o ConnectTimeout=30 -o ServerAliveInterval=30 \
+              "$VPS_USER@$VPS_HOST" "$remote_env bash -s" < scripts/deploy.sh
+            status=$?
+            set -e
+            [ "$status" -ne 255 ] && exit "$status"
+            echo "::warning::SSH connection failed (attempt $attempt of 3); retrying in 30 seconds."
+            sleep 30
+          done
+          echo "::error::Could not connect to the VPS after 3 attempts."
+          exit 255
 
       - name: Check the live site
         run: |
