@@ -34,6 +34,10 @@ const SITE_URL = 'https://www.shootatsightweddings.com';
 const PORT = process.env.PRERENDER_PORT || 5099;
 const BASE_URL = `http://localhost:${PORT}`;
 
+// SEO landing pages: always prerendered; listed in the sitemap only once
+// published ("public": true in landingPageRoutes.json).
+const LANDING = JSON.parse(readFileSync(path.join(__dirname, '../src/data/landingPageRoutes.json'), 'utf8'));
+
 const STATIC_ROUTES = [
   { path: '/', changefreq: 'weekly', priority: '1.0' },
   { path: '/about', changefreq: 'monthly', priority: '0.8' },
@@ -46,6 +50,7 @@ const STATIC_ROUTES = [
   { path: '/faq', changefreq: 'monthly', priority: '0.7' },
   { path: '/contact', changefreq: 'monthly', priority: '0.6' },
   { path: '/blog', changefreq: 'weekly', priority: '0.6' },
+  ...LANDING.routes.map((p) => ({ path: p, changefreq: 'monthly', priority: '0.9', sitemap: LANDING.public === true })),
 ];
 
 // Deliberately excluded from prerendering, the sitemap, and robots.txt:
@@ -217,9 +222,10 @@ async function main() {
     }
 
     if (failures.length) throw new Error(`Prerender failed for: ${failures.join(', ')}`);
-    const sitemapXml = buildSitemap(allRoutes);
+    const sitemapRoutes = allRoutes.filter((route) => route.sitemap !== false);
+    const sitemapXml = buildSitemap(sitemapRoutes);
     writeFileSync(path.join(DIST_DIR, 'sitemap.xml'), sitemapXml, 'utf8');
-    console.log(`[prerender] Wrote sitemap.xml with ${allRoutes.length} URLs.`);
+    console.log(`[prerender] Wrote sitemap.xml with ${sitemapRoutes.length} URLs (${allRoutes.length - sitemapRoutes.length} unlisted).`);
 
     const manifest = allRoutes.map((r) => r.path);
     writeFileSync(path.join(DIST_DIR, 'route-manifest.json'), JSON.stringify(manifest, null, 2), 'utf8');

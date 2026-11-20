@@ -83,6 +83,8 @@ if (process.env.NODE_ENV === 'production') {
   const STATIC_ROUTES = new Set([
     '/', '/films', '/about', '/portfolio', '/portfolio/wedding', '/portfolio/pre-wedding',
     '/blog', '/contact', '/faq', '/services', '/locations',
+    // SEO landing pages (frontend/src/data/landingPageRoutes.json).
+    ...require('../frontend/src/data/landingPageRoutes.json').routes,
   ]);
   const ADMIN_ROUTES = new Set([
     '/admin', '/admin/login', '/admin/dashboard', '/blog/admin-login',

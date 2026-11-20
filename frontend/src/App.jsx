@@ -13,6 +13,8 @@ import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import Contact from './pages/Contact';
 import ContentPages from './pages/ContentPages';
+import LandingPage from './pages/LandingPage';
+import { landingPages } from './data/landingPages';
 import FAQ from './pages/FAQ';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -59,6 +61,11 @@ function App() {
           <Route path="/portfolio/pre-wedding" element={<PreWeddingGallery />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
+
+          {/* SEO landing pages: reachable by direct link; see landingPageRoutes.json */}
+          {landingPages.map(page => (
+            <Route key={page.path} path={page.path} element={<LandingPage page={page} />} />
+          ))}
 
           <Route path="/services" element={<ContentPages kind="service" />} />
           <Route path="/services/:slug" element={<ContentPages kind="service" />} />
