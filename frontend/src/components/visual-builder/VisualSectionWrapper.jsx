@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Edit3, Plus, Trash2, Move, Sparkles } from 'lucide-react';
+import { useState } from 'react';
+import { Edit3, Plus, Trash2, Sparkles } from 'lucide-react';
 import './VisualSectionWrapper.css';
 
 export default function VisualSectionWrapper({ 
@@ -7,11 +7,10 @@ export default function VisualSectionWrapper({
   sectionKey, 
   onEdit, 
   onAdd, 
-  addLabel,
+  addLabel, 
   onDelete, 
   children,
-  badgePosition = 'top-center',
-  accentColor = '#C5A46D'
+  badgePosition = 'top-center'
 }) {
   const [isHovered, setIsHovered] = useState(false);
 

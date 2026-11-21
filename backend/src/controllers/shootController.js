@@ -8,13 +8,10 @@ const { validateSeo } = require('../services/seoFields');
 function galleryDescriptions(value, count, required = false) {
   let descriptions;
   try { descriptions = typeof value === 'string' ? JSON.parse(value) : value; } catch { descriptions = null; }
-  if (!Array.isArray(descriptions)) {
-    descriptions = Array.from({ length: count }, () => '');
+  if (!Array.isArray(descriptions) || descriptions.length !== count || descriptions.some(text => typeof text !== 'string' || (required && !text.trim()))) {
+    const error = new Error('Provide one image description for every gallery photo, in the same order.'); error.statusCode = 400; throw error;
   }
-  while (descriptions.length < count) {
-    descriptions.push('');
-  }
-  return descriptions.slice(0, count).map(text => typeof text === 'string' ? text.trim() : '');
+  return descriptions.map(text => text.trim());
 }
 
 function shootMetadata(body, galleryCount) {

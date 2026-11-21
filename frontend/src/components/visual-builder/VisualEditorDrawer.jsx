@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { X, Save, Upload, Trash2, Plus, Check, AlertCircle, RefreshCw } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { X, Save, Upload, Trash2, Plus, RefreshCw } from 'lucide-react';
 import './VisualEditorDrawer.css';
 
 export default function VisualEditorDrawer({
@@ -18,11 +18,10 @@ export default function VisualEditorDrawer({
   const [uploadingField, setUploadingField] = useState(null);
   const [uploadingVideoField, setUploadingVideoField] = useState(null);
   const [videoProgress, setVideoProgress] = useState(0);
-  const [activeTab, setActiveTab] = useState('content');
 
   useEffect(() => {
     if (initialData) {
-      // Clone deeply
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormData(JSON.parse(JSON.stringify(initialData)));
     }
   }, [initialData, isOpen]);

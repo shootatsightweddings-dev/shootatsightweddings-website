@@ -1,16 +1,11 @@
-import React, { useState } from 'react';
+import { useState, useRef } from 'react';
 import { 
   Camera, 
-  Upload, 
   Plus, 
   Trash2, 
   Edit3, 
   Film, 
-  ExternalLink, 
-  Sparkles, 
-  Check, 
-  ArrowLeft,
-  ArrowRight
+  ArrowLeft
 } from 'lucide-react';
 import VisualSectionWrapper from './VisualSectionWrapper';
 import Hero from '../Hero';
@@ -36,7 +31,7 @@ function DirectImageButton({
   style = {}
 }) {
   const [uploading, setUploading] = useState(false);
-  const inputRef = React.useRef(null);
+  const inputRef = useRef(null);
 
   const handleSelect = async (e) => {
     const file = e.target.files?.[0];
@@ -82,7 +77,7 @@ function DirectVideoButton({
 }) {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
-  const inputRef = React.useRef(null);
+  const inputRef = useRef(null);
 
   const handleSelect = async (e) => {
     const file = e.target.files?.[0];

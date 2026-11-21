@@ -1,17 +1,13 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import * as tus from 'tus-js-client';
 import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../config';
 import { useSiteConfig } from '../context/siteConfigState';
 import useSEO from '../hooks/useSEO';
-import { DEFAULT_VIDEO_URL, DEFAULT_POSTER_URL, DEFAULT_MOBILE_VIDEO_URL } from '../data/videoDefaults';
 import './AdminDashboard.css';
 import VisualAdminBar from '../components/visual-builder/VisualAdminBar';
 import VisualPageViewer from '../components/visual-builder/VisualPageViewer';
 import VisualEditorDrawer from '../components/visual-builder/VisualEditorDrawer';
 import SeoFields from '../components/SeoFields';
-import ShootStoryFields from '../components/ShootStoryFields';
-import ContentPageEditor from '../components/ContentPageEditor';
 import { defaultFaqs } from '../data/defaultFaqs';
 import { defaultPortfolio } from '../data/portfolioDefaults';
 
@@ -25,10 +21,6 @@ const AdminDashboard = () => {
   });
 
   const [blogSeo,setBlogSeo] = useState({});
-  const [shootSeo,setShootSeo] = useState({});
-  const [uploadDescriptions,setUploadDescriptions] = useState({});
-  const [pendingGallery,setPendingGallery] = useState([]);
-  const [pendingGalleryAlt,setPendingGalleryAlt] = useState([]);
   const [activeMode, setActiveMode] = useState('visual-page'); // 'visual-page', 'shoots', 'blogs', 'testimonials'
   const [visualPage, setVisualPage] = useState('home'); // 'home', 'about', 'portfolio', 'films', 'contact', 'faq'
   const [shootSubTab, setShootSubTab] = useState('list');
@@ -113,15 +105,27 @@ const AdminDashboard = () => {
     await handleDrawerSave(sectionKey, currentSection);
   };
 
+  const [toast, setToast] = useState(null);
+  const toastTimerRef = useRef(null);
+  const toastSequenceRef = useRef(0);
+
+  const showToast = useCallback((type, message) => {
+    const text = String(message || '').replace(/^[✅❌]\s*/, '').trim();
+    if (!text) return;
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    setToast({ id: ++toastSequenceRef.current, type, message: text });
+    toastTimerRef.current = setTimeout(() => setToast(null), 5000);
+  }, []);
+
   const handleDirectImageUpload = async (file) => {
     if (!file) return null;
     setEditorSaving(true);
     try {
       const url = await uploadImage(file);
-      setToast({ id: Date.now(), type: 'success', message: 'Image uploaded to Cloudflare R2!' });
+      showToast('success', 'Image uploaded to Cloudflare R2!');
       return url;
     } catch (err) {
-      setToast({ id: Date.now(), type: 'error', message: err.message });
+      showToast('error', err.message);
       throw err;
     } finally {
       setEditorSaving(false);
@@ -131,7 +135,7 @@ const AdminDashboard = () => {
   const handleDirectShootHeroUpload = async (shootId, file) => {
     if (!file) return;
     setEditorSaving(true);
-    setToast({ id: Date.now(), type: 'info', message: 'Uploading cover photo to Cloudflare R2...' });
+    showToast('info', 'Uploading cover photo to Cloudflare R2...');
     try {
       const token = localStorage.getItem('adminToken');
       const fd = new FormData();
@@ -147,9 +151,9 @@ const AdminDashboard = () => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Failed to update cover photo');
       await fetchShoots();
-      setToast({ id: Date.now(), type: 'success', message: 'Cover photo successfully updated!' });
+      showToast('success', 'Cover photo successfully updated!');
     } catch (err) {
-      setToast({ id: Date.now(), type: 'error', message: err.message });
+      showToast('error', err.message);
     } finally {
       setEditorSaving(false);
     }
@@ -172,6 +176,15 @@ const AdminDashboard = () => {
   const [editUploading, setEditUploading] = useState(false);
   const [editMsg, setEditMsgState] = useState('');
 
+  const setSuccess = (message) => { if (message) showToast('success', message); };
+  const setError = (message) => { if (message) showToast('error', message); };
+  const setEditMsg = (message) => {
+    setEditMsgState(message);
+    if (!message || /^(Saving|Uploading|Removing|Updating)/i.test(message)) return;
+    const type = /✅|saved|success|updated|removed|added/i.test(message) ? 'success' : 'error';
+    showToast(type, message);
+  };
+
   // Blog Management State
   const [blogs, setBlogs] = useState([]);
   const [loadingBlogs, setLoadingBlogs] = useState(true);
@@ -183,25 +196,6 @@ const AdminDashboard = () => {
   // UI States
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState('');
-  const [toast, setToast] = useState(null);
-  const toastTimerRef = useRef(null);
-  const toastSequenceRef = useRef(0);
-
-  const showToast = useCallback((type, message) => {
-    const text = String(message || '').replace(/^[✅❌]\s*/, '').trim();
-    if (!text) return;
-    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
-    setToast({ id: ++toastSequenceRef.current, type, message: text });
-    toastTimerRef.current = setTimeout(() => setToast(null), 5000);
-  }, []);
-  const setSuccess = (message) => { if (message) showToast('success', message); };
-  const setError = (message) => { if (message) showToast('error', message); };
-  const setEditMsg = (message) => {
-    setEditMsgState(message);
-    if (!message || /^(Saving|Uploading|Removing|Updating)/i.test(message)) return;
-    const type = /✅|saved|success|updated|removed|added/i.test(message) ? 'success' : 'error';
-    showToast(type, message);
-  };
 
   useEffect(() => () => clearTimeout(toastTimerRef.current), []);
 
@@ -218,16 +212,10 @@ const AdminDashboard = () => {
   const [successModal, setSuccessModal] = useState(null);
 
   // Site Editor State
-  const [editorSubTab, setEditorSubTab] = useState('visual');
   const [siteConfig, setSiteConfig] = useState(null);
-  const [loadingConfig, setLoadingConfig] = useState(false);
   const [editorSaving, setEditorSaving] = useState(false);
-  const [filmUploads, setFilmUploads] = useState({});
-  const [studioPage, setStudioPage] = useState('/');
-
 
   const fetchEditorConfig = async () => {
-    setLoadingConfig(true);
     try {
       const res = await fetch(`${API_URL}/site-config`);
       const data = await res.json();
@@ -254,8 +242,6 @@ const AdminDashboard = () => {
       }
     } catch {
       setError('Could not fetch site configurations.');
-    } finally {
-      setLoadingConfig(false);
     }
   };
 
@@ -301,322 +287,21 @@ const AdminDashboard = () => {
       }
 
       xhr.onload = () => {
-        let res = null;
         try {
-          res = JSON.parse(xhr.responseText);
-        } catch (e) {
-          return reject(new Error(`Server error (${xhr.status || 'unknown'}): ${xhr.statusText || 'Upload failed'}`));
-        }
-        if (xhr.status >= 200 && xhr.status < 300 && res.success) {
-          resolve(res.url);
-        } else {
-          reject(new Error(res.message || `Video upload failed (HTTP ${xhr.status})`));
+          const res = JSON.parse(xhr.responseText);
+          if (xhr.status >= 200 && xhr.status < 300 && res.success) {
+            resolve(res.url);
+          } else {
+            reject(new Error(res.message || `Video upload failed (HTTP ${xhr.status})`));
+          }
+        } catch {
+          reject(new Error(`Server error (${xhr.status || 'unknown'}): ${xhr.statusText || 'Upload failed'}`));
         }
       };
 
       xhr.onerror = () => reject(new Error('Network error during video upload'));
       xhr.send(formData);
     });
-  };
-
-  const handleConfigChange = (sectionKey, field, value) => {
-    setSiteConfig(prev => ({
-      ...prev,
-      [sectionKey]: {
-        ...prev[sectionKey],
-        [field]: value
-      }
-    }));
-  };
-
-  const handleConfigArrayChange = (sectionKey, arrayField, index, field, value) => {
-    setSiteConfig(prev => {
-      const updatedArray = [...prev[sectionKey][arrayField]];
-      updatedArray[index] = {
-        ...updatedArray[index],
-        [field]: value
-      };
-      return {
-        ...prev,
-        [sectionKey]: {
-          ...prev[sectionKey],
-          [arrayField]: updatedArray
-        }
-      };
-    });
-  };
-
-  const saveFilmsList = async (list) => {
-    const token = localStorage.getItem('adminToken');
-    const payload = { ...(siteConfig?.films_page || {}), list };
-    const response = await fetch(`${API_URL}/admin/site-config/films_page`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify(payload),
-    });
-    const data = await response.json();
-    if (!response.ok || !data.success) throw new Error(data.message || 'Could not save the uploaded film.');
-    await refreshConfig();
-  };
-
-  const updateFilm = (index, updates) => {
-    setSiteConfig((previous) => ({
-      ...previous,
-      films_page: {
-        ...previous.films_page,
-        list: previous.films_page.list.map((film, filmIndex) => (
-          filmIndex === index ? { ...film, ...updates } : film
-        )),
-      },
-    }));
-  };
-
-  const toTusMetadata = (file, filmId) => {
-    const encode = (value) => btoa(unescape(encodeURIComponent(value)));
-    return `filename ${encode(file.name)},filetype ${encode(file.type || 'video/mp4')},filmId ${encode(filmId)}`;
-  };
-
-  const pollFilmStatus = async (streamUid, index, attempt = 0) => {
-    if (!streamUid || attempt > 36) return;
-    const token = localStorage.getItem('adminToken');
-    try {
-      const response = await fetch(`${API_URL}/admin/stream/${encodeURIComponent(streamUid)}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await response.json();
-      if (!response.ok || !data.success) throw new Error(data.message || 'Could not check video processing.');
-      const video = data.video;
-      if (video.readyToStream) {
-        const readyFilm = {
-          streamStatus: 'ready',
-          videoUrl: `https://iframe.videodelivery.net/${streamUid}`,
-          posterUrl: video.thumbnail || `https://videodelivery.net/${streamUid}/thumbnails/thumbnail.jpg`,
-        };
-        updateFilm(index, readyFilm);
-        const readyList = (siteConfig?.films_page?.list || []).map((item, itemIndex) => (
-          itemIndex === index ? { ...item, ...readyFilm } : item
-        ));
-        void saveFilmsList(readyList).catch((error) => setError(error.message || 'The processed film details could not be saved.'));
-        setFilmUploads((previous) => ({ ...previous, [index]: { state: 'ready', message: 'Ready to publish' } }));
-        return;
-      }
-      if (video.status?.state === 'error') {
-        setFilmUploads((previous) => ({ ...previous, [index]: { state: 'error', message: video.status?.errorReason || 'Cloudflare could not process this video.' } }));
-        updateFilm(index, { streamStatus: 'error' });
-        return;
-      }
-      setFilmUploads((previous) => ({ ...previous, [index]: { state: 'processing', message: 'Cloudflare is creating playback versions…' } }));
-      window.setTimeout(() => pollFilmStatus(streamUid, index, attempt + 1), 10000);
-    } catch {
-      setFilmUploads((previous) => ({ ...previous, [index]: { state: 'processing', message: 'Upload finished. Processing status will refresh shortly.' } }));
-    }
-  };
-
-  const handleFilmUpload = async (event, index) => {
-    const file = event.target.files?.[0];
-    event.target.value = '';
-    if (!file) return;
-    if (!file.type.startsWith('video/')) {
-      setError('Choose a video file (MP4, MOV, or WebM).');
-      return;
-    }
-    if (file.size > 20 * 1024 * 1024 * 1024) {
-      setError('This file is larger than the 20 GB dashboard limit.');
-      return;
-    }
-
-    const film = siteConfig?.films_page?.list?.[index];
-    const token = localStorage.getItem('adminToken');
-    setFilmUploads((previous) => ({ ...previous, [index]: { state: 'starting', progress: 0, message: 'Preparing secure upload…' } }));
-    try {
-      const createResponse = await fetch(`${API_URL}/admin/stream/tus-upload`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Tus-Resumable': '1.0.0',
-          'Upload-Length': String(file.size),
-          'Upload-Metadata': toTusMetadata(file, film?.id || `film-${index + 1}`),
-        },
-      });
-      if (!createResponse.ok) {
-        const data = await createResponse.json().catch(() => ({}));
-        throw new Error(data.message || 'Cloudflare Stream could not prepare this upload.');
-      }
-      const uploadUrl = createResponse.headers.get('Location');
-      const streamUid = createResponse.headers.get('Stream-Media-Id');
-      if (!uploadUrl || !streamUid) throw new Error('Cloudflare Stream did not return a secure upload link.');
-
-      const upload = new tus.Upload(file, {
-        uploadUrl,
-        chunkSize: 10 * 1024 * 1024,
-        retryDelays: [0, 1000, 3000, 5000, 10000],
-        metadata: { filename: file.name, filetype: file.type || 'video/mp4' },
-        onError: (error) => {
-          setFilmUploads((previous) => ({ ...previous, [index]: { state: 'error', message: error.message || 'Video upload failed.' } }));
-        },
-        onProgress: (uploaded, total) => {
-          const progress = Math.round((uploaded / total) * 100);
-          setFilmUploads((previous) => ({ ...previous, [index]: { state: 'uploading', progress, message: `Uploading ${progress}%` } }));
-        },
-        onSuccess: () => {
-          const uploadedFilm = {
-            streamUid,
-            streamStatus: 'processing',
-            videoUrl: `https://iframe.videodelivery.net/${streamUid}`,
-            // An uploaded film remains private until the studio publishes it.
-            published: false,
-            uploadDate: new Date().toISOString().slice(0, 10),
-          };
-          updateFilm(index, uploadedFilm);
-          const updatedList = (siteConfig?.films_page?.list || []).map((item, itemIndex) => (
-            itemIndex === index ? { ...item, ...uploadedFilm } : item
-          ));
-          void saveFilmsList(updatedList).catch((error) => setError(error.message || 'The film uploaded, but its website record could not be saved.'));
-          setFilmUploads((previous) => ({ ...previous, [index]: { state: 'processing', message: 'Upload complete — Cloudflare is processing the film…' } }));
-          pollFilmStatus(streamUid, index);
-          setSuccess('Film upload completed. Save Films Page Changes to publish it once processing is ready.');
-        },
-      });
-      upload.start();
-    } catch (error) {
-      setFilmUploads((previous) => ({ ...previous, [index]: { state: 'error', message: error.message || 'Video upload could not start.' } }));
-      setError(error.message || 'Video upload could not start.');
-    }
-  };
-
-  const addFilm = () => {
-    setSiteConfig((previous) => {
-      const list = previous.films_page?.list || [];
-      const number = String(list.length + 1).padStart(2, '0');
-      return {
-        ...previous,
-        films_page: {
-          ...previous.films_page,
-          list: [...list, { id: `film-${Date.now()}`, num: number, label: 'NEW WEDDING FILM', location: '', videoUrl: '', posterUrl: '', streamUid: '', streamStatus: 'draft', published: false, uploadDate: new Date().toISOString().slice(0, 10) }],
-        },
-      };
-    });
-  };
-
-  const updateFaqs = (updater) => {
-    setSiteConfig((previous) => ({
-      ...previous,
-      faq_page: { ...previous.faq_page, faqs: updater(previous.faq_page?.faqs || []) },
-    }));
-  };
-
-  const handlePortfolioPanelChange = (collectionIndex, panelIndex, field, value) => {
-    setSiteConfig((previous) => ({
-      ...previous,
-      portfolio_page: {
-        ...previous.portfolio_page,
-        collections: previous.portfolio_page.collections.map((collection, index) => index === collectionIndex
-          ? { ...collection, panels: collection.panels.map((panel, itemIndex) => itemIndex === panelIndex ? { ...panel, [field]: value } : panel) }
-          : collection),
-      },
-    }));
-  };
-
-  const handleConfigImageUpload = async (e, sectionKey, field, index = null, arrayField = null) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const descriptionKey=JSON.stringify(index===null?[sectionKey,field]:[sectionKey,field,index,arrayField]);
-    const altText=(uploadDescriptions[descriptionKey] || '').trim();
-    if(!altText){setError('Describe the image before uploading.');e.target.value='';return;}
-
-    setUploading(true);
-    setUploadProgress(`Uploading image for ${field}...`);
-    try {
-      const url = await uploadImage(file, altText);
-      if (index !== null && arrayField) {
-        handleConfigArrayChange(sectionKey, arrayField, index, field, url);
-        handleConfigArrayChange(sectionKey, arrayField, index, `${field}Alt`, altText);
-      } else {
-        handleConfigChange(sectionKey, field, url);
-        handleConfigChange(sectionKey, `${field}Alt`, altText);
-      }
-      setSuccess('Image uploaded successfully!');
-      setTimeout(() => setSuccess(''), 3000);
-    } catch (err) {
-      setError(err.message || 'Image upload failed.');
-      setTimeout(() => setError(''), 4000);
-    } finally {
-      setUploading(false);
-      setUploadProgress('');
-    }
-  };
-
-  const saveSectionConfig = async (sectionKey) => {
-    setEditorSaving(true);
-    const token = localStorage.getItem('adminToken');
-    try {
-      const section = siteConfig[sectionKey];
-      const payload = sectionKey === 'portfolio_page'
-        ? {
-            heading: section.heading,
-            featuredTitle: section.featuredTitle,
-            heroImages: section.heroImagesText.split(/\r?\n/).map((url) => url.trim()).filter(Boolean),
-            featuredImages: section.featuredImagesText.split(/\r?\n/).map((url) => url.trim()).filter(Boolean),
-            collections: section.collections,
-          }
-        : section;
-      if (sectionKey === 'portfolio_page' && (payload.heroImages.length < 5 || payload.featuredImages.length < 1)) {
-        setError('Keep at least 5 carousel image links and 1 featured image link so the portfolio remains complete.');
-        return;
-      }
-      if (sectionKey === 'portfolio_page') {
-        if (payload.collections.length !== 2 || payload.collections.some((collection) => !collection.title?.trim() || !collection.tagline?.trim() || collection.panels?.length !== 2 || collection.panels.some((panel) => !panel.label?.trim() || !panel.to?.startsWith('/') || !panel.img?.trim()))) {
-          setError('Keep both collection sections complete, including their two cards, titles, image links, and page destinations.');
-          return;
-        }
-        const urls = [...payload.heroImages, ...payload.featuredImages, ...payload.collections.flatMap((collection) => collection.panels.map((panel) => panel.img))];
-        if (urls.some((value) => {
-          try { return new URL(value).protocol !== 'https:'; } catch { return true; }
-        })) {
-          setError('Portfolio image links must be complete HTTPS URLs.');
-          return;
-        }
-      }
-      if (sectionKey === 'faq_page' && (section.faqs || []).some((category) =>
-        !category.category?.trim() || !(category.items || []).length || category.items.some((item) => !item.q?.trim() || !item.a?.trim())
-      )) {
-        setError('Each FAQ category needs a name, and each question needs both a question and an answer.');
-        return;
-      }
-      const res = await fetch(`${API_URL}/admin/site-config/${sectionKey}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(payload)
-      });
-      const data = await res.json();
-      if (res.ok && data.success) {
-        await refreshConfig();
-        const sectionNames = {
-          hero: 'Home page hero',
-          about_philosophy: 'Home page story section',
-          services: 'Home page services section',
-          experience: 'Home page experience section',
-          featured_film: 'Featured film section',
-          cta: 'Home page contact banner',
-          films_page: 'Films page',
-          about_page: 'About page',
-          contact_page: 'Contact page',
-          faq_page: 'FAQ page',
-          portfolio_page: 'Portfolio page',
-        };
-        setSuccess(`${sectionNames[sectionKey] || 'Website section'} saved successfully.`);
-        setTimeout(() => setSuccess(''), 3000);
-      } else {
-        setError(data.message || 'Failed to save section.');
-      }
-    } catch {
-      setError('Connection to server failed.');
-    } finally {
-      setEditorSaving(false);
-    }
   };
 
   const fetchTestimonials = () => fetch(`${API_URL}/testimonials`)
@@ -667,6 +352,7 @@ const AdminDashboard = () => {
     fetchBlogs();
     fetchTestimonials();
     fetchEditorConfig();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate]);
 
   const handleLogout = () => {
@@ -704,7 +390,6 @@ const AdminDashboard = () => {
     }
     setError('');
     setGallery(files);
-    setShootSeo(previous=>({...previous,galleryAlt:[]}));
   };
 
   const handleDelete = (shootId, shootTitle) => {
@@ -740,7 +425,6 @@ const AdminDashboard = () => {
   // ── Gallery Edit Handlers ────────────────────────────────────────────────
   const openEditPanel = (shoot) => {
     setEditingShoot({ ...shoot, gallery: [...(shoot.gallery || [])] });
-    setPendingGallery([]); setPendingGalleryAlt([]);
     setEditMsg('');
   };
 
@@ -808,34 +492,6 @@ const AdminDashboard = () => {
     } finally {
       setEditUploading(false);
     }
-  };
-
-  const uploadPendingGallery = async () => {
-    const files = pendingGallery;
-    if (!files.length) return;
-    setEditUploading(true);
-    setEditMsg('Uploading new images...');
-    const token = localStorage.getItem('adminToken');
-    const fd = new FormData();
-    files.forEach(f => fd.append('gallery', f));
-    fd.append('galleryAlt',JSON.stringify(files.map((_, index) => pendingGalleryAlt[index]?.trim() || '')));
-    try {
-      const res = await fetch(`${API_URL}/shoots/${editingShoot._id}/gallery`, {
-        method: 'PATCH',
-        headers: { 'Authorization': `Bearer ${token}` },
-        body: fd,
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setEditingShoot(prev => ({ ...prev, gallery: data.gallery, galleryAlt:data.galleryAlt }));
-        setShoots(prev => prev.map(s => s._id === editingShoot._id ? { ...s, gallery: data.gallery } : s));
-        setEditMsg(`✅ ${files.length} image(s) added successfully!`);
-        setPendingGallery([]);setPendingGalleryAlt([]);
-      } else {
-        setEditMsg(`❌ ${data.message || 'Upload failed'}`);
-      }
-    } catch { setEditMsg('❌ Connection error'); }
-    finally { setEditUploading(false); }
   };
 
   const handleRemoveGalleryImage = (imageUrl) => {
@@ -1084,7 +740,7 @@ const AdminDashboard = () => {
       setLocation('');
       setDate('');
       setDesc('');
-      setHeroImage(null); setShootSeo({});
+      setHeroImage(null);
       setGallery([]);
 
       // Clear file inputs
@@ -1333,7 +989,7 @@ const AdminDashboard = () => {
             ) : shoots.length === 0 ? (
               <div className="dash-empty-state">
                 <p>No shoots found in database. Create your first portfolio story!</p>
-                <button onClick={() => setActiveTab('create')} className="btn-premium-action">Publish First Story</button>
+                <button onClick={() => setShootSubTab('create')} className="btn-premium-action">Publish First Story</button>
               </div>
             ) : (
               <div className="admin-shoots-grid">
