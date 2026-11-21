@@ -39,11 +39,11 @@ app.use(helmet({
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'", "'unsafe-inline'", 'https://www.googletagmanager.com', 'https://www.clarity.ms'],
       styleSrc: ["'self'", "'unsafe-inline'"],
-      imgSrc: ["'self'", 'data:', 'https://img.youtube.com', 'https://www.googletagmanager.com', 'https://www.google.com'],
-      mediaSrc: ["'self'"],
+      imgSrc: ["'self'", 'data:', 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev', 'https://img.youtube.com', 'https://www.googletagmanager.com', 'https://www.google.com', 'https://videodelivery.net', 'https://*.videodelivery.net'],
+      mediaSrc: ["'self'", 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev', 'https://videodelivery.net', 'https://*.videodelivery.net'],
       fontSrc: ["'self'", 'data:'],
-      frameSrc: ['https://www.youtube.com', 'https://www.youtube-nocookie.com'],
-      connectSrc: ["'self'", 'https://www.google-analytics.com', 'https://*.google-analytics.com', 'https://www.googletagmanager.com', 'https://www.clarity.ms', 'https://*.clarity.ms'],
+      frameSrc: ['https://www.youtube.com', 'https://www.youtube-nocookie.com', 'https://iframe.videodelivery.net'],
+      connectSrc: ["'self'", 'https://www.google-analytics.com', 'https://*.google-analytics.com', 'https://www.googletagmanager.com', 'https://www.clarity.ms', 'https://*.clarity.ms', 'https://upload.videodelivery.net'],
       objectSrc: ["'none'"],
       baseUri: ["'self'"],
     },
@@ -60,6 +60,10 @@ app.use((req,res,next) => {
 });
 
 app.use(cors());
+app.use((req, res, next) => {
+  console.log(`[REQ] ${req.method} ${req.url}`);
+  next();
+});
 app.use(express.json());
 
 // Images uploaded through the admin panel (backend/uploads).

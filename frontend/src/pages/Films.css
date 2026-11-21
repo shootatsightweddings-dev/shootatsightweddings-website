@@ -187,7 +187,8 @@
   background: #000;
 }
 
-.film-modal-video video {
+.film-modal-video video,
+.film-modal-video iframe {
   position: absolute;
   inset: 0;
   width: 100%;

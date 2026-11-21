@@ -1,0 +1,155 @@
+/* Visual Page Viewer Canvas */
+.vpv-canvas-wrapper {
+  margin-top: 60px; /* offset for visual-admin-bar */
+  background: #050505;
+  min-height: calc(100vh - 60px);
+  width: 100%;
+}
+
+.vpv-page-container {
+  width: 100%;
+}
+
+.vpv-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  gap: 16px;
+  color: #C5A46D;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+}
+
+.vpv-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(197, 164, 109, 0.2);
+  border-top-color: #C5A46D;
+  border-radius: 50%;
+  animation: vpv-spin 0.8s linear infinite;
+}
+
+@keyframes vpv-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Ensure smooth view inside visual builder */
+.home-page-visual,
+.about-page-visual,
+.films-page-visual,
+.portfolio-page-visual,
+.wedding-gallery-visual,
+.pre-wedding-gallery-visual,
+.contact-page-visual,
+.faq-page-visual {
+  position: relative;
+}
+
+/* ── Direct Image Uploader Pill ── */
+.vpv-direct-uploader {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(10, 10, 10, 0.88);
+  border: 1px solid #C5A46D;
+  color: #FAF9F6;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+.vpv-direct-uploader:hover {
+  background: #C5A46D;
+  color: #050505;
+  box-shadow: 0 6px 20px rgba(197, 164, 109, 0.4);
+  transform: translateY(-1px);
+}
+
+/* ── Floating Overlays on Cards ── */
+.vpv-card-action-overlay {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 10;
+  opacity: 0.9;
+  transition: opacity 0.2s;
+}
+
+.ptf-hero-card:hover .vpv-card-action-overlay,
+.ptf-featured-cell:hover .vpv-card-action-overlay {
+  opacity: 1;
+}
+
+.vpv-btn-del-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(231, 76, 60, 0.9);
+  color: #fff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.vpv-btn-del-icon:hover {
+  transform: scale(1.1);
+  background: #c0392b;
+}
+
+/* ── Collection Panel Covers (Wedding & Pre-Wedding) ── */
+.vpv-panel-cover-controls {
+  position: absolute;
+  bottom: 24px;
+  left: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  z-index: 10;
+}
+
+.vpv-btn-jump {
+  background: rgba(255, 255, 255, 0.12);
+  color: #FAF9F6;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(6px);
+  padding: 6px 16px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.05em;
+}
+
+.vpv-btn-jump:hover {
+  background: #FAF9F6;
+  color: #050505;
+}
+
+/* ── Wedding / Pre-Wedding Visual Couple Cards ── */
+.admin-visual-couple-card {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s;
+}
+
+.admin-visual-couple-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+  border-color: rgba(197, 164, 109, 0.35) !important;
+}

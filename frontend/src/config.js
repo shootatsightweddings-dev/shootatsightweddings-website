@@ -7,5 +7,5 @@
 // there regardless of hostname or port.
 export const API_URL = import.meta.env.VITE_API_URL ||
   (import.meta.env.DEV
-    ? 'http://localhost:5000/api'
+    ? 'http://localhost:5001/api'
     : `${window.location.origin}/api`);

@@ -1,0 +1,459 @@
+/* Visual Editor Drawer - WordPress / Elementor Style Slide-out Edit Panel */
+.ved-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 100000;
+  display: flex;
+  justify-content: flex-end;
+  animation: ved-fade-in 0.2s ease-out;
+}
+
+@keyframes ved-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.ved-drawer {
+  width: 540px;
+  max-width: 95vw;
+  height: 100vh;
+  background: #14120E;
+  border-left: 1px solid rgba(197, 164, 109, 0.35);
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  animation: ved-slide-in 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  color: #FAF9F6;
+  font-family: 'Inter', -apple-system, sans-serif;
+}
+
+@keyframes ved-slide-in {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+/* Header */
+.ved-header {
+  padding: 20px 24px;
+  background: #1A1713;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.ved-badge {
+  display: inline-block;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: #C5A46D;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.ved-title {
+  font-size: 18px;
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  color: #FFFFFF;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.ved-subtitle {
+  font-size: 12px;
+  color: #A39E93;
+  margin: 4px 0 0 0;
+}
+
+.ved-close-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #D6D2C8;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.ved-close-btn:hover {
+  background: rgba(231, 76, 60, 0.2);
+  border-color: #e74c3c;
+  color: #FFFFFF;
+}
+
+/* Body */
+.ved-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.ved-fields-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+/* Form Controls */
+.ved-group-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.ved-section-divider {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #C5A46D;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(197, 164, 109, 0.25);
+  padding-bottom: 6px;
+  margin: 16px 0 4px 0;
+}
+
+.ved-row {
+  display: flex;
+  gap: 12px;
+}
+
+.ved-row > .ved-group {
+  flex: 1;
+}
+
+.ved-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ved-group label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #C4BFB5;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.ved-group input[type="text"],
+.ved-group input[type="url"],
+.ved-group input[type="email"],
+.ved-group select,
+.ved-group textarea {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #FAF9F6;
+  font-size: 13px;
+  font-family: inherit;
+  padding: 10px 14px;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+  outline: none;
+  width: 100%;
+}
+
+.ved-group input:focus,
+.ved-group textarea:focus,
+.ved-group select:focus {
+  border-color: #C5A46D;
+  box-shadow: 0 0 0 1px #C5A46D;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.ved-group textarea {
+  resize: vertical;
+  line-height: 1.5;
+}
+
+/* Image Picker */
+.ved-image-picker {
+  display: flex;
+  gap: 8px;
+}
+
+.ved-image-picker input {
+  flex: 1;
+}
+
+.ved-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(197, 164, 109, 0.18);
+  border: 1px solid #C5A46D;
+  color: #FAF9F6;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 0 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.ved-upload-btn:hover {
+  background: #C5A46D;
+  color: #14120E;
+}
+
+.ved-preview-box {
+  margin-top: 8px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  max-height: 120px;
+  background: #000;
+}
+
+.ved-preview-box img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  display: block;
+}
+
+/* List / Repeatable Cards (Services, Phases, Films, FAQs) */
+.ved-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 10px;
+  margin-top: 10px;
+}
+
+.ved-list-title {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #C5A46D;
+  text-transform: uppercase;
+}
+
+.ved-btn-add-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #C5A46D;
+  color: #14120E;
+  border: none;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 99px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ved-btn-add-item:hover {
+  background: #E0C79B;
+  box-shadow: 0 2px 8px rgba(197, 164, 109, 0.4);
+}
+
+.ved-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.ved-card-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+}
+
+.ved-card-item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: 8px;
+}
+
+.ved-card-num {
+  font-size: 12px;
+  font-weight: 700;
+  color: #C5A46D;
+}
+
+.ved-card-delete-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(231, 76, 60, 0.12);
+  border: 1px solid rgba(231, 76, 60, 0.25);
+  color: #ff7675;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ved-card-delete-btn:hover {
+  background: #e74c3c;
+  color: #FFFFFF;
+}
+
+/* FAQ Builder Styles */
+.ved-faq-category-block {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(197, 164, 109, 0.2);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.ved-faq-cat-top {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ved-cat-title-input {
+  flex: 1;
+  background: transparent !important;
+  border: none !important;
+  color: #C5A46D !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+  padding: 0 !important;
+}
+
+.ved-cat-title-input:focus {
+  box-shadow: none !important;
+  border-bottom: 1px solid #C5A46D !important;
+}
+
+.ved-faq-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ved-faq-item {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ved-faq-item-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ved-faq-item-num {
+  font-size: 11px;
+  font-weight: 700;
+  color: #A39E93;
+}
+
+.ved-item-delete-btn {
+  background: transparent;
+  border: none;
+  color: #ff7675;
+  cursor: pointer;
+  padding: 2px;
+}
+
+.ved-btn-add-sub {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: transparent;
+  border: 1px dashed rgba(197, 164, 109, 0.4);
+  color: #C5A46D;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 6px;
+  justify-content: center;
+}
+
+.ved-btn-add-sub:hover {
+  background: rgba(197, 164, 109, 0.1);
+  border-color: #C5A46D;
+}
+
+/* Footer Actions */
+.ved-footer {
+  padding: 16px 24px;
+  background: #1A1713;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.ved-btn-cancel {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #D6D2C8;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 9px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ved-btn-cancel:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #FFFFFF;
+}
+
+.ved-btn-save {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #C5A46D;
+  color: #14120E;
+  border: none;
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 9px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  box-shadow: 0 4px 14px rgba(197, 164, 109, 0.35);
+}
+
+.ved-btn-save:hover:not(:disabled) {
+  background: #E0C79B;
+  box-shadow: 0 4px 18px rgba(197, 164, 109, 0.5);
+}
+
+.ved-btn-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

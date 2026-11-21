@@ -1,0 +1,131 @@
+/* Visual Section Wrapper - WordPress / Elementor Style Section Outlines */
+.visual-section-wrapper {
+  position: relative;
+  transition: all 0.2s ease;
+  outline: 2px dashed transparent;
+  outline-offset: -2px;
+}
+
+.visual-section-wrapper:hover,
+.visual-section-wrapper.hovered {
+  outline: 2px dashed #C5A46D !important;
+  outline-offset: -2px;
+  cursor: default;
+}
+
+/* Floating WordPress / Elementor Badge */
+.vsw-controls {
+  position: absolute;
+  z-index: 999;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.visual-section-wrapper:hover .vsw-controls,
+.visual-section-wrapper.hovered .vsw-controls {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.vsw-controls.top-center {
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+}
+
+.visual-section-wrapper:hover .vsw-controls.top-center,
+.visual-section-wrapper.hovered .vsw-controls.top-center {
+  transform: translateX(-50%) translateY(0);
+}
+
+.vsw-controls.top-right {
+  top: 14px;
+  right: 24px;
+}
+
+.vsw-controls.top-left {
+  top: 14px;
+  left: 24px;
+}
+
+.vsw-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(18, 16, 13, 0.96);
+  border: 1px solid #C5A46D;
+  padding: 4px 6px 4px 10px;
+  border-radius: 99px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 12px rgba(197, 164, 109, 0.25);
+  backdrop-filter: blur(8px);
+}
+
+.vsw-pill-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #FAF9F6;
+  text-transform: uppercase;
+  margin-right: 6px;
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+  padding-right: 10px;
+}
+
+.vsw-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: transparent;
+  border: none;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 99px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  line-height: 1;
+}
+
+.vsw-btn-edit {
+  background: #C5A46D;
+  color: #14120E;
+}
+
+.vsw-btn-edit:hover {
+  background: #E0C79B;
+  box-shadow: 0 2px 8px rgba(197, 164, 109, 0.4);
+}
+
+.vsw-btn-add {
+  background: rgba(255, 255, 255, 0.08);
+  color: #FAF9F6;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.vsw-btn-add:hover {
+  background: rgba(255, 255, 255, 0.16);
+  color: #FFFFFF;
+}
+
+.vsw-btn-delete {
+  background: rgba(231, 76, 60, 0.15);
+  color: #ff7675;
+  border: 1px solid rgba(231, 76, 60, 0.3);
+  padding: 5px 8px;
+}
+
+.vsw-btn-delete:hover {
+  background: #e74c3c;
+  color: #FFFFFF;
+}
+
+.vsw-content {
+  position: relative;
+  width: 100%;
+}

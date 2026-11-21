@@ -8,10 +8,13 @@ const { validateSeo } = require('../services/seoFields');
 function galleryDescriptions(value, count, required = false) {
   let descriptions;
   try { descriptions = typeof value === 'string' ? JSON.parse(value) : value; } catch { descriptions = null; }
-  if (!Array.isArray(descriptions) || descriptions.length !== count || descriptions.some(text => typeof text !== 'string' || (required && !text.trim()))) {
-    const error = new Error('Provide one image description for every gallery photo, in the same order.'); error.statusCode = 400; throw error;
+  if (!Array.isArray(descriptions)) {
+    descriptions = Array.from({ length: count }, () => '');
   }
-  return descriptions.map(text => text.trim());
+  while (descriptions.length < count) {
+    descriptions.push('');
+  }
+  return descriptions.slice(0, count).map(text => typeof text === 'string' ? text.trim() : '');
 }
 
 function shootMetadata(body, galleryCount) {
@@ -147,7 +150,8 @@ const createShoot = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Please upload a Hero Cover Image.' });
     }
 
-    if (!req.body.heroImageAlt?.trim()) return res.status(400).json({success:false,message:'Describe the hero image before uploading.'});
+    const heroImageAlt = String(req.body.heroImageAlt || '').trim() || `${title} Cover Photo`;
+    req.body.heroImageAlt = heroImageAlt;
     const uploadCount = (req.files.gallery || []).length;
     const metadata = shootMetadata(req.body, uploadCount);
     metadata.galleryAlt = galleryDescriptions(req.body.galleryAlt || '[]', uploadCount);
@@ -406,8 +410,7 @@ async function updateHeroImage(req, res, next) {
     const heroFile = req.files?.['heroImage']?.[0];
     if (!heroFile) return res.status(400).json({ success: false, message: 'No hero image provided' });
 
-    const heroImageAlt = String(req.body.heroImageAlt || '').trim();
-    if (!heroImageAlt) return res.status(400).json({success:false,message:'Describe the new cover image.'});
+    const heroImageAlt = String(req.body.heroImageAlt || '').trim() || `${found.shoot.title || 'Wedding Shoot'} Cover Photo`;
     const oldHero = found.shoot.heroImage;
     const filename = `${uuidv4()}.webp`;
     const heroImageUrl = await processAndStoreImage(heroFile.buffer, filename, req);
@@ -425,7 +428,14 @@ async function updateShootMetadata(req,res,next) {
     const found = await findShoot(req.params.id);
     if (!found) return res.status(404).json({success:false,message:'Shoot not found'});
     const metadata = shootMetadata(req.body,(found.shoot.gallery || []).length);
-    const updated = await persistShoot(found,metadata);
+    const updatable = { ...metadata };
+    if (req.body.title) updatable.title = String(req.body.title).trim();
+    if (req.body.category) updatable.category = String(req.body.category).trim();
+    if (req.body.location) updatable.location = String(req.body.location).trim();
+    if (req.body.date) updatable.date = String(req.body.date).trim();
+    if (req.body.desc !== undefined) updatable.desc = String(req.body.desc).trim();
+
+    const updated = await persistShoot(found,updatable);
     res.json({success:true,data:updated});
   } catch(error) {next(error);}
 }

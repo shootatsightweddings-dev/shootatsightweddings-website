@@ -19,15 +19,16 @@ const Films = () => {
     list: DEFAULT_FILMS
   };
 
-  const films = filmsContent.list || [];
-  const videosJsonLd = films.filter((film) => film.videoUrl && film.posterUrl && film.uploadDate).map((film) => ({
+  const films = (filmsContent.list || []).filter((film) => film.published !== false);
+  const canPlay = (film) => Boolean(film.streamUid || film.videoUrl);
+  const videosJsonLd = films.filter((film) => canPlay(film) && film.posterUrl && film.uploadDate).map((film) => ({
     '@context': 'https://schema.org',
     '@type': 'VideoObject',
     name: film.videoTitle || film.label,
     description: `${film.videoTitle || film.label} — a wedding film by Shoot At Sight Weddings, ${film.location}.`,
     thumbnailUrl: film.posterUrl,
     uploadDate: film.uploadDate,
-    contentUrl: film.videoUrl,
+    contentUrl: film.streamUid ? `https://videodelivery.net/${film.streamUid}/manifest/video.m3u8` : film.videoUrl,
     publisher: { '@type': 'Organization', name: 'Shoot At Sight Weddings' },
   }));
 
@@ -55,7 +56,7 @@ const Films = () => {
   }, [activeFilm]);
 
   const openFilm = (film) => {
-    if (!film.videoUrl) return;
+    if (!canPlay(film)) return;
     setActiveFilm(film);
   };
 
@@ -82,9 +83,9 @@ const Films = () => {
             <div
               key={film.id || film.num}
               className="film-card"
-              role={film.videoUrl ? 'button' : undefined}
-              tabIndex={film.videoUrl ? 0 : undefined}
-              aria-label={film.videoUrl ? `Play ${film.label}` : undefined}
+              role={canPlay(film) ? 'button' : undefined}
+              tabIndex={canPlay(film) ? 0 : undefined}
+              aria-label={canPlay(film) ? `Play ${film.label}` : undefined}
               onKeyDown={(event) => {
                 if (event.key === 'Enter' || event.key === ' ') {
                   event.preventDefault();
@@ -97,9 +98,9 @@ const Films = () => {
                 {film.posterUrl ? (
                   <img src={film.posterUrl} alt={film.label} loading="lazy" />
                 ) : (
-                  <div className="film-card-placeholder">{film.videoUrl ? film.label : 'Coming soon'}</div>
+                  <div className="film-card-placeholder">{canPlay(film) ? film.label : 'Coming soon'}</div>
                 )}
-                {film.videoUrl && <div className="film-card-overlay">
+                {canPlay(film) && <div className="film-card-overlay">
                   <div className="film-play-btn">
                     <svg viewBox="0 0 24 24" fill="currentColor">
                       <path d="M8 5v14l11-7z" />
@@ -129,16 +130,26 @@ const Films = () => {
               <span className="film-modal-title">{activeFilm.label} // {activeFilm.location}</span>
             </div>
             <div className="film-modal-video">
-              <video
-                key={activeFilm.videoUrl}
-                src={activeFilm.videoUrl}
-                poster={activeFilm.posterUrl || undefined}
-                autoPlay
-                controls
-                playsInline
-                preload="metadata"
-                aria-label={activeFilm.label}
-              />
+              {activeFilm.streamUid ? (
+                <iframe
+                  key={activeFilm.streamUid}
+                  src={`https://iframe.videodelivery.net/${activeFilm.streamUid}?autoplay=true`}
+                  title={activeFilm.label}
+                  allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : (
+                <video
+                  key={activeFilm.videoUrl}
+                  src={activeFilm.videoUrl}
+                  poster={activeFilm.posterUrl || undefined}
+                  autoPlay
+                  controls
+                  playsInline
+                  preload="metadata"
+                  aria-label={activeFilm.label}
+                />
+              )}
             </div>
           </div>
         </div>
