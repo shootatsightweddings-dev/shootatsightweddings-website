@@ -22,10 +22,17 @@ const PARTIAL_DIR = path.join(VIDEO_DIR, '.partial');
 const CHUNK_BYTES = 16 * 1024 * 1024; // 16 MB per piece
 const MAX_VIDEO_BYTES = 10 * 1024 * 1024 * 1024; // 10 GB per video
 const STALE_MS = 24 * 60 * 60 * 1000;
+const SPARE_BYTES = 2 * 1024 * 1024 * 1024; // always leave 2 GB free on the server
 const TYPES = { 'video/mp4': '.mp4', 'video/webm': '.webm', 'video/quicktime': '.mov' };
+// Some computers (e.g. Windows without QuickTime) send no type for .mov files.
+const EXTENSIONS = { '.mp4': '.mp4', '.m4v': '.mp4', '.webm': '.webm', '.mov': '.mov' };
 const ID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 
 const busy = new Set(); // uploads currently receiving a piece
+
+let freeSpace = (dir) => {
+  try { const s = fs.statfsSync(dir); return s.bavail * s.bsize; } catch { return Infinity; }
+};
 
 const httpError = (status, message, extra = {}) => Object.assign(new Error(message), { statusCode: status, ...extra });
 const metaPath = (id) => path.join(PARTIAL_DIR, `${id}.json`);
@@ -62,13 +69,17 @@ const cleanupStale = (now = Date.now()) => {
 };
 
 const start = ({ filename, size, type }) => {
-  const ext = TYPES[type];
+  const ext = TYPES[type] || EXTENSIONS[path.extname(String(filename || '')).toLowerCase()];
   if (!ext) throw httpError(400, 'Only MP4, WebM or MOV videos can be uploaded.');
   const bytes = Number(size);
   if (!Number.isSafeInteger(bytes) || bytes <= 0) throw httpError(400, 'A valid file size is required.');
   if (bytes > MAX_VIDEO_BYTES) throw httpError(413, 'Videos can be up to 10 GB.');
   fs.mkdirSync(PARTIAL_DIR, { recursive: true });
   cleanupStale();
+  // Room for the upload plus its web-optimised copy, with space to spare.
+  if (freeSpace(PARTIAL_DIR) < bytes * 2 + SPARE_BYTES) {
+    throw httpError(507, 'The server does not have enough free disk space for this video. Please contact the website team.');
+  }
   const id = uuidv4();
   const now = new Date().toISOString();
   fs.writeFileSync(dataPath(id), '');
@@ -78,12 +89,14 @@ const start = ({ filename, size, type }) => {
 
 const status = (id) => {
   const meta = readMeta(id);
+  if (meta.done) return { id, size: meta.size, received: meta.size, chunkBytes: CHUNK_BYTES, done: true, result: meta.result };
   return { id, size: meta.size, received: meta.received, chunkBytes: CHUNK_BYTES };
 };
 
 // Streams one piece from the request straight onto disk at its offset.
 const receiveChunk = async (id, offset, req) => {
   const meta = readMeta(id);
+  if (meta.done) throw httpError(409, 'This upload is already finished.', { received: meta.size });
   const at = Number(offset);
   const length = Number(req.headers['content-length']);
   if (!Number.isSafeInteger(at) || at !== meta.received) {
@@ -107,6 +120,7 @@ const receiveChunk = async (id, offset, req) => {
         if (count > length) fail(httpError(400, 'Piece is larger than declared.'));
       });
       req.on('aborted', () => fail(httpError(400, 'Connection dropped during this piece.')));
+      req.on('close', () => { if (!req.complete) fail(httpError(400, 'Connection dropped during this piece.')); });
       req.on('error', fail);
       out.on('error', fail);
       out.on('finish', () => { if (!failed) resolve(count); });
@@ -123,20 +137,25 @@ const receiveChunk = async (id, offset, req) => {
 };
 
 // All pieces are in: move the file into place and queue it for optimisation.
+// Safe to call again (e.g. if the reply was lost): the same result is returned,
+// and is remembered for 24 hours so the browser can always pick it up.
 const complete = (id) => {
   const meta = readMeta(id);
+  if (meta.done) return meta.result;
   if (meta.received !== meta.size) throw httpError(409, 'The upload is not finished yet.', { received: meta.received });
   if (fs.statSync(dataPath(id)).size !== meta.size) throw httpError(500, 'The uploaded file size does not match; please upload again.');
 
   const convert = isAvailable();
   const filename = meta.ext !== '.mp4' && convert ? `${id}.source${meta.ext}` : `${id}${meta.ext}`;
   fs.renameSync(dataPath(id), path.join(VIDEO_DIR, filename));
-  fs.rmSync(metaPath(id), { force: true });
 
-  if (convert) {
-    return { url: enqueue(id, filename), processing: true, playableNow: filename === `${id}.mp4` };
-  }
-  return { url: `/uploads/videos/${filename}`, processing: false };
+  const result = convert
+    ? { url: enqueue(id, filename), processing: true, playableNow: filename === `${id}.mp4` }
+    : { url: `/uploads/videos/${filename}`, processing: false };
+  writeMeta(id, { ...meta, done: true, result, updatedAt: new Date().toISOString() });
+  return result;
 };
 
-module.exports = { start, status, receiveChunk, complete, cleanupStale, CHUNK_BYTES, MAX_VIDEO_BYTES, PARTIAL_DIR };
+const _test = { setFreeSpace: (fn) => { freeSpace = fn; } };
+
+module.exports = { start, status, receiveChunk, complete, cleanupStale, CHUNK_BYTES, MAX_VIDEO_BYTES, PARTIAL_DIR, _test };

@@ -52,7 +52,79 @@ test('a 40 MB video arrives in 16 MB pieces and is byte-identical', async () => 
   assert.equal(res.processing, false);
   assert.ok(saved(res.url).equals(data));
   assert.equal(progress.at(-1), 100);
-  assert.deepEqual(fs.readdirSync(uploads.PARTIAL_DIR).filter((f) => !f.startsWith('.')), []);
+  assert.deepEqual(fs.readdirSync(uploads.PARTIAL_DIR).filter((f) => f.endsWith('.part')), [], 'no partial data left behind');
+});
+
+test('a lost reply on the final step is retried and never re-uploads the video', async () => {
+  const { data, file } = makeFile(20 * MB);
+  const storage = memoryStorage();
+  let completes = 0;
+  let puts = 0;
+  const res = await client.uploadVideoInPieces(file, {
+    apiUrl: api, token: 't', storage, sleep: noWait,
+    fetchImpl: async (url, init) => {
+      if (init?.method === 'PUT') puts++;
+      const r = await fetch(url, init);
+      if (url.endsWith('/complete') && ++completes === 1) throw new TypeError('reply lost');
+      return r;
+    },
+  });
+  assert.equal(completes, 2);
+  assert.equal(puts, 2);
+  assert.ok(saved(res.url).equals(data));
+  assert.equal(storage.m.size, 0);
+});
+
+test('if the final step never got confirmed, picking the file again finishes it without re-uploading', async () => {
+  const { data, file } = makeFile(18 * MB);
+  const storage = memoryStorage();
+  await assert.rejects(client.uploadVideoInPieces(file, {
+    apiUrl: api, token: 't', storage, sleep: noWait,
+    fetchImpl: async (url, init) => {
+      const r = await fetch(url, init);
+      if (url.endsWith('/complete')) throw new TypeError('offline');
+      return r;
+    },
+  }), /will not re-upload/);
+  assert.equal(storage.m.size, 1, 'upload remembered');
+
+  let calls = 0;
+  const res = await client.uploadVideoInPieces(file, {
+    apiUrl: api, token: 't', storage, sleep: noWait,
+    fetchImpl: (url, init) => { calls++; return fetch(url, init); },
+  });
+  assert.equal(calls, 1, 'one status check, nothing re-sent');
+  assert.ok(saved(res.url).equals(data));
+  assert.equal(storage.m.size, 0);
+});
+
+test('a network blip while resuming keeps the earlier upload instead of starting over', async () => {
+  const { file } = makeFile(20 * MB);
+  const storage = memoryStorage();
+  const { id } = uploads.start({ filename: file.name, size: file.size, type: file.type });
+  storage.set(`video-upload:${file.name}:${file.size}:${file.lastModified}`, id);
+  await assert.rejects(client.uploadVideoInPieces(file, {
+    apiUrl: api, token: 't', storage, sleep: noWait,
+    fetchImpl: () => Promise.reject(new TypeError('offline')),
+  }), /Could not reach the server/);
+  assert.equal([...storage.m.values()][0], id);
+});
+
+test('a .mov with no file type (some Windows PCs) is accepted by its extension', () => {
+  const { id } = uploads.start({ filename: 'Wedding Film.MOV', size: 10, type: '' });
+  assert.match(id, /^[0-9a-f-]{36}$/);
+  assert.throws(() => uploads.start({ filename: 'notes.txt', size: 10, type: '' }), /Only MP4/);
+});
+
+test('an upload is refused up front if the server disk is too full', async () => {
+  uploads._test.setFreeSpace(() => 5 * 1024 * MB);
+  try {
+    const r = await fetch(`${api}/videos/uploads`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ filename: 'big.mp4', size: 3 * 1024 * MB, type: 'video/mp4' }) });
+    assert.equal(r.status, 507);
+    assert.match((await r.json()).message, /disk space/);
+  } finally {
+    uploads._test.setFreeSpace((dir) => { try { const s = fs.statfsSync(dir); return s.bavail * s.bsize; } catch { return Infinity; } });
+  }
 });
 
 test('dropped connections are retried and the upload completes', async () => {
