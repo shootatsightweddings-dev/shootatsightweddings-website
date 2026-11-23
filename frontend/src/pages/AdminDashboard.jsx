@@ -295,6 +295,11 @@ const AdminDashboard = () => {
         try {
           const res = JSON.parse(xhr.responseText);
           if (xhr.status >= 200 && xhr.status < 300 && res.success) {
+            if (res.processing) {
+              showToast('info', res.playableNow
+                ? 'Video uploaded. It is being optimised for the web in the background; a smaller version replaces it automatically in a few minutes.'
+                : 'Video uploaded. It is being converted for the web and will start playing on the site in a few minutes.');
+            }
             resolve(res.url);
           } else {
             reject(new Error(res.message || `Video upload failed (HTTP ${xhr.status})`));
