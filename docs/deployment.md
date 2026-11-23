@@ -97,4 +97,22 @@ In `/etc/nginx/sites-enabled/shootatsightweddings.com`, inside the `server { ...
 
 Back up the file first, then run `nginx -t` and, only if it passes, `systemctl reload nginx`.
 
+### Automatic video optimisation (install ffmpeg once)
+
+When ffmpeg is installed on the server, every uploaded video is converted in the background into a web-friendly MP4: longest side 1080p (1920 px), H.264/AAC, set to start playing before it fully downloads. Videos are processed one at a time, at low CPU priority, so the site stays responsive. On this server a long 4K film can take several minutes.
+
+- The URL the admin saves stays the same. An MP4 plays immediately and is swapped for the smaller version when ready (only if it is smaller). A MOV/WebM becomes playable at its `.mp4` URL once converted.
+- If conversion fails, the original upload is kept.
+- Pending conversions are recorded in `backend/uploads/videos/.jobs.json` and resume after a restart or deploy.
+- Admins can check a video with `GET /api/videos/status/<id>`.
+
+Install once on the VPS, then restart the app so it detects ffmpeg:
+
+```bash
+apt-get update && apt-get install -y ffmpeg
+pm2 reload shootatsight --update-env
+```
+
+The app log then shows "ffmpeg found: uploaded videos will be optimised for the web." Without ffmpeg, uploads are simply kept as uploaded.
+
 `backend/uploads` (photos and videos added through the admin) and `backend/media` (the site's own photos and videos) are not in Git; include both in server backups.

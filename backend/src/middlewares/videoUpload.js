@@ -1,12 +1,12 @@
 const fs = require('fs');
-const path = require('path');
 const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
+const { VIDEO_DIR, isAvailable } = require('../services/videoProcessing');
 
 // Videos uploaded from the admin panel are saved straight onto this server in
 // backend/uploads/videos and served by server.js at /uploads/videos/<file>.
-// nginx allows up to 2 GB on the upload routes (see docs/deployment.md).
-const VIDEO_DIR = path.join(__dirname, '..', '..', 'uploads', 'videos');
+// nginx must allow large bodies on the upload routes (see docs/deployment.md).
+// When ffmpeg is installed, services/videoProcessing.js then optimises them.
 const MAX_VIDEO_BYTES = 2 * 1024 * 1024 * 1024; // 2 GB
 const ALLOWED = { 'video/mp4': '.mp4', 'video/webm': '.webm', 'video/quicktime': '.mov' };
 
@@ -14,7 +14,14 @@ const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     fs.mkdir(VIDEO_DIR, { recursive: true }, (err) => cb(err, VIDEO_DIR));
   },
-  filename: (req, file, cb) => cb(null, `${uuidv4()}${ALLOWED[file.mimetype] || '.mp4'}`),
+  filename: (req, file, cb) => {
+    const id = uuidv4();
+    const ext = ALLOWED[file.mimetype] || '.mp4';
+    req.videoId = id;
+    // Non-MP4 uploads that will be converted keep a ".source" name; the
+    // converted <id>.mp4 appears beside it when ready.
+    cb(null, ext !== '.mp4' && isAvailable() ? `${id}.source${ext}` : `${id}${ext}`);
+  },
 });
 
 const upload = multer({

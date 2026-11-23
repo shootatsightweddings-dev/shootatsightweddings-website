@@ -217,4 +217,7 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+  // Resume video conversions left over from a restart or deploy. The build's
+  // prerender server sets DISABLE_VIDEO_JOBS so only the live server converts.
+  if (!process.env.DISABLE_VIDEO_JOBS) require('./src/services/videoProcessing').resumePending();
 });

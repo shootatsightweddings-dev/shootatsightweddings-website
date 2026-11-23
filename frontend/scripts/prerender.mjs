@@ -167,7 +167,7 @@ async function main() {
   console.log(`[prerender] Starting production server on port ${PORT}...`);
   const server = spawn(process.execPath, ['server.js'], {
     cwd: BACKEND_DIR,
-    env: { ...process.env, NODE_ENV: 'production', PORT: String(PORT) },
+    env: { ...process.env, NODE_ENV: 'production', PORT: String(PORT), DISABLE_VIDEO_JOBS: '1' },
     stdio: ['ignore', 'pipe', 'pipe'],
   });
   server.stdout.on('data', (d) => process.stdout.write(`[server] ${d}`));
