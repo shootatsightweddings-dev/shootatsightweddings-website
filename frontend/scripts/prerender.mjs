@@ -20,7 +20,7 @@
 
 import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync, copyFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -163,6 +163,14 @@ async function main() {
     console.error('[prerender] dist/ not found — run `vite build` first.');
     process.exit(1);
   }
+
+  // Keep a clean copy of Vite's empty app shell before the homepage snapshot
+  // overwrites dist/index.html. The server falls back to shell.html for any
+  // route without its own snapshot; falling back to the homepage snapshot made
+  // every such page load the homepage's autoplaying 4K hero video first, which
+  // could keep the network busy past the prerender timeout.
+  const shellFile = path.join(DIST_DIR, 'shell.html');
+  if (!existsSync(shellFile)) copyFileSync(path.join(DIST_DIR, 'index.html'), shellFile);
 
   console.log(`[prerender] Starting production server on port ${PORT}...`);
   const server = spawn(process.execPath, ['server.js'], {

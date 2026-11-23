@@ -171,8 +171,13 @@ if (process.env.NODE_ENV === 'production') {
     res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
     res.sendFile(resolveRouteFile(routePath), (err) => {
       // Falls back to the generic shell only if that route's own prerender
-      // is missing (e.g. a fresh admin login, or a prerender failure).
-      if (err) res.sendFile(path.join(DIST_DIR, 'index.html'));
+      // is missing (e.g. a fresh admin login, or a prerender failure). Use the
+      // clean shell saved by prerender.mjs: dist/index.html is the homepage
+      // snapshot, which would flash homepage content and start its hero video.
+      if (err) {
+        const shell = path.join(DIST_DIR, 'shell.html');
+        res.sendFile(fs.existsSync(shell) ? shell : path.join(DIST_DIR, 'index.html'));
+      }
     });
   };
 
