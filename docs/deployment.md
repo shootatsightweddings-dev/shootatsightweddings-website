@@ -74,7 +74,18 @@ The workflow fails with a clear "Deploy is not configured" message until these a
 - Playwright's Chromium installed for prerendering (`npx playwright install --with-deps chromium`, once).
 - `backend/.env` with a working database connection: prerendering fails without it, and the deploy then rolls back.
 
-## Video uploads (one-time nginx setting)
+## Video uploads
+
+The admin panel uploads videos **in resumable pieces** (`frontend/src/utils/chunkedUpload.js` → `backend/src/services/chunkedUploads.js`), up to **10 GB** per video:
+
+- Each piece is 16 MB, well under nginx's 50 MB per-request limit, so no nginx change is needed for this path.
+- A dropped connection is retried automatically. If the connection stays down, picking the same file again resumes from the last piece the server received, even after closing the browser.
+- When the last piece arrives, the video goes into the optimisation queue below, at the same URL.
+- Unfinished uploads are kept in `backend/uploads/videos/.partial` and deleted 24 hours after their last piece.
+
+### Older single-request upload route (one-time nginx setting)
+
+`/api/videos/upload` (one request per video) is kept for compatibility.
 
 Videos uploaded from the admin panel are saved on the server in `backend/uploads/videos` and served at `/uploads/videos/<file>`. The app accepts up to 2 GB, but nginx limits every request to 50 MB (`client_max_body_size 50M`), so larger uploads are rejected with HTTP 413 until nginx allows them on the upload routes.
 
