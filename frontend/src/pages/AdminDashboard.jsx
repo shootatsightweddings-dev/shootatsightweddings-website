@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../config';
+import { uploadVideoInPieces } from '../utils/chunkedUpload';
 import { useSiteConfig } from '../context/siteConfigState';
 import useSEO from '../hooks/useSEO';
 import './AdminDashboard.css';
@@ -267,51 +268,20 @@ const AdminDashboard = () => {
     }
   };
 
+  // Uploads in resumable pieces (up to 10 GB): a dropped connection carries on
+  // from where it stopped, and picking the same file again resumes it.
   const uploadVideo = async (file, onProgress) => {
-    const token = localStorage.getItem('adminToken');
-    const formData = new FormData();
-    formData.append('video', file);
-
-    return new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.open('POST', `${API_URL}/videos/upload`);
-      xhr.setRequestHeader('Authorization', `Bearer ${token}`);
-
-      if (xhr.upload && onProgress) {
-        xhr.upload.onprogress = (e) => {
-          if (e.lengthComputable) {
-            const percent = Math.round((e.loaded / e.total) * 100);
-            onProgress(percent);
-          }
-        };
-      }
-
-      xhr.onload = () => {
-        // nginx answers 413 (with an HTML page) when a file is over its upload limit.
-        if (xhr.status === 413) {
-          reject(new Error('This video is larger than the server currently accepts. Compress it, or ask the developer to raise the upload limit (see docs/deployment.md).'));
-          return;
-        }
-        try {
-          const res = JSON.parse(xhr.responseText);
-          if (xhr.status >= 200 && xhr.status < 300 && res.success) {
-            if (res.processing) {
-              showToast('info', res.playableNow
-                ? 'Video uploaded. It is being optimised for the web in the background; a smaller version replaces it automatically in a few minutes.'
-                : 'Video uploaded. It is being converted for the web and will start playing on the site in a few minutes.');
-            }
-            resolve(res.url);
-          } else {
-            reject(new Error(res.message || `Video upload failed (HTTP ${xhr.status})`));
-          }
-        } catch {
-          reject(new Error(`Server error (${xhr.status || 'unknown'}): ${xhr.statusText || 'Upload failed'}`));
-        }
-      };
-
-      xhr.onerror = () => reject(new Error('Network error during video upload'));
-      xhr.send(formData);
+    const res = await uploadVideoInPieces(file, {
+      apiUrl: API_URL,
+      token: localStorage.getItem('adminToken'),
+      onProgress,
     });
+    if (res.processing) {
+      showToast('info', res.playableNow
+        ? 'Video uploaded. It is being optimised for the web in the background; a smaller version replaces it automatically in a few minutes.'
+        : 'Video uploaded. It is being converted for the web and will start playing on the site in a few minutes.');
+    }
+    return res.url;
   };
 
   const fetchTestimonials = () => fetch(`${API_URL}/testimonials`)

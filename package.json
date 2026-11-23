@@ -12,7 +12,7 @@
     "dev:backend": "npm run start --workspace backend",
     "seed-admin": "npm run seed-admin --workspace backend",
     "lint": "npm run lint --workspace frontend",
-    "test": "node --test backend/tests/seo.test.js backend/tests/video-processing.test.js frontend/tests/article-seo.test.mjs frontend/tests/landing-pages.test.mjs",
+    "test": "node --test backend/tests/seo.test.js backend/tests/video-processing.test.js backend/tests/chunked-uploads.test.js frontend/tests/article-seo.test.mjs frontend/tests/landing-pages.test.mjs",
     "build": "npm run build --workspace frontend"
   },
   "overrides": {
