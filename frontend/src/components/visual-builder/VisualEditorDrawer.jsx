@@ -265,7 +265,7 @@ function renderFieldsForSection(
         </div>
 
         <div className="ved-group">
-          <label>Hero Background Video (Desktop 4K/HD MP4 or Stream M3U8)</label>
+          <label>Hero Background Video (Desktop MP4)</label>
           <div className="ved-image-picker">
             <input 
               type="url" 
@@ -556,7 +556,7 @@ function renderFieldsForSection(
               num: `0${list.length + 1}`,
               title: 'New Wedding Service',
               desc: 'Describe this luxury bespoke service...',
-              img: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/shoot-sight-latest-images/VIJ01478.jpg.webp'
+              img: '/shoot-sight-latest-images/VIJ01478.jpg.webp'
             })}
           >
             <Plus className="w-3.5 h-3.5" />
@@ -703,7 +703,7 @@ function renderFieldsForSection(
               heading: 'New Creative Phase',
               desc: 'Describe what couples experience in this phase...',
               tags: ['Custom', 'Luxury'],
-              img: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/_DSC4382.webp'
+              img: '/common/_DSC4382.webp'
             })}
           >
             <Plus className="w-3.5 h-3.5" />
@@ -844,7 +844,7 @@ function renderFieldsForSection(
         </div>
 
         <div className="ved-group">
-          <label>Video Stream / MP4 Video File</label>
+          <label>MP4 Video File</label>
           <div className="ved-image-picker">
             <input 
               type="url" 
@@ -1167,8 +1167,8 @@ function renderFieldsForSection(
               label: 'Bangalore Wedding Teaser',
               videoTitle: 'New Couple // Cinematic Teaser',
               location: 'Bangalore, India',
-              videoUrl: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/Naveen%20%26%20Kate%204K%20Teaser.mp4',
-              posterUrl: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/NAVEEN%20AND%20KATE/SYD08467.webp',
+              videoUrl: '/Naveen%20%26%20Kate%204K%20Teaser.mp4',
+              posterUrl: '/NAVEEN%20AND%20KATE/SYD08467.webp',
               uploadDate: new Date().toISOString().split('T')[0],
               published: true
             })}
@@ -1388,6 +1388,27 @@ function renderFieldsForSection(
             value={data.studioInfo || ''} 
             onChange={(e) => onChange('studioInfo', e.target.value)} 
             placeholder="Bengaluru, India // Global Commissions"
+          />
+        </div>
+
+        <div className="ved-group">
+          <label>Studio Address (keep identical to the Google Business Profile)</label>
+          <textarea
+            rows={3}
+            maxLength={200}
+            value={data.address || ''}
+            onChange={(e) => onChange('address', e.target.value)}
+            placeholder="7, Sindhoor, 2nd Cross Rd, ..., Bengaluru, Karnataka 560076"
+          />
+        </div>
+
+        <div className="ved-group">
+          <label>Get Directions Link (Google Maps, starts with https://)</label>
+          <input
+            type="url"
+            value={data.mapsUrl || ''}
+            onChange={(e) => onChange('mapsUrl', e.target.value)}
+            placeholder="https://www.google.com/maps/search/?api=1&query=..."
           />
         </div>
 

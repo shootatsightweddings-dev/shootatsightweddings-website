@@ -19,7 +19,6 @@ router.use('/images', imageRoutes);
 router.use('/videos', videoRoutes);
 router.use('/blogs', blogRoutes);
 router.use('/admin', adminRoutes);
-router.use('/admin/stream', require('./streamRoutes'));
 router.use('/shoots', shootRoutes);
 router.use('/testimonials', testimonialRoutes);
 router.use('/site-config', siteConfigRoutes);

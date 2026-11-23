@@ -20,15 +20,16 @@ const Films = () => {
   };
 
   const films = (filmsContent.list || []).filter((film) => film.published !== false);
-  const canPlay = (film) => Boolean(film.streamUid || film.videoUrl);
+  const canPlay = (film) => Boolean(film.videoUrl);
+  const absolute = (url) => (url && !/^https?:\/\//.test(url) ? `https://www.shootatsightweddings.com${url}` : url);
   const videosJsonLd = films.filter((film) => canPlay(film) && film.posterUrl && film.uploadDate).map((film) => ({
     '@context': 'https://schema.org',
     '@type': 'VideoObject',
     name: film.videoTitle || film.label,
     description: `${film.videoTitle || film.label} — a wedding film by Shoot At Sight Weddings, ${film.location}.`,
-    thumbnailUrl: film.posterUrl,
+    thumbnailUrl: absolute(film.posterUrl),
     uploadDate: film.uploadDate,
-    contentUrl: film.streamUid ? `https://videodelivery.net/${film.streamUid}/manifest/video.m3u8` : film.videoUrl,
+    contentUrl: absolute(film.videoUrl),
     publisher: { '@type': 'Organization', name: 'Shoot At Sight Weddings' },
   }));
 
@@ -130,26 +131,16 @@ const Films = () => {
               <span className="film-modal-title">{activeFilm.label} // {activeFilm.location}</span>
             </div>
             <div className="film-modal-video">
-              {activeFilm.streamUid ? (
-                <iframe
-                  key={activeFilm.streamUid}
-                  src={`https://iframe.videodelivery.net/${activeFilm.streamUid}?autoplay=true`}
-                  title={activeFilm.label}
-                  allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
-                  allowFullScreen
-                />
-              ) : (
-                <video
-                  key={activeFilm.videoUrl}
-                  src={activeFilm.videoUrl}
-                  poster={activeFilm.posterUrl || undefined}
-                  autoPlay
-                  controls
-                  playsInline
-                  preload="metadata"
-                  aria-label={activeFilm.label}
-                />
-              )}
+              <video
+                key={activeFilm.videoUrl}
+                src={activeFilm.videoUrl}
+                poster={activeFilm.posterUrl || undefined}
+                autoPlay
+                controls
+                playsInline
+                preload="metadata"
+                aria-label={activeFilm.label}
+              />
             </div>
           </div>
         </div>
