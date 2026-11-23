@@ -73,3 +73,28 @@ The workflow fails with a clear "Deploy is not configured" message until these a
 - Node.js 22.12 or newer on the `PATH` for non-interactive SSH sessions (nvm is loaded automatically if installed in `~/.nvm`).
 - Playwright's Chromium installed for prerendering (`npx playwright install --with-deps chromium`, once).
 - `backend/.env` with a working database connection: prerendering fails without it, and the deploy then rolls back.
+
+## Video uploads (one-time nginx setting)
+
+Videos uploaded from the admin panel are saved on the server in `backend/uploads/videos` and served at `/uploads/videos/<file>`. The app accepts up to 2 GB, but nginx limits every request to 50 MB (`client_max_body_size 50M`), so larger uploads are rejected with HTTP 413 until nginx allows them on the upload routes.
+
+In `/etc/nginx/sites-enabled/shootatsightweddings.com`, inside the `server { ... listen 443 ssl; }` block and directly after `client_max_body_size 50M;`, add:
+
+```nginx
+    # Admin video uploads (saved on this server): allow up to 2 GB.
+    location ~ ^/api/(videos/upload|admin/upload-video)$ {
+        client_max_body_size 2G;
+        proxy_read_timeout 600s;
+        proxy_send_timeout 600s;
+        proxy_pass http://127.0.0.1:5000;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+```
+
+Back up the file first, then run `nginx -t` and, only if it passes, `systemctl reload nginx`.
+
+`backend/uploads` (photos and videos added through the admin) and `backend/media` (the site's own photos and videos) are not in Git; include both in server backups.

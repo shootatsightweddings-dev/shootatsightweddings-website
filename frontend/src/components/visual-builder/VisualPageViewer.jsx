@@ -302,7 +302,7 @@ export default function VisualPageViewer({
               num: `0${(config?.services?.list || []).length + 1}`,
               title: 'New Wedding Service',
               desc: 'Describe this luxury service...',
-              img: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/shoot-sight-latest-images/VIJ01478.jpg.webp'
+              img: '/shoot-sight-latest-images/VIJ01478.jpg.webp'
             })}
           >
             <Services />
@@ -319,7 +319,7 @@ export default function VisualPageViewer({
               heading: 'New Experience Phase',
               desc: 'Describe what couples experience in this phase...',
               tags: ['Custom', 'Luxury'],
-              img: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/_DSC4382.webp'
+              img: '/common/_DSC4382.webp'
             })}
           >
             <Experience />
@@ -341,7 +341,7 @@ export default function VisualPageViewer({
                 </h2>
                 <div style={{ maxWidth: '850px', margin: '0 auto', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)', position: 'relative' }}>
                   <img 
-                    src={config?.featured_film?.posterUrl || 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/NAVEEN%20AND%20KATE/SYD08467.webp'} 
+                    src={config?.featured_film?.posterUrl || '/NAVEEN%20AND%20KATE/SYD08467.webp'} 
                     alt="Featured film poster" 
                     style={{ width: '100%', height: '420px', objectFit: 'cover' }}
                   />
@@ -388,7 +388,7 @@ export default function VisualPageViewer({
               <div style={{ maxWidth: '1100px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '50px', alignItems: 'center' }}>
                 <div style={{ position: 'relative' }}>
                   <img 
-                    src={config?.about_page?.founderImg || 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/about-founder.webp'} 
+                    src={config?.about_page?.founderImg || '/founder%20(1).webp'} 
                     alt="Founder portrait" 
                     style={{ width: '100%', borderRadius: '12px', border: '1px solid rgba(197, 164, 109, 0.3)' }}
                   />
@@ -447,7 +447,7 @@ export default function VisualPageViewer({
                 </p>
                 <div style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)', position: 'relative' }}>
                   <img 
-                    src={config?.about_page?.teamImg || 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/team.webp'} 
+                    src={config?.about_page?.teamImg || '/common/team.webp'} 
                     alt="Team collective" 
                     style={{ width: '100%', height: 'auto', display: 'block' }}
                   />
@@ -957,8 +957,8 @@ export default function VisualPageViewer({
               label: 'Bangalore Luxury Wedding Teaser',
               videoTitle: 'New Couple Film',
               location: 'Bangalore, India',
-              videoUrl: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/Naveen%20%26%20Kate%204K%20Teaser.mp4',
-              posterUrl: 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/NAVEEN%20AND%20KATE/SYD08467.webp',
+              videoUrl: '/Naveen%20%26%20Kate%204K%20Teaser.mp4',
+              posterUrl: '/NAVEEN%20AND%20KATE/SYD08467.webp',
               uploadDate: new Date().toISOString().split('T')[0],
               duration: '3:45 mins',
               published: true
@@ -1008,7 +1008,7 @@ export default function VisualPageViewer({
                   <div key={idx} style={{ background: '#111', borderRadius: '10px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)', position: 'relative', textAlign: 'left' }}>
                     <div style={{ height: '240px', position: 'relative' }}>
                       <img 
-                        src={film.posterUrl || 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/NAVEEN%20AND%20KATE/SYD08467.webp'} 
+                        src={film.posterUrl || '/NAVEEN%20AND%20KATE/SYD08467.webp'} 
                         alt={film.label} 
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
                       />
@@ -1113,13 +1113,14 @@ export default function VisualPageViewer({
                     <div><strong style={{ color: '#C5A46D' }}>Phone:</strong> {config?.contact_page?.phone || '+91 9900233338'}</div>
                     <div><strong style={{ color: '#C5A46D' }}>Email:</strong> {config?.contact_page?.email || 'connect@shootatsightweddings.com'}</div>
                     <div><strong style={{ color: '#C5A46D' }}>Studio:</strong> {config?.contact_page?.studioInfo || 'Bengaluru, India // Global Commissions'}</div>
+                    {config?.contact_page?.address && <div><strong style={{ color: '#C5A46D' }}>Address:</strong> {config.contact_page.address}</div>}
                   </div>
                 </div>
 
                 <div style={{ position: 'relative' }}>
                   <div style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(197, 164, 109, 0.3)' }}>
                     <img 
-                      src={config?.contact_page?.contactImg || 'https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/SAS_3280.webp'} 
+                      src={config?.contact_page?.contactImg || '/common/SAS_3280.webp'} 
                       alt="Contact Cover" 
                       style={{ width: '100%', height: 'auto', display: 'block' }}
                     />

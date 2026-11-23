@@ -122,7 +122,7 @@ const AdminDashboard = () => {
     setEditorSaving(true);
     try {
       const url = await uploadImage(file);
-      showToast('success', 'Image uploaded to Cloudflare R2!');
+      showToast('success', 'Image uploaded.');
       return url;
     } catch (err) {
       showToast('error', err.message);
@@ -135,7 +135,7 @@ const AdminDashboard = () => {
   const handleDirectShootHeroUpload = async (shootId, file) => {
     if (!file) return;
     setEditorSaving(true);
-    showToast('info', 'Uploading cover photo to Cloudflare R2...');
+    showToast('info', 'Uploading cover photo...');
     try {
       const token = localStorage.getItem('adminToken');
       const fd = new FormData();
@@ -191,7 +191,7 @@ const AdminDashboard = () => {
   const [blogTitle, setBlogTitle] = useState('');
   const [blogCategory, setBlogCategory] = useState('ARTISTRY');
   const [blogContent, setBlogContent] = useState('');
-  const [blogCover, setBlogCover] = useState("https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/_DSC3521_-_Copy.webp");
+  const [blogCover, setBlogCover] = useState("/common/_DSC3521_-_Copy.webp");
 
   // UI States
   const [uploading, setUploading] = useState(false);
@@ -287,6 +287,11 @@ const AdminDashboard = () => {
       }
 
       xhr.onload = () => {
+        // nginx answers 413 (with an HTML page) when a file is over its upload limit.
+        if (xhr.status === 413) {
+          reject(new Error('This video is larger than the server currently accepts. Compress it, or ask the developer to raise the upload limit (see docs/deployment.md).'));
+          return;
+        }
         try {
           const res = JSON.parse(xhr.responseText);
           if (xhr.status >= 200 && xhr.status < 300 && res.success) {
@@ -1227,7 +1232,7 @@ const AdminDashboard = () => {
                 {blogs.map((blog) => (
                   <div key={blog._id} className="admin-shoot-card">
                     <div className="card-thumbnail-wrapper">
-                      <img src={(editingBlog?._id === blog._id ? editingBlog.coverImageUrl : blog.coverImageUrl) || "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/_DSC3521_-_Copy.webp"} alt={blog.title} />
+                      <img src={(editingBlog?._id === blog._id ? editingBlog.coverImageUrl : blog.coverImageUrl) || "/common/_DSC3521_-_Copy.webp"} alt={blog.title} />
                       <span className="card-cat-badge">{(editingBlog?._id === blog._id ? editingBlog.tags?.[0] : blog.tags?.[0]) || 'ARTISTRY'}</span>
                     </div>
                     <div className="card-details">
@@ -1728,7 +1733,7 @@ const AdminDashboard = () => {
               <div className="edit-section" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '25px', marginBottom: '25px' }}>
                 <label className="edit-section-label">Cover Image</label>
                 <div className="hero-preview-row">
-                  <img src={editingBlog.coverImageUrl || "https://pub-53f55a87e6f64c51862dbd0fa933eee1.r2.dev/common/_DSC3521_-_Copy.webp"} alt="cover" className="hero-thumb-edit" style={{ width: '160px', height: '100px', borderRadius: '4px' }} />
+                  <img src={editingBlog.coverImageUrl || "/common/_DSC3521_-_Copy.webp"} alt="cover" className="hero-thumb-edit" style={{ width: '160px', height: '100px', borderRadius: '4px' }} />
                   <div>
                     <p style={{ fontSize: '0.8rem', color: '#a0a0a0', marginBottom: '12px' }}>
                       Choose an image from your computer to update this article's primary cover.
