@@ -17,6 +17,9 @@ export const LANDING_PAGES_PUBLIC = routeConfig.public === true;
 // Photos and video are served from this site's own server (backend/media).
 const MEDIA = '';
 
+// Destination photos from the studio's own shoots abroad (served from backend/media/destinations).
+const DEST = `${MEDIA}/destinations`;
+
 const img = {
   raghuHero: `${MEDIA}/4%20RAGHUDIXITH%20AND%20VARIJASHREE_WEBP/NGD_6702.webp`,
   raghu1: `${MEDIA}/4%20RAGHUDIXITH%20AND%20VARIJASHREE_WEBP/NGD_6707.webp`,
@@ -28,8 +31,6 @@ const img = {
   aish4: `${MEDIA}/aishwarya%20and%20akshay/KRP_7896.webp`,
   naveen1: `${MEDIA}/NAVEEN%20AND%20KATE/SYD07968.webp`,
   naveen2: `${MEDIA}/NAVEEN%20AND%20KATE/SYD07976.webp`,
-  naveenPillars: `${MEDIA}/NAVEEN%20AND%20KATE/SYD08295.webp`,
-  naveenDoors: `${MEDIA}/NAVEEN%20AND%20KATE/SYD08132.webp`,
   naveenHaldi: `${MEDIA}/NAVEEN%20AND%20KATE/_UNI9937.webp`,
   ragini1: `${MEDIA}/ragini/_I3A6607.webp`,
   ragini2: `${MEDIA}/ragini/_I3A6392.webp`,
@@ -396,11 +397,18 @@ export const landingPages = [
       'We are a Bengaluru studio, and we travel for weddings — across India and abroad, with work in France, Italy, Switzerland, Thailand, Dubai, the Netherlands and Belgium. A destination wedding gets the same team, the same editorial approach and the same delivery as a wedding at home.',
       'A destination wedding is a bigger decision than a local one: you are trusting a team to arrive prepared, work in an unfamiliar venue and bring the story home. Here is how we handle it.',
     ],
-    hero: { focus: '22% center', src: img.naveenPillars, alt: 'Naveen and Kate in an embrace beside carved sandstone pillars, Sydney' },
+    hero: { src: `${DEST}/paris-eiffel-bridge.webp`, alt: 'A couple on a Paris bridge, framed by its steel arches, with the Eiffel Tower behind them' },
+    galleryTitle: 'Destination weddings and shoots abroad',
     gallery: [
-      { src: img.naveen1, alt: 'Bride in a black and gold lehenga seated in an ornate, lamp-lit room' },
-      { src: img.naveen2, alt: 'Fashion-style portrait of the bride doubled in a reflection, framed by soft gold blur' },
-      { src: img.naveenDoors, alt: 'The bride framed between tall red louvred doors' },
+      { src: `${DEST}/paris-louvre.webp`, caption: 'The Louvre, Paris', alt: 'Bride in a lace gown and groom in a black suit in front of the Louvre glass pyramid' },
+      { src: `${DEST}/paris-sacre-coeur.webp`, caption: 'Sacré-Cœur, Paris', alt: 'A couple beside a vintage red car below the domes of Sacré-Cœur' },
+      { src: `${DEST}/paris-courtyard.webp`, caption: 'Paris', alt: 'A long red fabric caught in the wind as a couple poses in a grand Parisian courtyard' },
+      { src: `${DEST}/alpine-meadow.webp`, caption: 'Alpine meadow, Europe', alt: 'A woman reading in a green mountain meadow with snow-capped peaks behind' },
+      { src: `${DEST}/europe-street.webp`, caption: 'City streets, Europe', alt: 'A couple in long coats embracing on a quiet European street' },
+      { src: `${DEST}/canal-boat.webp`, caption: 'Canal village, Europe', alt: 'A couple in a red wooden boat on a narrow canal lined with hydrangeas' },
+      { src: `${DEST}/dubai-burj-khalifa.webp`, caption: 'Burj Khalifa, Dubai', alt: 'A couple on a terrace with the Burj Khalifa rising behind them' },
+      { src: `${DEST}/dubai-frame.webp`, caption: 'Dubai Frame, Dubai', alt: 'A couple walking towards the camera with the golden Dubai Frame behind' },
+      { src: `${DEST}/dubai-sunset.webp`, caption: 'Dubai skyline at sunset', alt: 'A couple in silhouette under a white arch, with the Dubai skyline at sunset' },
     ],
     video: TEASER,
     sections: [

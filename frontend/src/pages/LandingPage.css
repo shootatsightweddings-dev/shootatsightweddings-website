@@ -63,6 +63,8 @@
 .lp-stage-ui button:hover, .lp-stage-ui button:focus-visible { background:rgba(0,0,0,.7); }
 .lp-gallery { display:grid; grid-template-columns:repeat(var(--cols,3),minmax(0,1fr)); gap:12px; margin-bottom:16px; }
 .lp-gallery img { width:100%; aspect-ratio:4/5; object-fit:cover; border-radius:6px; display:block; }
+.lp-gallery figure { margin:0; }
+.lp-gallery figcaption { font-family:var(--font-sans); font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--text-secondary); margin-top:8px; }
 .lp-faqs details { border-bottom:1px solid #8d756b44; padding:18px 0; }
 .lp-faqs summary { cursor:pointer; list-style:none; }
 .lp-faqs summary::-webkit-details-marker { display:none; }

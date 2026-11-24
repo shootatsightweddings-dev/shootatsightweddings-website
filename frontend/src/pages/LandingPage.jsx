@@ -200,9 +200,14 @@ export default function LandingPage({ page }) {
 
         {page.gallery?.length > 0 && (
           <section className="lp-section">
-            <h2>From the portfolio</h2>
+            <h2>{page.galleryTitle || 'From the portfolio'}</h2>
             <div className="lp-gallery" style={{ '--cols': Math.min(page.gallery.length, 3) }}>
-              {page.gallery.map(item => <img key={item.src} src={item.src} alt={item.alt} loading="lazy" decoding="async" />)}
+              {page.gallery.map(item => (item.caption ? (
+                <figure key={item.src}>
+                  <img src={item.src} alt={item.alt} loading="lazy" decoding="async" />
+                  <figcaption>{item.caption}</figcaption>
+                </figure>
+              ) : <img key={item.src} src={item.src} alt={item.alt} loading="lazy" decoding="async" />))}
             </div>
             <p><Link to="/portfolio">See the full portfolio</Link></p>
           </section>
