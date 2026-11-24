@@ -19,6 +19,8 @@ const shootSchema = new Schema(
     testimonialId: { type: Schema.Types.ObjectId, ref: 'Testimonial', default: null },
     resultsSummary: { type: String, default: '' },
     heroImage: { type: String, required: true },
+    // Position on the portfolio page (1 = first). Couples without one follow.
+    displayOrder: { type: Number, default: null },
     gallery: [{ type: String }],
   },
   {
