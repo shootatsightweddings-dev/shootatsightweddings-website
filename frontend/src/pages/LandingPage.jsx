@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
 import useSEO from '../hooks/useSEO';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { inline } from '../utils/pageBody';
@@ -39,6 +40,100 @@ function buildSchema(page) {
       priceSpecification: { '@type': 'PriceSpecification', priceCurrency: 'INR', minPrice: Number(price) },
     } : undefined,
   }];
+}
+
+// On desktop the film grows from its box to fill the screen as you scroll,
+// playing silently with a sound button. Phones (portrait screens would crop
+// most of a widescreen film, and data matters) and visitors who prefer
+// reduced motion get the normal player.
+const IMMERSIVE_QUERY = '(min-width: 900px) and (prefers-reduced-motion: no-preference)';
+
+function useMediaQuery(query) {
+  const [matches, setMatches] = useState(() => typeof window !== 'undefined' && window.matchMedia(query).matches);
+  useEffect(() => {
+    const mq = window.matchMedia(query);
+    const update = () => setMatches(mq.matches);
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, [query]);
+  return matches;
+}
+
+function FilmVideo({ video }) {
+  const immersive = useMediaQuery(IMMERSIVE_QUERY);
+  const stageRef = useRef(null);
+  const videoRef = useRef(null);
+  const [muted, setMuted] = useState(true);
+
+  useEffect(() => {
+    if (!immersive) return undefined;
+    const stage = stageRef.current;
+    const film = videoRef.current;
+    film.muted = true;
+    let frame = 0;
+    const measure = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const box = stage.getBoundingClientRect();
+        const travel = box.height - window.innerHeight;
+        // Full screen after 55% of the scroll, then held there for the rest.
+        const progress = Math.min(1, Math.max(0, -box.top / (travel * 0.55)));
+        stage.style.setProperty('--p', progress.toFixed(4));
+        // Pin the frame to the screen while the stage scrolls past. (CSS
+        // sticky can't be used: the site's body overflow rule disables it.)
+        stage.dataset.pin = box.top > 0 ? 'before' : box.bottom < window.innerHeight ? 'after' : 'fixed';
+      });
+    };
+    // Only load and play while the film is on screen.
+    const watcher = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) film.play().catch(() => {});
+      else film.pause();
+    }, { threshold: 0.2 });
+    watcher.observe(stage);
+    measure();
+    window.addEventListener('scroll', measure, { passive: true });
+    window.addEventListener('resize', measure);
+    return () => {
+      cancelAnimationFrame(frame);
+      watcher.disconnect();
+      window.removeEventListener('scroll', measure);
+      window.removeEventListener('resize', measure);
+    };
+  }, [immersive]);
+
+  if (!immersive) {
+    return (
+      <figure className="lp-video">
+        <video controls preload="none" playsInline poster={video.poster} src={video.src} aria-label={video.title} />
+        <figcaption>{video.title}</figcaption>
+      </figure>
+    );
+  }
+
+  const toggleSound = () => {
+    const film = videoRef.current;
+    film.muted = !film.muted;
+    setMuted(film.muted);
+    if (!film.muted) film.play().catch(() => {});
+  };
+
+  return (
+    <figure className="lp-stage" ref={stageRef}>
+      <div className="lp-stage-frame">
+        <video
+          ref={videoRef} muted loop playsInline preload="none"
+          poster={video.poster} src={video.src} aria-label={video.title}
+        />
+        <figcaption className="lp-stage-ui">
+          <span>{video.title}</span>
+          <button type="button" onClick={toggleSound} aria-pressed={!muted}>
+            {muted ? 'Sound on' : 'Sound off'}
+          </button>
+        </figcaption>
+      </div>
+    </figure>
+  );
 }
 
 function Section({ section, index }) {
@@ -95,12 +190,7 @@ export default function LandingPage({ page }) {
       )}
 
       <div className="lp-body container">
-        {page.video && (
-          <figure className="lp-video">
-            <video controls preload="none" playsInline poster={page.video.poster} src={page.video.src} aria-label={page.video.title} />
-            <figcaption>{page.video.title}</figcaption>
-          </figure>
-        )}
+        {page.video && <FilmVideo video={page.video} />}
 
         {page.sections.map((section, i) => <Section key={section.heading} section={section} index={i} />)}
 
