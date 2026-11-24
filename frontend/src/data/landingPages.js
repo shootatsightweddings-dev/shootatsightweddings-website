@@ -194,7 +194,7 @@ export const landingPages = [
       'A wedding film keeps what photographs cannot: voices, music, movement and the way people react to one another. We film with the same documentary eye we bring to photography, then edit for story rather than a checklist of events.',
       'Films can be added to any photography package or booked as a standalone service.',
     ],
-    hero: { portrait: true, src: img.raghu1, alt: 'A laughing guest in a green kurta and jasmine garland at Raghu Dixit and Varijashree’s wedding' },
+    hero: { src: img.raghu1, alt: 'A laughing guest in a green kurta and jasmine garland at Raghu Dixit and Varijashree’s wedding' },
     video: TEASER,
     sections: [
       {
@@ -246,7 +246,7 @@ export const landingPages = [
       'Bangalore has more variety for a pre-wedding shoot than most couples expect: century-old gardens, colonial architecture, a palace and, an hour or two north, hills that sit above the clouds at sunrise.',
       'Below are four of the most popular places for a pre-wedding photoshoot in Bangalore, what each looks like on camera, when the light is best, and what to check before you go. Rules, timings and fees change, so we confirm current permissions while planning every shoot.',
     ],
-    hero: { portrait: true, src: img.ragini2, alt: 'Portrait in a red sari spread across the floor in front of an ornate carved doorway' },
+    hero: { src: img.ragini2, alt: 'Portrait in a red sari spread across the floor in front of an ornate carved doorway' },
     sections: [
       {
         heading: '1. Lalbagh Botanical Garden',
@@ -396,7 +396,7 @@ export const landingPages = [
       'We are a Bengaluru studio, and we travel for weddings — across India and abroad, with work in France, Italy, Switzerland, Thailand, Dubai, the Netherlands and Belgium. A destination wedding gets the same team, the same editorial approach and the same delivery as a wedding at home.',
       'A destination wedding is a bigger decision than a local one: you are trusting a team to arrive prepared, work in an unfamiliar venue and bring the story home. Here is how we handle it.',
     ],
-    hero: { src: img.naveenPillars, alt: 'Naveen and Kate in an embrace beside carved sandstone pillars, Sydney' },
+    hero: { focus: '22% center', src: img.naveenPillars, alt: 'Naveen and Kate in an embrace beside carved sandstone pillars, Sydney' },
     gallery: [
       { src: img.naveen1, alt: 'Bride in a black and gold lehenga seated in an ornate, lamp-lit room' },
       { src: img.naveen2, alt: 'Fashion-style portrait of the bride doubled in a reflection, framed by soft gold blur' },

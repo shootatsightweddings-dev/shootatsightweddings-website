@@ -172,22 +172,26 @@ export default function LandingPage({ page }) {
 
   return (
     <article className="landing-page">
-      <header className="lp-header container">
+      {/* Opening: text beside the photo on desktop, stacked on phones. */}
+      <div className={`lp-top container${page.hero ? ' lp-top--split' : ''}`}>
         <Breadcrumbs currentLabel={page.navLabel} />
-        <p className="lp-eyebrow">{page.eyebrow}</p>
-        <h1 className="section-title-large">{page.h1}</h1>
-        <div className="lp-intro">{page.intro.map((text, i) => <p key={i}>{inline(text, `intro${i}`)}</p>)}</div>
-        <Link className="btn-premium" to="/contact">Check your date</Link>
-      </header>
-
-      {page.hero && (
-        <div className={`lp-hero container${page.hero.portrait ? ' lp-hero--portrait' : ''}`}>
-          <img
-            src={page.hero.src} alt={page.hero.alt} fetchPriority="high"
-            width={page.hero.portrait ? 1000 : 1600} height={page.hero.portrait ? 1500 : 1000}
-          />
+        <div className="lp-top-grid">
+          <header className="lp-header">
+            <p className="lp-eyebrow">{page.eyebrow}</p>
+            <h1 className="section-title-large">{page.h1}</h1>
+            <div className="lp-intro">{page.intro.map((text, i) => <p key={i}>{inline(text, `intro${i}`)}</p>)}</div>
+            <Link className="btn-premium" to="/contact">Check your date</Link>
+          </header>
+          {page.hero && (
+            <div className="lp-hero">
+              <img
+                src={page.hero.src} alt={page.hero.alt} fetchPriority="high" width="1200" height="1500"
+                style={page.hero.focus ? { objectPosition: page.hero.focus } : undefined}
+              />
+            </div>
+          )}
         </div>
-      )}
+      </div>
 
       <div className="lp-body container">
         {page.video && <FilmVideo video={page.video} />}
