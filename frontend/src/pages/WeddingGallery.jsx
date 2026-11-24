@@ -58,6 +58,12 @@ const WeddingGallery = () => {
           })
         );
 
+        // The studio's chosen order (displayOrder) within each row type;
+        // couples without one follow, by name. Layout is unchanged.
+        const byOrder = (a, b) => (a.displayOrder ?? 1000) - (b.displayOrder ?? 1000) || String(a.title).localeCompare(String(b.title));
+        verts.sort(byOrder);
+        horizs.sort(byOrder);
+
         setVerticalShoots(verts);
         setHorizontalShoots(horizs);
       } catch (err) {

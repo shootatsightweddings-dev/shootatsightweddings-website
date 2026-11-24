@@ -95,6 +95,12 @@ if (process.env.NODE_ENV === 'production') {
     '/admin', '/admin/login', '/admin/dashboard', '/blog/admin-login',
   ]);
   const LOCAL_SHOOTS_PATH = path.join(__dirname, 'shoots-db.json');
+  // Couple pages whose address changed (e.g. a corrected name spelling): the
+  // old address keeps working by redirecting to the new one.
+  const RENAMED_SHOOTS = {
+    'abhijit-taina': 'abhijitha-taina',
+    'ramya-lathendra': 'ramya-latesh',
+  };
 
   // Returns { slug, category } for a published shoot, or null.
   const findShoot = async (slug) => {
@@ -211,7 +217,7 @@ if (process.env.NODE_ENV === 'production') {
     const newShoot = reqPath.match(/^\/portfolio\/([a-z0-9-]+)\/([a-z0-9-]+)$/i);
     const shootSlug = oldShoot?.[1] || newShoot?.[2];
     if (shootSlug) {
-      const shoot = await findShoot(shootSlug);
+      const shoot = await findShoot(RENAMED_SHOOTS[shootSlug] || shootSlug);
       if (shoot) {
         const canonical = shootPath(shoot);
         if (reqPath !== canonical) {
