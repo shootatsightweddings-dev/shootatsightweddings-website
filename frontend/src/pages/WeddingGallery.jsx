@@ -100,15 +100,16 @@ const WeddingGallery = () => {
       {!loading && (
         <div className="wg-sections-container">
 
-          {/* Vertical Couples Pair Row (3-col portrait grid) */}
-          {verticalShoots.length > 0 && (
+          {/* Wide-cover couples first, in the studio's chosen order (2 per row) */}
+          {/* Horizontal Couples Pair Row (2-col landscape grid) */}
+          {horizontalShoots.length > 0 && (
             <div className="wg-pair-section">
-              <div className="wg-pair-grid wg-pair-grid--vertical">
-                {verticalShoots.map((shoot) => (
+              <div className="wg-pair-grid wg-pair-grid--horizontal">
+                {horizontalShoots.map((shoot) => (
                   <Link
                     key={shoot.slug}
                     to={shootPath(shoot)}
-                    className="wg-cell wg-cell--vertical"
+                    className="wg-cell wg-cell--horizontal"
                   >
                     <img
                       src={shoot.heroImage}
@@ -128,15 +129,15 @@ const WeddingGallery = () => {
             </div>
           )}
 
-          {/* Horizontal Couples Pair Row (2-col landscape grid) */}
-          {horizontalShoots.length > 0 && (
+          {/* Vertical Couples Pair Row (3-col portrait grid) */}
+          {verticalShoots.length > 0 && (
             <div className="wg-pair-section">
-              <div className="wg-pair-grid wg-pair-grid--horizontal">
-                {horizontalShoots.map((shoot) => (
+              <div className="wg-pair-grid wg-pair-grid--vertical">
+                {verticalShoots.map((shoot) => (
                   <Link
                     key={shoot.slug}
                     to={shootPath(shoot)}
-                    className="wg-cell wg-cell--horizontal"
+                    className="wg-cell wg-cell--vertical"
                   >
                     <img
                       src={shoot.heroImage}
