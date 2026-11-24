@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../config';
 import { uploadVideoInPieces } from '../utils/chunkedUpload';
+import { shootPath } from '../utils/shootPath';
 import { useSiteConfig } from '../context/siteConfigState';
 import useSEO from '../hooks/useSEO';
 import './AdminDashboard.css';
@@ -986,7 +987,7 @@ const AdminDashboard = () => {
                         {(editingShoot?._id === shoot._id ? editingShoot.gallery : shoot.gallery)?.length || 0} gallery photos
                       </p>
                       <div className="card-actions-framer">
-                        <a href={`/shoot/${shoot.slug}`} target="_blank" rel="noreferrer" className="btn-preview-link">View Live ↗</a>
+                        <a href={shootPath(shoot)} target="_blank" rel="noreferrer" className="btn-preview-link">View Live ↗</a>
                         <button onClick={() => openEditPanel(shoot)} className="btn-edit-gallery">
                           Edit Gallery
                         </button>

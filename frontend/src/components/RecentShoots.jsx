@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { API_URL } from '../config';
+import { shootPath } from '../utils/shootPath';
 import './RecentShoots.css';
 
 
@@ -124,7 +125,7 @@ const RecentShoots = () => {
 
       <div ref={horizontalRef} className="horizontal-scroll-container">
         {shoots.map((shoot, index) => (
-          <Link to={`/shoot/${shoot.id}`} key={index} className="horizontal-item-link">
+          <Link to={shootPath(shoot)} key={index} className="horizontal-item-link">
             <div className="horizontal-item">
               <span className="item-number-overlay">0{index + 1}</span>
               <div className="horizontal-img-wrapper">
