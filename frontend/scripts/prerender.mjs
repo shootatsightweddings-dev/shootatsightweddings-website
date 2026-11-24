@@ -23,6 +23,7 @@ import { spawn } from 'node:child_process';
 import { readFileSync, writeFileSync, mkdirSync, existsSync, copyFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { shootPath } from '../src/utils/shootPath.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const FRONTEND_DIR = path.resolve(__dirname, '..');
@@ -79,14 +80,14 @@ async function getShootSlugs() {
     const res = await fetch(`${BASE_URL}/api/shoots`);
     const data = await res.json();
     if (data.success && Array.isArray(data.data)) {
-      return data.data.map((s) => ({ slug: s.slug, updatedAt: s.updatedAt }));
+      return data.data.map((s) => ({ slug: s.slug, category: s.category, updatedAt: s.updatedAt }));
     }
   } catch (err) {
     console.warn('[prerender] Could not fetch /api/shoots, falling back to shoots-db.json:', err.message);
   }
   try {
     const local = JSON.parse(readFileSync(path.join(BACKEND_DIR, 'shoots-db.json'), 'utf8'));
-    return local.map((s) => ({ slug: s.slug, updatedAt: s.updatedAt }));
+    return local.map((s) => ({ slug: s.slug, category: s.category, updatedAt: s.updatedAt }));
   } catch {
     return [];
   }
@@ -197,7 +198,7 @@ async function main() {
     const dynamicRoutes = [
       ...contentPages.map(page=>({path:`/${page.kind === 'service' ? 'services' : 'locations'}/${page.slug}`,changefreq:'monthly',priority:'0.7',lastmod:page.updatedAt})),
       ...shoots.map((s) => ({
-        path: `/shoot/${s.slug}`,
+        path: shootPath(s),
         changefreq: 'monthly',
         priority: '0.6',
         lastmod: s.updatedAt,

@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { PORTFOLIO_SECTIONS } from '../utils/shootPath';
 
 const SITE_URL = 'https://www.shootatsightweddings.com';
 const BRAND = 'Shoot At Sight Weddings';
@@ -50,7 +51,8 @@ const buildBreadcrumbList = (pathname, labelOverrides = {}) => {
     // "/shoot" alone isn't a real route (only "/shoot/:id" is) — point that
     // intermediate crumb at the actual listing page instead of a 404.
     const isShootSegment = !isLast && seg === 'shoot';
-    const path = isShootSegment ? '/portfolio' : accPath;
+    const orphanSection = !isLast && i === 1 && segments[0] === 'portfolio' && !PORTFOLIO_SECTIONS.includes(seg);
+    const path = isShootSegment || orphanSection ? '/portfolio' : accPath;
     const label = labelOverrides[accPath] || (isShootSegment
       ? 'Portfolio'
       : seg.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()));

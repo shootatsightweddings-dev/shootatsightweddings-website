@@ -75,9 +75,9 @@ export const landingPages = [
         heading: 'Recent weddings we photographed in Bangalore',
         paragraphs: ['These are real celebrations from our Bengaluru portfolio. Each one opens the full gallery.'],
         bullets: [
-          '[Raghu Dixit & Varijashree](/shoot/raghudixith-varijashree) — a musical celebration of love and art',
-          '[Aishwarya & Akshay](/shoot/aishwarya-and-akshay) — an editorial wedding story',
-          '[Ragini](/shoot/ragini) — a portrait session in soft, cinematic light',
+          '[Raghu Dixit & Varijashree](/portfolio/wedding/raghudixith-varijashree) — a musical celebration of love and art',
+          '[Aishwarya & Akshay](/portfolio/wedding/aishwarya-and-akshay) — an editorial wedding story',
+          '[Ragini](/portfolio/portrait/ragini) — a portrait session in soft, cinematic light',
         ],
       },
       {
@@ -154,9 +154,9 @@ export const landingPages = [
       {
         heading: 'Editorial stories from our portfolio',
         bullets: [
-          '[Aishwarya & Akshay](/shoot/aishwarya-and-akshay) — an editorial wedding narrative captured with timeless sophistication, Bangalore',
-          '[Naveen & Kate](/shoot/naveen-kate) — a high-fashion wedding celebration, Sydney',
-          '[Ragini](/shoot/ragini) — a portrait story of grace, in soft, cinematic light, Bangalore',
+          '[Aishwarya & Akshay](/portfolio/wedding/aishwarya-and-akshay) — an editorial wedding narrative captured with timeless sophistication, Bangalore',
+          '[Naveen & Kate](/portfolio/wedding/naveen-kate) — a high-fashion wedding celebration, Sydney',
+          '[Ragini](/portfolio/portrait/ragini) — a portrait story of grace, in soft, cinematic light, Bangalore',
         ],
       },
       {
@@ -423,7 +423,7 @@ export const landingPages = [
           'Dubai, United Arab Emirates',
           'The Netherlands',
           'Brussels, Belgium',
-          'Sydney, Australia — [Naveen & Kate](/shoot/naveen-kate), a high-fashion wedding celebration photographed and filmed by our team',
+          'Sydney, Australia — [Naveen & Kate](/portfolio/wedding/naveen-kate), a high-fashion wedding celebration photographed and filmed by our team',
         ],
       },
       {

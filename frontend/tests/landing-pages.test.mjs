@@ -2,10 +2,12 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { landingPages, LANDING_PAGES_PUBLIC } from '../src/data/landingPages.js';
+import { shootPath } from '../src/utils/shootPath.js';
 
 const routeConfig = JSON.parse(readFileSync(new URL('../src/data/landingPageRoutes.json', import.meta.url), 'utf8'));
 const routes = routeConfig.routes;
-const shoots = JSON.parse(readFileSync(new URL('../../backend/shoots-db.json', import.meta.url), 'utf8')).map(s => s.slug);
+// Couple pages live at /portfolio/<section>/<slug> (see src/utils/shootPath.js).
+const shootPaths = JSON.parse(readFileSync(new URL('../../backend/shoots-db.json', import.meta.url), 'utf8')).map(shootPath);
 const blog = readFileSync(new URL('../src/data/localBlogPosts.js', import.meta.url), 'utf8');
 const app = readFileSync(new URL('../src/App.jsx', import.meta.url), 'utf8');
 const STATIC = ['/', '/films', '/about', '/portfolio', '/portfolio/wedding', '/portfolio/pre-wedding', '/blog', '/contact', '/faq', '/services', '/locations'];
@@ -23,7 +25,7 @@ test('every internal link points at a real route', () => {
   for (const page of landingPages) {
     for (const href of links(page)) {
       const ok = STATIC.includes(href) || routes.includes(href)
-        || (href.startsWith('/shoot/') && shoots.includes(href.slice(7)))
+        || shootPaths.includes(href)
         || (href.startsWith('/blog/') && blog.includes(`'${href.slice(6)}'`));
       assert.ok(ok, `${page.path} links to unknown route ${href}`);
     }

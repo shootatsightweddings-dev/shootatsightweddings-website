@@ -56,6 +56,7 @@ function App() {
           <Route path="/films" element={<Films />} />
           <Route path="/about" element={<About />} />
           <Route path="/shoot/:id" element={<ShootDetail />} />
+          <Route path="/portfolio/:section/:id" element={<ShootDetail />} />
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/portfolio/wedding" element={<WeddingGallery />} />
           <Route path="/portfolio/pre-wedding" element={<PreWeddingGallery />} />

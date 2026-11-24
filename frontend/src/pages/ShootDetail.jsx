@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation, useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { API_URL } from '../config';
 import useSEO from '../hooks/useSEO';
 import { isoDate } from '../utils/articleSeo';
 import Breadcrumbs from '../components/Breadcrumbs';
+import { shootPath } from '../utils/shootPath';
 import './ShootDetail.css';
 
 
@@ -168,6 +169,17 @@ const ShootDetail = () => {
   const container = useRef();
   const [shoot, setShoot] = useState(null);
   const [allShoots, setAllShoots] = useState([]);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Couple pages live at /portfolio/<section>/<slug>. If this page was opened
+  // through the old /shoot/<slug> link (inside the app, so the server's 301
+  // didn't run), move to the proper address without adding a history entry.
+  useEffect(() => {
+    if (!shoot?.category) return;
+    const proper = shootPath({ ...shoot, slug: id });
+    if (location.pathname.replace(/\/$/, '') !== proper) navigate(proper + location.search, { replace: true });
+  }, [shoot, id, location.pathname, location.search, navigate]);
   const [loading, setLoading] = useState(true);
   const [lightboxImage, setLightboxImage] = useState(null);
 
@@ -199,7 +211,8 @@ const ShootDetail = () => {
     description: shoot ? (shoot.metaDescription || shoot.desc) : 'Explore the editorial wedding and pre-wedding galleries by Shoot At Sight Weddings.',
     ogImage: shoot ? shoot.hero : null,
     noindex: !shoot,
-    breadcrumbLabels: shoot ? { [`/shoot/${id}`]: shoot.title } : undefined,
+    breadcrumbLabels: shoot ? { [shootPath({ ...shoot, slug: id })]: shoot.title } : undefined,
+    path: shoot?.category ? shootPath({ ...shoot, slug: id }) : undefined,
     jsonLd: [...imagesJsonLd, ...(shoot?.narrative ? [{
       '@context':'https://schema.org','@type':'Article',headline:shoot.title,
       description:shoot.metaDescription || shoot.desc,image:shoot.hero ? absoluteUrl(shoot.hero) : undefined,
@@ -419,7 +432,7 @@ const ShootDetail = () => {
         {nextShoot && nextShoot.slug !== id && (
           <div className="sd-next-block">
             <span className="sd-next-subtitle">NEXT STORY</span>
-            <Link to={`/shoot/${nextShoot.slug}`} className="sd-next-card">
+            <Link to={shootPath(nextShoot)} className="sd-next-card">
               <div className="sd-next-img-wrap">
                 <img src={nextShoot.heroImage || nextShoot.hero} alt={nextShoot.title} />
               </div>

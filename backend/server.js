@@ -18,6 +18,7 @@ const errorHandler = require('./src/middlewares/errorHandler');
 const Shoot = require('./src/models/Shoot');
 const Blog = require('./src/models/Blog');
 const contentPages = require('./src/services/contentPageService');
+const { shootPath } = require('./src/utils/shootPath');
 
 connectDB();
 
@@ -95,21 +96,22 @@ if (process.env.NODE_ENV === 'production') {
   ]);
   const LOCAL_SHOOTS_PATH = path.join(__dirname, 'shoots-db.json');
 
-  const shootSlugExists = async (slug) => {
+  // Returns { slug, category } for a published shoot, or null.
+  const findShoot = async (slug) => {
     try {
       const found = await Promise.race([
-        Shoot.exists({ slug }),
+        Shoot.findOne({ slug }, { slug: 1, category: 1 }).lean(),
         new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 1500)),
       ]);
-      if (found) return true;
+      if (found) return found;
     } catch {
       // fall through to local fallback below
     }
     try {
       const local = JSON.parse(fs.readFileSync(LOCAL_SHOOTS_PATH, 'utf8'));
-      return local.some((s) => s.slug === slug);
+      return local.find((s) => s.slug === slug) || null;
     } catch {
-      return false;
+      return null;
     }
   };
 
@@ -201,9 +203,23 @@ if (process.env.NODE_ENV === 'production') {
       }
     }
 
-    const shootMatch = reqPath.match(/^\/shoot\/([a-z0-9-]+)$/i);
-    if (shootMatch && (await shootSlugExists(shootMatch[1]))) {
-      return sendRoute(res, reqPath);
+    // Couple pages: /portfolio/<section>/<slug> (section from the category,
+    // see src/utils/shootPath.js). The old /shoot/<slug> address, and a
+    // section that no longer matches the category, 301-redirect there so
+    // shared links and search rankings carry over.
+    const oldShoot = reqPath.match(/^\/shoot\/([a-z0-9-]+)$/i);
+    const newShoot = reqPath.match(/^\/portfolio\/([a-z0-9-]+)\/([a-z0-9-]+)$/i);
+    const shootSlug = oldShoot?.[1] || newShoot?.[2];
+    if (shootSlug) {
+      const shoot = await findShoot(shootSlug);
+      if (shoot) {
+        const canonical = shootPath(shoot);
+        if (reqPath !== canonical) {
+          const query = req.originalUrl.includes('?') ? req.originalUrl.slice(req.originalUrl.indexOf('?')) : '';
+          return res.redirect(301, canonical + query);
+        }
+        return sendRoute(res, reqPath);
+      }
     }
 
     const blogMatch = reqPath.match(/^\/blog\/([a-z0-9-]+)$/i);

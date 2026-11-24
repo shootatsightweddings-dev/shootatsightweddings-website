@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import './Breadcrumbs.css';
+import { PORTFOLIO_SECTIONS } from '../utils/shootPath';
 
 const LABELS = {
   about: 'About',
@@ -31,7 +32,10 @@ const Breadcrumbs = ({ currentLabel }) => {
     const label = isLast && currentLabel ? currentLabel : (LABELS[seg] || seg.replace(/-/g, ' '));
     // "/shoot" alone isn't a real route (only "/shoot/:id" is) — point that
     // intermediate crumb at the actual listing page instead of a 404.
-    const path = (!isLast && seg === 'shoot') ? '/portfolio' : accPath;
+    // A portfolio section without its own listing page (e.g. /portfolio/portrait)
+    // also points back to the portfolio.
+    const orphanSection = !isLast && i === 1 && segments[0] === 'portfolio' && !PORTFOLIO_SECTIONS.includes(seg);
+    const path = (!isLast && seg === 'shoot') || orphanSection ? '/portfolio' : accPath;
     return { path, label, isLast };
   });
 
