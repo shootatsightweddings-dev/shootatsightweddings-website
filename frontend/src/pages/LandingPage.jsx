@@ -86,8 +86,11 @@ export default function LandingPage({ page }) {
       </header>
 
       {page.hero && (
-        <div className="lp-hero container">
-          <img src={page.hero.src} alt={page.hero.alt} fetchPriority="high" width="1600" height="1067" />
+        <div className={`lp-hero container${page.hero.portrait ? ' lp-hero--portrait' : ''}`}>
+          <img
+            src={page.hero.src} alt={page.hero.alt} fetchPriority="high"
+            width={page.hero.portrait ? 1000 : 1600} height={page.hero.portrait ? 1500 : 1000}
+          />
         </div>
       )}
 
@@ -104,7 +107,7 @@ export default function LandingPage({ page }) {
         {page.gallery?.length > 0 && (
           <section className="lp-section">
             <h2>From the portfolio</h2>
-            <div className="lp-gallery">
+            <div className="lp-gallery" style={{ '--cols': Math.min(page.gallery.length, 3) }}>
               {page.gallery.map(item => <img key={item.src} src={item.src} alt={item.alt} loading="lazy" decoding="async" />)}
             </div>
             <p><Link to="/portfolio">See the full portfolio</Link></p>
