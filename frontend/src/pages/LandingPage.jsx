@@ -28,7 +28,11 @@ function buildSchema(page) {
     '@context': 'https://schema.org', '@type': 'Service', '@id': `${url}#service`,
     name: page.h1, serviceType, description: page.metaDescription, url,
     provider: { '@id': `${origin}/#business` },
-    areaServed: areaServed ? { '@type': areaServed === 'India' ? 'Country' : 'City', name: areaServed } : undefined,
+    // A string is a city ('India' is a country); an array lists places as
+    // 'Country' names or { type, name } objects.
+    areaServed: Array.isArray(areaServed)
+      ? areaServed.map((a) => (typeof a === 'string' ? { '@type': 'Country', name: a } : { '@type': a.type, name: a.name }))
+      : areaServed ? { '@type': areaServed === 'India' ? 'Country' : 'City', name: areaServed } : undefined,
     image: absolute(page.hero?.src),
     offers: price ? {
       '@type': 'Offer', priceCurrency: 'INR', url,
