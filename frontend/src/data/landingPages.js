@@ -387,11 +387,11 @@ export const landingPages = [
     navLabel: 'Destination Wedding Photography',
     primaryKeyword: 'destination wedding photographer bangalore',
     metaTitle: 'Destination Wedding Photographer from Bangalore | Shoot At Sight',
-    metaDescription: 'A Bengaluru wedding photography and film team that travels across India and internationally, including recent work in Sydney. Travel billed by location.',
+    metaDescription: 'Bengaluru wedding photographers and filmmakers who travel worldwide: France, Italy, Switzerland, Thailand, Dubai, the Netherlands and Belgium.',
     eyebrow: 'India and international',
     h1: 'Destination Wedding Photographer from Bangalore',
     intro: [
-      'We are a Bengaluru studio, and we travel for weddings — across India and internationally. A destination wedding gets the same team, the same editorial approach and the same delivery as a wedding at home.',
+      'We are a Bengaluru studio, and we travel for weddings — across India and abroad, with work in France, Italy, Switzerland, Thailand, Dubai, the Netherlands and Belgium. A destination wedding gets the same team, the same editorial approach and the same delivery as a wedding at home.',
       'A destination wedding is a bigger decision than a local one: you are trusting a team to arrive prepared, work in an unfamiliar venue and bring the story home. Here is how we handle it.',
     ],
     hero: { src: img.naveenHero, alt: 'Naveen and Kate standing in a palm garden, framed by a carved arched window' },
@@ -402,8 +402,18 @@ export const landingPages = [
     video: TEASER,
     sections: [
       {
-        heading: 'Recent destination work',
-        bullets: ['[Naveen & Kate](/shoot/naveen-kate) — a high-fashion wedding celebration in Sydney, photographed and filmed by our team'],
+        heading: 'Where we have worked',
+        paragraphs: ['Outside India, our team has photographed and filmed in:'],
+        bullets: [
+          'France',
+          'Italy',
+          'Switzerland',
+          'Thailand',
+          'Dubai, United Arab Emirates',
+          'The Netherlands',
+          'Brussels, Belgium',
+          'Sydney, Australia — [Naveen & Kate](/shoot/naveen-kate), a high-fashion wedding celebration photographed and filmed by our team',
+        ],
       },
       {
         heading: 'How destination weddings work',
@@ -428,11 +438,14 @@ export const landingPages = [
       },
     ],
     faqs: [
-      { q: 'Do you travel for destination weddings?', a: 'Yes. We have photographed weddings across India and internationally. Tell us where your celebration is and we will plan accordingly.' },
+      { q: 'Do you travel for destination weddings?', a: 'Yes. Besides weddings across India, we have worked in France, Italy, Switzerland, Thailand, Dubai, the Netherlands, Belgium and Australia. Tell us where your celebration is and we will plan accordingly.' },
       { q: 'Who pays for travel and accommodation?', a: 'Travel and accommodation are billed separately, based on the location.' },
       { q: 'Is delivery slower for destination weddings?', a: 'No. Edited photographs are delivered within 6–8 weeks and highlight films within 8–12 weeks, the same as for weddings in Bengaluru.' },
     ],
-    schema: { type: 'Service', serviceType: 'Destination wedding photography', areaServed: 'India' },
+    schema: {
+      type: 'Service', serviceType: 'Destination wedding photography',
+      areaServed: ['India', 'France', 'Italy', 'Switzerland', 'Thailand', 'United Arab Emirates', 'Netherlands', 'Belgium', 'Australia'],
+    },
   },
 
   // 7 ─────────────────────────────────────────────────────────────────────
