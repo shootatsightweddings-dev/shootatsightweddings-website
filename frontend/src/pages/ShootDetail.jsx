@@ -347,8 +347,12 @@ const ShootDetail = () => {
             <div className="sd-split-right">
               <div className="header-meta">
                 <span className="meta-item">{shoot.date}</span>
-                <span className="meta-divider">•</span>
-                <span className="meta-item">{shoot.location}</span>
+                {shoot.location && (
+                  <>
+                    <span className="meta-divider">•</span>
+                    <span className="meta-item">{shoot.location}</span>
+                  </>
+                )}
               </div>
 
               <h1 className="exhibition-title display-serif">
