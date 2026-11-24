@@ -1,12 +1,16 @@
 .landing-page { padding-top:170px; padding-bottom:80px; min-height:70vh; }
-.lp-header { max-width:900px; }
+/* Header text and body share one reading column so their left edges line up;
+   the hero photo is allowed to be wider. */
+.lp-header, .lp-body { max-width:920px; }
 .lp-eyebrow { font-family:var(--font-sans); font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--accent); margin:28px 0 8px; }
-.landing-page h1 { margin:0 0 24px; }
+.landing-page h1.section-title-large { font-size:clamp(34px, 4.2vw + 12px, 72px); line-height:1.08; letter-spacing:-0.01em; margin:0 0 28px; }
 .lp-intro p { font-size:19px; line-height:1.8; color:var(--text-secondary); margin:0 0 16px; }
 .lp-header .btn-premium { margin-top:16px; }
-.lp-hero { margin-top:48px; }
-.lp-hero img { width:100%; height:auto; max-height:640px; object-fit:cover; border-radius:8px; display:block; }
-.lp-body { max-width:860px; margin-top:24px; }
+.lp-hero { max-width:1200px; margin-top:56px; }
+.lp-hero img { width:100%; height:auto; aspect-ratio:3/2; object-fit:cover; border-radius:8px; display:block; }
+/* Portrait photos are shown whole, centred, rather than cut into a wide strip. */
+.lp-hero--portrait img { width:auto; max-width:100%; height:min(82vh, 900px); aspect-ratio:2/3; margin:0 auto; }
+.lp-body { margin-top:24px; }
 .lp-section { margin-top:56px; }
 .lp-section h2, .lp-cta h2, .lp-related h2 { font-family:var(--font-display); font-size:clamp(24px,3vw,34px); margin:0 0 18px; color:var(--text-primary); }
 .lp-section p, .lp-section li { font-size:18px; line-height:1.8; color:var(--text-secondary); }
@@ -20,9 +24,9 @@
 .lp-table-wrap thead th { font-family:var(--font-sans); font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--text-primary); }
 .lp-table-wrap tbody th { color:var(--text-primary); font-weight:600; }
 .lp-video { margin:48px 0 0; }
-.lp-video video { width:100%; border-radius:8px; background:#000; aspect-ratio:16/9; display:block; }
+.lp-video video { width:100%; border-radius:8px; background:#000; aspect-ratio:16/9; object-fit:cover; display:block; }
 .lp-video figcaption { font-size:14px; color:var(--text-secondary); margin-top:10px; }
-.lp-gallery { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-bottom:16px; }
+.lp-gallery { display:grid; grid-template-columns:repeat(var(--cols,3),minmax(0,1fr)); gap:12px; margin-bottom:16px; }
 .lp-gallery img { width:100%; aspect-ratio:4/5; object-fit:cover; border-radius:6px; display:block; }
 .lp-faqs details { border-bottom:1px solid #8d756b44; padding:18px 0; }
 .lp-faqs summary { cursor:pointer; list-style:none; }
@@ -40,6 +44,7 @@
   .landing-page { padding-top:130px; }
   .lp-intro p, .lp-section p, .lp-section li { font-size:17px; }
   .lp-gallery { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .lp-hero--portrait img { width:100%; height:auto; }
   .lp-related ul { grid-template-columns:1fr; }
   .lp-cta { padding:28px 20px; }
 }
