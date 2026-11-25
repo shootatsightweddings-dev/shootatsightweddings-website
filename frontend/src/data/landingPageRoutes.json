@@ -1,6 +1,6 @@
 {
   "_comment": "SEO landing pages (content in landingPages.js). While public is false they work at their URLs for sharing, but are noindex, left out of the sitemap, and not linked from the rest of the site. Set public to true to publish them to search.",
-  "public": false,
+  "public": true,
   "routes": [
     "/wedding-photography-bangalore",
     "/editorial-wedding-photography-bangalore",

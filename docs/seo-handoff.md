@@ -28,7 +28,11 @@ https://shootatsightweddings.com/<path>?<query>
 
 Keep HTTPS certificates valid for both hosts. Verify `/`, `/about`, `/contact`, a real shoot URL and a URL with query parameters. Do not redirect missing pages to the homepage; genuine missing URLs should remain 404 on the canonical host. The repository push alone cannot change a legacy CDN/hosting redirect rule.
 
-## SEO landing pages (shareable, not yet public)
+## SEO landing pages (published 2026-11-25)
+
+The client approved the eight pages; `"public": true` is set, so they are indexable, in `sitemap.xml`, and linked from the site footer (Footer.jsx renders every page in landingPages.js).
+
+### History: shareable, not yet public
 
 Eight landing pages from the keyword plan live in `frontend/src/data/landingPages.js`, with their URLs in `frontend/src/data/landingPageRoutes.json`. They load at their own URLs and can be shared by link, but while `"public": false` in that JSON file they are **not linked from anywhere on the site**, are marked `noindex`, and are left out of `sitemap.xml`. A test fails if another page links to them while they are unpublished.
 

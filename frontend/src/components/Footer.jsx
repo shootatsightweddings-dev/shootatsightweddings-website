@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import "./Footer.css";
+import { landingPages, LANDING_PAGES_PUBLIC } from "../data/landingPages";
 
 const portfolioStrips = [
   "/4%20RAGHUDIXITH%20AND%20VARIJASHREE_WEBP/NGD_6702.webp",
@@ -130,7 +131,16 @@ const Footer = () => {
         </div>
       </div>
 
-      <nav aria-label="Services and locations" style={{display:'flex',justifyContent:'center',gap:28,marginTop:28}}>
+      {/* Service pages (src/data/landingPages.js), shown once published
+          via landingPageRoutes.json, plus the services/locations hubs. */}
+      {LANDING_PAGES_PUBLIC && (
+        <nav aria-label="Wedding photography services" className="ft-explore">
+          {landingPages.map((page) => (
+            <Link key={page.path} className="ft-nav-link" to={page.path}>{page.navLabel}</Link>
+          ))}
+        </nav>
+      )}
+      <nav aria-label="Services and locations" className="ft-hubs">
         <Link className="ft-nav-link" to="/services">Services</Link>
         <Link className="ft-nav-link" to="/locations">Locations</Link>
       </nav>
