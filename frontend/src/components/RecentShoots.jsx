@@ -18,7 +18,7 @@ const mockShoots = [
   { id: 'naveen-kate', title: "Naveen & Kate", cat: "Wedding", img: "/NAVEEN%20AND%20KATE/SYD08467.webp" },
   { id: 'ragini', title: "Ragini", cat: "Portrait", img: "/ragini/_I3A6607.webp" },
   { id: 'aishwarya-and-akshay', title: "Aishwarya & Akshay", cat: "Wedding", img: "/aishwarya%20and%20akshay/KRP_8213.webp" },
-  { id: 'srinidhi-and-ramya', title: "Srinidhi & Ramya", cat: "Wedding", img: "/srinidhi%20and%20ramya/DSC00045.webp" },
+  { id: 'srinidhi-and-ramya', title: "Srinidhi & Ramya", cat: "Pre-wedding", img: "/srinidhi%20and%20ramya/DSC00045.webp" },
 ];
 
 const RecentShoots = () => {
