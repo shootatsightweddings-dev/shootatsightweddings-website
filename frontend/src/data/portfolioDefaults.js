@@ -21,7 +21,7 @@ export const defaultPortfolio = {
   collections: [
     {
       id: 'wedding', title: 'Wedding', tagline: 'REAL EMOTIONS & INTIMATE MOMENTS', panels: [
-        { label: 'PHOTOGRAPHY', img: 'https://www.shootatsightweddings.com/4%20RAGHUDIXITH%20AND%20VARIJASHREE_WEBP/NGD_6702.webp', to: '/portfolio/wedding' },
+        { label: 'PHOTOGRAPHY', img: 'https://www.shootatsightweddings.com/common/wedding-photography-cover.webp', position: 'center 10%', to: '/portfolio/wedding' },
         { label: 'WEDDING FILM', img: 'https://www.shootatsightweddings.com/NAVEEN%20AND%20KATE/SYD08467.webp', to: '/films' },
       ],
     },
