@@ -325,6 +325,13 @@
   transition: background 0.4s ease;
 }
 
+/* Label in the upper part of the card, for covers whose subject sits in
+   the middle (set per panel with labelAt: 'top'). */
+.ptf-col-panel-text--top {
+  align-items: flex-start;
+  padding-top: 16%;
+}
+
 .ptf-col-panel:hover .ptf-col-panel-text {
   background: rgba(0, 0, 0, 0.28);
 }
