@@ -305,7 +305,8 @@
   width: 100%;
   height: 100%;
   object-fit: cover;      /* Full bleed, zero grey background gaps */
-  object-position: center 25%;
+  /* --pos / --pos-m: per-panel framing from portfolioDefaults.js */
+  object-position: var(--pos, center 25%);
   display: block;
   transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -330,6 +331,12 @@
 .ptf-col-panel-text--top {
   align-items: flex-start;
   padding-top: 16%;
+}
+
+/* Label near the very top, for covers where the couple fills most of the card. */
+.ptf-col-panel-text--top-high {
+  align-items: flex-start;
+  padding-top: 6%;
 }
 
 .ptf-col-panel:hover .ptf-col-panel-text {
@@ -490,6 +497,13 @@
 
   .ptf-col-panel-img {
     height: 100%;
+    object-position: var(--pos-m, var(--pos, center 25%));
+  }
+
+  /* Phone cards are wider than tall, so a top label would sit on the couple. */
+  .ptf-col-panel-text--top-high {
+    align-items: center;
+    padding-top: 0;
   }
 
   .ptf-hero-strip {
