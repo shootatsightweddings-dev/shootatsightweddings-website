@@ -11,6 +11,7 @@ const HERO_POSTER = "/NAVEEN%20AND%20KATE/SYD08467.webp";
 
 const Hero = () => {
   const containerRef = useRef(null);
+  const videoRef = useRef(null);
   const { config } = useSiteConfig();
   const [isMobile, setIsMobile] = useState(
     typeof window !== "undefined" ? window.matchMedia("(max-width: 768px)").matches : false
@@ -52,6 +53,42 @@ const Hero = () => {
 
   const mobileVideoUrl = heroContent.mobileVideoUrl || DEFAULT_MOBILE_VIDEO_URL;
 
+  // The build-time prerender (a headless browser at desktop width) snapshots
+  // this page. Leave the video address out of that snapshot: otherwise phones
+  // start downloading the 23 MB desktop teaser from the static HTML before
+  // the app swaps in the mobile reel.
+  const renderVideoSrc = typeof window === "undefined" || !window.__PRERENDER__;
+
+  // iPhone Safari only autoplays a video it knows is muted and inline. React
+  // sets `muted` as a property, not an attribute, so set both and start
+  // playback ourselves. If the phone still refuses (e.g. Low Power Mode),
+  // start on the first touch or scroll instead of leaving a still poster.
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v || !renderVideoSrc) return undefined;
+    v.muted = true;
+    v.defaultMuted = true;
+    v.setAttribute("muted", "");
+    v.setAttribute("playsinline", "");
+    v.setAttribute("webkit-playsinline", "");
+    const tryPlay = () => {
+      const p = v.play();
+      if (p && typeof p.catch === "function") p.catch(() => {});
+    };
+    const events = ["touchstart", "scroll", "click"];
+    const onGesture = () => {
+      tryPlay();
+      if (!v.paused) events.forEach((e) => window.removeEventListener(e, onGesture));
+    };
+    tryPlay();
+    v.addEventListener("canplay", tryPlay, { once: true });
+    events.forEach((e) => window.addEventListener(e, onGesture, { passive: true }));
+    return () => {
+      v.removeEventListener("canplay", tryPlay);
+      events.forEach((e) => window.removeEventListener(e, onGesture));
+    };
+  }, [isMobile, mobileVideoUrl, videoUrl, renderVideoSrc]);
+
   return (
     <section ref={containerRef} className="hero-full">
       <div className="hero-video-container">
@@ -59,9 +96,10 @@ const Hero = () => {
         {isMobile ? (
           <video
             key="mobile"
-            src={mobileVideoUrl}
+            ref={videoRef}
+            src={renderVideoSrc ? mobileVideoUrl : undefined}
             poster={HERO_POSTER}
-            preload="none"
+            preload="auto"
             autoPlay
             loop
             muted
@@ -72,9 +110,10 @@ const Hero = () => {
           <div className="hero-desktop-video">
             <video
               key="desktop"
-              src={videoUrl}
+              ref={videoRef}
+              src={renderVideoSrc ? videoUrl : undefined}
               poster={HERO_POSTER}
-              preload="none"
+              preload="auto"
               autoPlay
               loop
               muted

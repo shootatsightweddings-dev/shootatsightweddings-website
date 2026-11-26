@@ -215,6 +215,9 @@ async function main() {
 
     browser = await chromium.launch();
     const context = await browser.newContext();
+    // Lets components leave out what a static snapshot should not ship
+    // (e.g. Hero's video address, so phones don't fetch the desktop video).
+    await context.addInitScript(() => { window.__PRERENDER__ = true; });
     let page = await context.newPage();
 
     // The server's outbound connection occasionally stalls, so a page can
