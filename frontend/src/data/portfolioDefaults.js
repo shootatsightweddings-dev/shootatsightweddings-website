@@ -27,7 +27,7 @@ export const defaultPortfolio = {
     },
     {
       id: 'pre-wedding', title: 'Pre-Wedding', tagline: "CAPTURING YOUR LOVE'S FIRST GLANCE", panels: [
-        { label: 'PHOTOGRAPHY', img: 'https://www.shootatsightweddings.com/common/KRP_9777.webp', to: '/portfolio/pre-wedding' },
+        { label: 'PHOTOGRAPHY', img: 'https://www.shootatsightweddings.com/common/prewedding-photography-cover.webp', labelAt: 'top', to: '/portfolio/pre-wedding' },
         { label: 'PRE-WEDDING FILM', img: 'https://www.shootatsightweddings.com/common/_I3A6612.webp', to: '/films' },
       ],
     },
