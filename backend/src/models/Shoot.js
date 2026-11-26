@@ -7,7 +7,8 @@ const shootSchema = new Schema(
     title: { type: String, required: true, trim: true },
     slug: { type: String, required: true, unique: true, lowercase: true, trim: true },
     category: { type: String, required: true, trim: true },
-    location: { type: String, required: true, trim: true },
+    // Optional: some couples are published before the studio confirms the city.
+    location: { type: String, default: '', trim: true },
     date: { type: String, required: true, trim: true },
     desc: { type: String, required: true },
     ...fields,
