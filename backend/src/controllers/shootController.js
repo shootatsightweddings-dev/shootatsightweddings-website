@@ -33,11 +33,19 @@ const UPLOAD_DIR = path.join(__dirname, '..', '..', 'uploads');
 
 // Optimize image to next-gen .webp format
 const optimizeImage = async (buffer) => {
-  return sharp(buffer)
-    .rotate()                                          // auto-rotate camera orientation based on EXIF metadata
-    .resize({ width: 2400, withoutEnlargement: true }) // cap at 2400px width
-    .webp({ quality: 85 })                             // webp high-performance compression
-    .toBuffer();
+  try {
+    return await sharp(buffer)
+      .rotate()                                          // auto-rotate camera orientation based on EXIF metadata
+      .resize({ width: 2400, withoutEnlargement: true }) // cap at 2400px width
+      .webp({ quality: 85 })                             // webp high-performance compression
+      .toBuffer();
+  } catch {
+    // Usually an iPhone HEIC photo or a damaged file: tell the admin what to do
+    // instead of returning a raw image-library error.
+    const error = new Error('One of the photos could not be read. Please upload JPG, PNG or WebP photos (iPhone HEIC photos need to be saved as JPG first).');
+    error.statusCode = 400;
+    throw error;
+  }
 };
 
 // Optimize and save an uploaded image on this server.
@@ -428,7 +436,7 @@ async function updateShootMetadata(req,res,next) {
     const updatable = { ...metadata };
     if (req.body.title) updatable.title = String(req.body.title).trim();
     if (req.body.category) updatable.category = String(req.body.category).trim();
-    if (req.body.location) updatable.location = String(req.body.location).trim();
+    if (req.body.location !== undefined) updatable.location = String(req.body.location).trim();
     if (req.body.date) updatable.date = String(req.body.date).trim();
     if (req.body.desc !== undefined) updatable.desc = String(req.body.desc).trim();
 
