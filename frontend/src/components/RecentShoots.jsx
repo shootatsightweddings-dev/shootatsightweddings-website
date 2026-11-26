@@ -50,15 +50,23 @@ const RecentShoots = () => {
 
         const data = await res.json();
         if (res.ok && data.data && data.data.length > 0) {
-          const mapped = data.data.map(s => ({
+          const toCard = s => ({
             id: s.slug || s._id,
             title: s.title,
             cat: s.category,
-            img: s.heroImage
-          }));
+            img: s.homeImage || s.heroImage
+          });
           // Keep the homepage curated as the archive grows; the full archive
-          // remains available from the portfolio galleries.
-          setShoots(mapped.slice(-6).reverse());
+          // remains available from the portfolio galleries. Shoots the studio
+          // pins (homeOrder) come first, then the newest, six in total.
+          const pinned = data.data
+            .filter(s => s.homeOrder != null)
+            .sort((a, b) => a.homeOrder - b.homeOrder);
+          const newest = data.data
+            .filter(s => s.homeOrder == null)
+            .slice(-Math.max(0, 6 - pinned.length))
+            .reverse();
+          setShoots([...pinned, ...newest].slice(0, 6).map(toCard));
 
           // Recalculate ScrollTrigger parameters on the next tick
           setTimeout(() => {

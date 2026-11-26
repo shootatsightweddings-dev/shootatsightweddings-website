@@ -21,6 +21,11 @@ const shootSchema = new Schema(
     heroImage: { type: String, required: true },
     // Position on the portfolio page (1 = first). Couples without one follow.
     displayOrder: { type: Number, default: null },
+    // Pinned to the homepage "Recent Captures" strip, in this order (1 =
+    // first), ahead of the newest shoots. Optional portrait photo for that
+    // card (the strip's cards are tall); falls back to heroImage.
+    homeOrder: { type: Number, default: null },
+    homeImage: { type: String, default: null },
     gallery: [{ type: String }],
   },
   {
