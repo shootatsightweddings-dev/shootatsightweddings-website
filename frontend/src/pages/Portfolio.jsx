@@ -170,7 +170,7 @@ const Portfolio = () => {
           <div className="ptf-col-panels">
             {col.panels.map((panel) => (
               <Link key={panel.label} to={panel.to} className="ptf-col-panel">
-                <img src={panel.img} alt={panel.label} loading="lazy" className="ptf-col-panel-img" />
+                <img src={panel.img} alt={panel.label} loading="lazy" className="ptf-col-panel-img" style={panel.position ? { objectPosition: panel.position } : undefined} />
                 <div className="ptf-col-panel-text"><span>{panel.label}</span></div>
               </Link>
             ))}
