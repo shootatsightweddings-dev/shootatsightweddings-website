@@ -52,7 +52,9 @@ const Films = () => {
       stagger: 0.15,
       ease: 'power3.out',
     });
-  }, [films]);
+  // Keyed on the count, not the array: the list is rebuilt on every render,
+  // so keying on it replayed the fade-in each time a film was opened or closed.
+  }, [films.length]);
 
   useEffect(() => {
     if (!activeFilm) return;
