@@ -1237,6 +1237,17 @@ function renderFieldsForSection(
               </div>
 
               <div className="ved-group">
+                <label>Film Type (which section of the Films page it shows in)</label>
+                <select
+                  value={film.category === 'pre-wedding' ? 'pre-wedding' : 'wedding'}
+                  onChange={(e) => onListChange('list', idx, 'category', e.target.value)}
+                >
+                  <option value="wedding">Wedding Film</option>
+                  <option value="pre-wedding">Pre-wedding Film</option>
+                </select>
+              </div>
+
+              <div className="ved-group">
                 <label>Video File (Upload MP4 / MOV or Paste Link)</label>
                 <div className="ved-image-picker">
                   <input 

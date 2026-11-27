@@ -20,13 +20,18 @@ const Films = () => {
   };
 
   const films = (filmsContent.list || []).filter((film) => film.published !== false);
+  // Wedding films first, then pre-wedding films (set per film in admin).
+  const filmSections = [
+    { key: 'wedding', title: 'Wedding Films', films: films.filter((film) => film.category !== 'pre-wedding') },
+    { key: 'pre-wedding', title: 'Pre-wedding Films', films: films.filter((film) => film.category === 'pre-wedding') },
+  ].filter((section) => section.films.length > 0);
   const canPlay = (film) => Boolean(film.videoUrl);
   const absolute = (url) => (url && !/^https?:\/\//.test(url) ? `https://www.shootatsightweddings.com${url}` : url);
   const videosJsonLd = films.filter((film) => canPlay(film) && film.posterUrl && film.uploadDate).map((film) => ({
     '@context': 'https://schema.org',
     '@type': 'VideoObject',
     name: film.videoTitle || film.label,
-    description: `${film.videoTitle || film.label} — a wedding film by Shoot At Sight Weddings, ${film.location}.`,
+    description: `${film.videoTitle || film.label} — a ${film.category === 'pre-wedding' ? 'pre-wedding' : 'wedding'} film by Shoot At Sight Weddings, ${film.location}.`,
     thumbnailUrl: absolute(film.posterUrl),
     uploadDate: film.uploadDate,
     contentUrl: absolute(film.videoUrl),
@@ -79,8 +84,11 @@ const Films = () => {
           </p>
         </div>
 
+        {filmSections.map((section) => (
+        <section key={section.key} className="films-section" aria-labelledby={`films-${section.key}`}>
+        {filmSections.length > 1 && <h2 id={`films-${section.key}`} className="films-section-title">{section.title}</h2>}
         <div className="films-grid">
-          {films.map((film) => (
+          {section.films.map((film) => (
             <div
               key={film.id || film.num}
               className="film-card"
@@ -119,6 +127,8 @@ const Films = () => {
             </div>
           ))}
         </div>
+        </section>
+        ))}
       </div>
 
       {/* Fullscreen Film Modal */}
